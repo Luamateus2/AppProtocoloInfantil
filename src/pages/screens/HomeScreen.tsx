@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { auth, db } from "../../services/firebaseConfig";
-import {
-  collection,
-  onSnapshot,
-  query,
-  where,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../../services/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
-export default function Home({ navigation }: any) {
-  const [tasks, setTasks] = useState<any[]>([]);
+const { width } = Dimensions.get("window");
+const CARD_WIDTH = width * 0.8; // 80% da largura da tela
 
+export default function Home({ navigation }: any) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (!user) navigation.replace("Login");
@@ -29,151 +22,120 @@ export default function Home({ navigation }: any) {
     return unsub;
   }, []);
 
-  useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const q = query(collection(db, "tasks"), where("uid", "==", user.uid));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const lista = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTasks(lista);
-    });
-    return unsub;
-  }, []);
-
-  async function excluir(id: string) {
-    await deleteDoc(doc(db, "tasks", id));
-  }
-
   return (
-    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
+    <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
-        {/* HEADER */}
+        {/* CABEÇALHO */}
         <View style={styles.header}>
           <Text style={styles.title}>Protocolo Infantil</Text>
           <TouchableOpacity
             style={styles.configButton}
             onPress={() => navigation.navigate("Configuracoes")}
           >
-            <Text style={styles.config}>⋮</Text>
+            <Ionicons name="settings-outline" size={28} color="#1F4E8C" />
           </TouchableOpacity>
         </View>
 
-        {/* SEÇÃO DE GERENCIAMENTO DE PACIENTES */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pacientes</Text>
+        {/* MENSAGEM DE BOAS-VINDAS */}
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.welcomeText}>Olá, bem-vindo!</Text>
+          <Text style={styles.subtitle}>
+            Gerencie os pacientes e acompanhe os protocolos
+          </Text>
+        </View>
+
+        {/* CARDS CENTRALIZADOS */}
+        <View style={styles.cardsContainer}>
+          {/* Card Cadastrar Paciente */}
           <TouchableOpacity
-            style={styles.patientButton}
+            style={styles.card}
             onPress={() => navigation.navigate("PacientsCad")}
+            activeOpacity={0.8}
           >
-            <Text style={styles.patientButtonText}>Cadastrar Paciente</Text>
+            <View style={styles.iconCircle}>
+              <Ionicons name="person-add-outline" size={40} color="#1F4E8C" />
+            </View>
+            <Text style={styles.cardTitle}>Cadastrar Paciente</Text>
+            <Text style={styles.cardDesc}>
+              Adicione um novo paciente ao sistema
+            </Text>
           </TouchableOpacity>
+
+          {/* Card Ver Históricos */}
           <TouchableOpacity
-            style={[styles.patientButton, styles.historyButton]}
+            style={styles.card}
             onPress={() => navigation.navigate("HistoricoPacientes")}
+            activeOpacity={0.8}
           >
-            <Text style={styles.patientButtonText}>Ver Históricos</Text>
+            <View style={styles.iconCircle}>
+              <Ionicons name="list-outline" size={40} color="#4A90E2" />
+            </View>
+            <Text style={styles.cardTitle}>Ver Históricos</Text>
+            <Text style={styles.cardDesc}>
+              Consulte pacientes já cadastrados
+            </Text>
           </TouchableOpacity>
         </View>
 
-       
-            
+        {/* RODAPÉ OPCIONAL (ex: versão) */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>v1.0.0</Text>
         </View>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F8FB" },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
+  safe: { flex: 1, backgroundColor: "#F8FAFC" },
+  container: { flex: 1, paddingHorizontal: 24, paddingTop: 16 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#1F4E8C",
-  },
-  configButton: {
-    padding: 8,
-    borderRadius: 8,
-  },
-  config: {
-    fontSize: 28,
-    color: "#1F4E8C",
-  },
-  section: {
     marginBottom: 24,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 12,
+  title: { fontSize: 28, fontWeight: "bold", color: "#1E293B" },
+  configButton: { padding: 4 },
+  welcomeContainer: { marginBottom: 40, alignItems: "center" },
+  welcomeText: { fontSize: 22, fontWeight: "600", color: "#0F172A" },
+  subtitle: {
+    fontSize: 14,
+    color: "#64748B",
+    textAlign: "center",
+    marginTop: 6,
   },
-  patientButton: {
-    backgroundColor: "#1F4E8C",
-    paddingVertical: 12,
-    borderRadius: 10,
+  cardsContainer: {
+    flex: 1,
     alignItems: "center",
-    marginBottom: 12,
+    justifyContent: "center",
+    gap: 24,
   },
-  historyButton: {
-    backgroundColor: "#4A90E2",
-    marginBottom: 0,
-  },
-  patientButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  task: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
+  card: {
+    width: CARD_WIDTH,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 24,
     alignItems: "center",
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
   },
-  taskText: {
-    fontSize: 17,
-    color: "#333",
-    fontWeight: "500",
-  },
-  actions: {
-    flexDirection: "row",
+  iconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#EFF6FF",
+    justifyContent: "center",
     alignItems: "center",
+    marginBottom: 16,
   },
-  editButton: {
-    backgroundColor: "#1F4E8C",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 6,
-    marginRight: 10,
-  },
-  editText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  delete: {
-    color: "#1F4E8C",
-    fontSize: 20,
-    fontWeight: "bold",
-    paddingHorizontal: 10,
-  },
+  cardTitle: { fontSize: 20, fontWeight: "600", color: "#1E293B", marginBottom: 8 },
+  cardDesc: { fontSize: 14, color: "#64748B", textAlign: "center" },
+  footer: { alignItems: "center", marginVertical: 20 },
+  footerText: { fontSize: 12, color: "#94A3B8" },
 });

@@ -9,7 +9,6 @@ export default function Configuracoes({ navigation }: any) {
   async function handleLogout() {
     try {
       await signOut(auth);
-      // Navegar para Login e resetar a stack para que o usuário não consiga voltar
       navigation.reset({
         index: 0,
         routes: [{ name: "SignIn" }],

@@ -32,6 +32,7 @@ export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Listener para verificar se o usuário já está logado
   useEffect(() => {
@@ -40,13 +41,15 @@ export default function SignInScreen() {
         navigation.replace("Home");
       }
     });
-
-    return unsubscribe; // limpa o listener ao sair da tela
+    return unsubscribe;
   }, []);
 
   const handleLogin = async () => {
+    // Limpa mensagem anterior
+    setErrorMessage("");
+
     if (!email || !senha) {
-      alert("Preencha e-mail e senha!");
+      setErrorMessage("Preencha e-mail e senha!");
       return;
     }
 
@@ -54,11 +57,10 @@ export default function SignInScreen() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       console.log("Usuário logado:", userCredential.user);
-
-      navigation.replace("Home"); // redireciona para Home
-
+      navigation.replace("Home");
     } catch (error: any) {
-      alert(error.message);
+      // Mensagem personalizada – não exibe o erro técnico do Firebase
+      setErrorMessage("Falha na autenticação. Verifique seus dados e tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -90,6 +92,11 @@ export default function SignInScreen() {
             value={senha}
             onChangeText={setSenha}
           />
+
+          {/* Exibe mensagem de erro personalizada */}
+          {errorMessage !== "" && (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          )}
 
           <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
             {loading ? (
@@ -142,4 +149,10 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   registerText: { marginTop: 18, color: "#007bff", fontSize: 14 },
+  errorText: {
+    color: "#d9534f",
+    marginBottom: 12,
+    textAlign: "center",
+    fontSize: 14,
+  },
 });

@@ -249,7 +249,7 @@ export default function DetalhesPaciente({ route, navigation }: any) {
             <Switch value={jejumLiquidos} onValueChange={setJejumLiquidos} />
           </View>
 
-          <Text style={styles.label}>Tempo de jejum (horas:minutos)</Text>
+          <Text style={styles.label}>Tempo de jejum</Text>
           <TouchableOpacity
             style={styles.timeButton}
             onPress={() => setShowTempoJejum(true)}
@@ -308,7 +308,7 @@ export default function DetalhesPaciente({ route, navigation }: any) {
             <Switch value={capnografia} onValueChange={setCapnografia} />
           </View>
 
-          <Text style={styles.label}>Tempo de cirurgia (horas:minutos)</Text>
+          <Text style={styles.label}>Tempo de cirurgia</Text>
           <TouchableOpacity
             style={styles.timeButton}
             onPress={() => setShowTempoCirurgia(true)}
