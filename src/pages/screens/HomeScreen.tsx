@@ -1,58 +1,179 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text, Pressable, ToastAndroid, Platform } from "react-native";
-import { Patient } from "../../routes/patients";
-import { Card } from "../../components/PatientForm/Card";
-import { InputField } from "../../components/PatientForm/InputField";
-import { SwitchField } from "../../components/PatientForm/SwitchField";
-import { TimePickerField } from "../../components/PatientForm/TimePickerField";
-import { DatePickerField } from "../../components/PatientForm/DatePickerField";import { db } from "../../services/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function EditPatient({ route, navigation }: any) {
-  const { id } = route.params;
-  const [form, setForm] = useState<Patient>({
-    idade: "", peso: "", classificacaoAsa: "", tipoCirurgia: "", comorbidadeResp: "",
-    observacoes: "", dataCadastro: new Date(), protocoloJejum: false, tempoJejum: new Date(),
-    carboPreOp: false, viaAereaDificil: false, avaliacaoAnsiedade: false, eva: "",
-    riscoObstrucao: false, alimentacaoPrecoce: false, criterioAlta: false, tempoAlta: new Date(),
-    obsPosOp: "", ventilacaoProtetora: false, analgesicoMultimodal: false, dexametasona: false,
-    monitorizacaoCapnografica: false, tempoCirurgia: new Date(), complicacoesIntra: "", observacoesGerais: "",
-  });
+import { auth, db } from "../../services/firebaseConfig";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+
+export default function Home({ navigation }: any) {
+  const [tasks, setTasks] = useState<any[]>([]);
 
   useEffect(() => {
-    const loadPatient = async () => {
-      const docRef = doc(db, "patients", id);
-      const snapshot = await getDoc(docRef);
-      if (snapshot.exists()) setForm(snapshot.data() as Patient);
-    };
-    loadPatient();
-  }, [id]);
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (!user) navigation.replace("Login");
+    });
+    return unsub;
+  }, []);
 
-  const handleChange = (key: keyof Patient, value: any) => setForm(prev => ({ ...prev, [key]: value }));
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
 
-  const handleSave = async () => {
-    const docRef = doc(db, "patients", id);
-    await updateDoc(docRef, form);
-    if (Platform.OS === "android") ToastAndroid.show("Paciente atualizado!", ToastAndroid.SHORT);
-    navigation.goBack();
-  };
+    const q = query(collection(db, "tasks"), where("uid", "==", user.uid));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const lista = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTasks(lista);
+    });
+    return unsub;
+  }, []);
+
+  async function excluir(id: string) {
+    await deleteDoc(doc(db, "tasks", id));
+  }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
-      <Card title="Informações Básicas">
-        <InputField label="Idade" value={form.idade} onChange={v => handleChange("idade", v)} keyboardType="numeric" />
-        <InputField label="Peso" value={form.peso} onChange={v => handleChange("peso", v)} keyboardType="numeric" />
-        <InputField label="Tipo Cirurgia" value={form.tipoCirurgia} onChange={v => handleChange("tipoCirurgia", v)} />
-      </Card>
+    <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Protocolo Infantil</Text>
+          <TouchableOpacity
+            style={styles.configButton}
+            onPress={() => navigation.navigate("Configuracoes")}
+          >
+            <Text style={styles.config}>⋮</Text>
+          </TouchableOpacity>
+        </View>
 
-      <Card title="Protocolo Intra-Operatório">
-        <TimePickerField label="Tempo Jejum" value={form.tempoJejum} onChange={v => handleChange("tempoJejum", v)} />
-        <SwitchField label="Jejum Líquidos" value={form.protocoloJejum} onValueChange={v => handleChange("protocoloJejum", v)} />
-      </Card>
+        {/* SEÇÃO DE GERENCIAMENTO DE PACIENTES */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Pacientes</Text>
+          <TouchableOpacity
+            style={styles.patientButton}
+            onPress={() => navigation.navigate("PacientsCad")}
+          >
+            <Text style={styles.patientButtonText}>Cadastrar Paciente</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.patientButton, styles.historyButton]}
+            onPress={() => navigation.navigate("HistoricoPacientes")}
+          >
+            <Text style={styles.patientButtonText}>Ver Históricos</Text>
+          </TouchableOpacity>
+        </View>
 
-      <Pressable style={{ backgroundColor: "#1565C0", padding: 16, borderRadius: 12, alignItems: "center", marginTop: 10 }} onPress={handleSave}>
-        <Text style={{ color: "#FFF", fontSize: 18, fontWeight: "bold" }}>SALVAR</Text>
-      </Pressable>
-    </ScrollView>
+       
+            
+        </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: "#F4F8FB" },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#1F4E8C",
+  },
+  configButton: {
+    padding: 8,
+    borderRadius: 8,
+  },
+  config: {
+    fontSize: 28,
+    color: "#1F4E8C",
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 12,
+  },
+  patientButton: {
+    backgroundColor: "#1F4E8C",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  historyButton: {
+    backgroundColor: "#4A90E2",
+    marginBottom: 0,
+  },
+  patientButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  task: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  taskText: {
+    fontSize: 17,
+    color: "#333",
+    fontWeight: "500",
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  editButton: {
+    backgroundColor: "#1F4E8C",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginRight: 10,
+  },
+  editText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  delete: {
+    color: "#1F4E8C",
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingHorizontal: 10,
+  },
+});
