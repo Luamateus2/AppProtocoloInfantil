@@ -45,7 +45,6 @@ export default function SignInScreen() {
   }, []);
 
   const handleLogin = async () => {
-    // Limpa mensagem anterior
     setErrorMessage("");
 
     if (!email || !senha) {
@@ -59,7 +58,6 @@ export default function SignInScreen() {
       console.log("Usuário logado:", userCredential.user);
       navigation.replace("Home");
     } catch (error: any) {
-      // Mensagem personalizada – não exibe o erro técnico do Firebase
       setErrorMessage("Falha na autenticação. Verifique seus dados e tente novamente.");
     } finally {
       setLoading(false);
@@ -93,7 +91,6 @@ export default function SignInScreen() {
             onChangeText={setSenha}
           />
 
-          {/* Exibe mensagem de erro personalizada */}
           {errorMessage !== "" && (
             <Text style={styles.errorText}>{errorMessage}</Text>
           )}

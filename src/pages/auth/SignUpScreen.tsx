@@ -52,7 +52,6 @@ export default function SignUpScreen() {
         navigation.replace("SignIn");
       }, 2000);
     } catch (error: any) {
-      // Mensagem personalizada – sem expor detalhes do Firebase
       setErrorMessage("Falha ao criar conta. Verifique os dados e tente novamente.");
     } finally {
       setLoading(false);
@@ -86,12 +85,10 @@ export default function SignUpScreen() {
             onChangeText={setSenha}
           />
 
-          {/* Mensagem de erro */}
           {errorMessage !== "" && (
             <Text style={styles.errorText}>{errorMessage}</Text>
           )}
 
-          {/* Mensagem de sucesso */}
           {successMessage !== "" && (
             <Text style={styles.successText}>{successMessage}</Text>
           )}
