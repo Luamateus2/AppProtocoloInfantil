@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,28 +17,35 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
-import { RootStackParamList } from "../../routes/types";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebaseConfig";
+import { RootStackParamList } from "../../../../routes/types";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../services/firebaseConfig";
 
-type RegisterScreenNavigationProp = NativeStackNavigationProp<
+type SignInScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  "SignUp"
+  "SignIn"
 >;
 
-export default function SignUpScreen() {
-  const navigation = useNavigation<RegisterScreenNavigationProp>();
+export default function SignInScreen() {
+  const navigation = useNavigation<SignInScreenNavigationProp>();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleRegister = async () => {
-    // Limpa mensagens anteriores
+  // Listener para verificar se o usuário já está logado
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.replace("Home");
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleLogin = async () => {
     setErrorMessage("");
-    setSuccessMessage("");
 
     if (!email || !senha) {
       setErrorMessage("Preencha e-mail e senha!");
@@ -45,14 +54,11 @@ export default function SignUpScreen() {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, senha);
-      setSuccessMessage("Cadastro realizado com sucesso!");
-      // Aguarda 2 segundos e redireciona
-      setTimeout(() => {
-        navigation.replace("SignIn");
-      }, 2000);
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      console.log("Usuário logado:", userCredential.user);
+      navigation.replace("Home");
     } catch (error: any) {
-      setErrorMessage("Falha ao criar conta. Verifique os dados e tente novamente.");
+      setErrorMessage("Falha na autenticação. Verifique seus dados e tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -66,7 +72,7 @@ export default function SignUpScreen() {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <View style={styles.container}>
-          <Text style={styles.title}>Criar Conta</Text>
+          <Text style={styles.title}>Bem-vindo</Text>
 
           <TextInput
             style={styles.input}
@@ -89,24 +95,18 @@ export default function SignUpScreen() {
             <Text style={styles.errorText}>{errorMessage}</Text>
           )}
 
-          {successMessage !== "" && (
-            <Text style={styles.successText}>{successMessage}</Text>
-          )}
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleRegister}
-            disabled={loading}
-          >
+          <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Cadastrar</Text>
+              <Text style={styles.buttonText}>Entrar</Text>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.replace("SignIn")}>
-            <Text style={styles.registerText}>Voltar ao Login</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <Text style={styles.registerText}>
+              Não tem conta? Cadastre-se
+            </Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -144,24 +144,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  registerText: {
-    marginTop: 18,
-    color: "#007bff",
-    fontSize: 14,
-  },
+  buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  registerText: { marginTop: 18, color: "#007bff", fontSize: 14 },
   errorText: {
     color: "#d9534f",
-    marginBottom: 12,
-    textAlign: "center",
-    fontSize: 14,
-  },
-  successText: {
-    color: "#5cb85c",
     marginBottom: 12,
     textAlign: "center",
     fontSize: 14,

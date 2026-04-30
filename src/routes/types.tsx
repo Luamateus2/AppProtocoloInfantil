@@ -1,9 +1,8 @@
 export type RootStackParamList = {
-  SignIn: undefined;
-  SignUp: undefined;
+  Inicio: undefined;
+  Login: undefined;
+  RecuperarSenha:undefined;
+  Cadastro:undefined;
   Home: undefined;
-  Configuracoes:undefined;
-  PacientsCad:undefined;
-  HistoricoPacientes:undefined;
-  DetalhesPaciente: undefined;
+  NovoPaciente: undefined;
 };

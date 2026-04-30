@@ -36,7 +36,6 @@ export default function Home({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
-        {/* MENSAGEM DE BOAS-VINDAS */}
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcomeText}>Olá, bem-vindo!</Text>
           <Text style={styles.subtitle}>
@@ -44,9 +43,7 @@ export default function Home({ navigation }: any) {
           </Text>
         </View>
 
-        {/* CARDS CENTRALIZADOS */}
         <View style={styles.cardsContainer}>
-          {/* Card Cadastrar Paciente */}
           <TouchableOpacity
             style={styles.card}
             onPress={() => navigation.navigate("PacientsCad")}
@@ -61,7 +58,6 @@ export default function Home({ navigation }: any) {
             </Text>
           </TouchableOpacity>
 
-          {/* Card Ver Históricos */}
           <TouchableOpacity
             style={styles.card}
             onPress={() => navigation.navigate("HistoricoPacientes")}
