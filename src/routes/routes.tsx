@@ -1,11 +1,15 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types"; 
-import Inicio from "../../src/pages/screens/Inicio";
-import Login from "../../src/pages/screens/Login";
-import Cadastro from "../../src/pages/screens/Cadastro";
-import RecuperarSenha from "../../src/pages/screens/RecuperarSenha";
-import Home from "../../src/pages/screens/Home";
-import NovoPaciente from "../../src/pages/screens/NovoPaciente";
+import Inicio from "../screens/Inicio";
+import Login from "../screens/Auth/Login";
+import Cadastro from "../screens/Auth/Cadastro";
+import RecuperarSenha from "../screens/Auth/RecuperarSenha";
+import Home from "../screens/Home";
+import NovoPaciente from "../screens/Patient/NovoPaciente";
+import NovaSenha from "../screens/Auth/NovaSenha";
+import Historico from "../screens/Patient/Historico";
+import Pacientes from "../screens/Patient/Paciente";
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Routes() {
@@ -17,6 +21,9 @@ export default function Routes() {
       <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
       <Stack.Screen name = "Home" component={Home} />
       <Stack.Screen name = "NovoPaciente" component={NovoPaciente} />
+      <Stack.Screen name = "NovaSenha" component={NovaSenha} />
+      <Stack.Screen name = "Historico" component={Historico} />
+      <Stack.Screen name = "Pacientes" component={Pacientes} />
     </Stack.Navigator>
   );
 }
