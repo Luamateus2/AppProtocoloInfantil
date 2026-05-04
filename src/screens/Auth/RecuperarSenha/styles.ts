@@ -1,39 +1,30 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#eaeaea',
-  },
-
   top: {
-    height: 180,
+    height: 140,
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
   },
 
   logo: {
-    width: 160,
-    height: 50,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
+    width: 200,
+    height: 200,
   },
 
   content: {
     flex: 1,
-    padding: 20,
-    marginTop: 15,
+    padding: 24,
+    marginTop: 10,
+    backgroundColor: '#F4F4F4', 
   },
 
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1E3C72',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#214192',
     marginBottom: 10,
+    letterSpacing: 0.3,
   },
 
   description: {
@@ -45,30 +36,41 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: 14,
-    marginBottom: 5,
+    marginBottom: 6,
     color: '#333',
   },
 
   input: {
     borderWidth: 1.5,
     borderColor: '#1E3C72',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 20,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 25,
     backgroundColor: '#fff',
   },
 
-  button: {
-    backgroundColor: '#4A90E2',
+  buttonWrapper: {
+    alignSelf: 'center',
     borderRadius: 25,
-    paddingVertical: 15,
+    overflow: 'hidden',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+  },
+
+  button: {
+    width: 235,
+    paddingVertical: 12,
     alignItems: 'center',
-    marginTop: 10,
+    borderRadius: 25,
   },
 
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '600',
     fontSize: 16,
   },
 });

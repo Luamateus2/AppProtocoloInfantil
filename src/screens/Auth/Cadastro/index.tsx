@@ -17,7 +17,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList } from '../../../routes/types';
 import { register } from '../../../services/authService';
-import { IMAGES } from '../../../constants/images';
+import { LogoPrincipal } from '../../../constants/images';
 
 import CardModal from '../../../components/Card';
 import styles from './styles';
@@ -97,7 +97,7 @@ export default function Cadastro() {
 
       console.log('CHAMANDO FIREBASE REGISTER');
 
-      await register(email, senha);
+      await register(email, senha,crm);
 
       console.log('CADASTRO OK');
 
@@ -119,12 +119,9 @@ export default function Cadastro() {
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
-          {/* HEADER */}
           <View style={styles.header}>
-            <Image source={IMAGES.logo} style={styles.logo} />
+            <Image source={LogoPrincipal.logo} style={styles.logo} />
           </View>
-
-          {/* CONTENT */}
           <LinearGradient colors={['#4A90E2', '#1E3C72']} style={styles.content}>
 
             <View style={styles.form}>
@@ -135,7 +132,6 @@ export default function Cadastro() {
                 Preencha seus dados para criar uma conta.
               </Text>
 
-              {/* NOME */}
               <Text style={styles.label}>Nome Completo</Text>
               <TextInput
                 value={nome}
@@ -146,7 +142,6 @@ export default function Cadastro() {
                 style={[styles.input, errors.nome && styles.inputError]}
               />
 
-              {/* CRM */}
               <Text style={styles.label}>CRM</Text>
               <TextInput
                 value={crm}
@@ -157,7 +152,6 @@ export default function Cadastro() {
                 style={[styles.input, errors.crm && styles.inputError]}
               />
 
-              {/* EMAIL */}
               <Text style={styles.label}>Email</Text>
               <TextInput
                 value={email}
@@ -170,7 +164,6 @@ export default function Cadastro() {
                 autoCapitalize="none"
               />
 
-              {/* SENHA */}
               <Text style={styles.label}>Senha</Text>
               <TextInput
                 value={senha}
@@ -182,7 +175,6 @@ export default function Cadastro() {
                 style={[styles.input, errors.senha && styles.inputError]}
               />
 
-              {/* CONFIRMAR */}
               <Text style={styles.label}>Confirmar senha</Text>
               <TextInput
                 value={confirmarSenha}
@@ -199,8 +191,6 @@ export default function Cadastro() {
               </Text>
 
             </View>
-
-            {/* ACTIONS */}
             <View style={styles.actions}>
 
               <TouchableOpacity
@@ -225,8 +215,6 @@ export default function Cadastro() {
           </LinearGradient>
 
         </ScrollView>
-
-        {/* CARD MODAL */}
         <CardModal
           visible={modalVisible}
           onClose={() => {
@@ -259,7 +247,7 @@ export default function Cadastro() {
                 }
               }}
               style={{
-                backgroundColor: '#2F5DA8',
+                backgroundColor: '#4A90E2',
                 padding: 12,
                 borderRadius: 10,
                 width: '100%',

@@ -9,7 +9,9 @@ import NovoPaciente from "../screens/Patient/NovoPaciente";
 import NovaSenha from "../screens/Auth/NovaSenha";
 import Historico from "../screens/Patient/Historico";
 import Pacientes from "../screens/Patient/Paciente";
-
+import PreOperatorio from "../screens/Surgery/PreOperatorio";
+import IntraOperatorio from "../screens/Surgery/IntraOperatorio";
+import PosOperatorio from "../screens/Surgery/PosOperatorio";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Routes() {
@@ -24,6 +26,9 @@ export default function Routes() {
       <Stack.Screen name = "NovaSenha" component={NovaSenha} />
       <Stack.Screen name = "Historico" component={Historico} />
       <Stack.Screen name = "Pacientes" component={Pacientes} />
+      <Stack.Screen name= "PreOperatorio" component={PreOperatorio}/>
+      <Stack.Screen name = "IntraOperatorio" component={IntraOperatorio}/>
+      <Stack.Screen name = "PosOperatorio" component={PosOperatorio}/>
     </Stack.Navigator>
   );
 }

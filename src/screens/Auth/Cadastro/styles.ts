@@ -99,8 +99,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
   },
 
-  // 🔥 SÓ ISSO FOI ADICIONADO (necessário para o Login-style funcionar)
-
   inputError: {
     borderWidth: 1,
     borderColor: '#F8F9FA',

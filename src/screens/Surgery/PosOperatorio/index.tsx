@@ -5,90 +5,107 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
 import styles from './styles';
 
 export default function PosOperatorio() {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" />
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
 
-        <Text style={styles.headerTitle}>Pós-Operatório</Text>
-
-        <View style={{ width: 22 }} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
-
-        {/* DATA */}
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>12/03/2026</Text>
-        </View>
-
-        {/* CAMPOS */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Horário de Término</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>10:30</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>Pós-Operatório</Text>
+
+          <View style={{ width: 22 }} />
         </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Recuperação</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>Estável</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
+        {/* BODY */}
+        <View style={styles.body}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+
+            {/* DATA */}
+            <View style={styles.dateContainer}>
+              <Text style={styles.dateText}>12/03/2026</Text>
+            </View>
+
+            {/* CAMPOS EM LINHA */}
+            {[
+              ['Horário de Término', '10:30'],
+              ['Recuperação', 'Estável'],
+              ['Sinais Vitais', '98 bpm | SpO2: 99%'],
+              ['Dor (Escala)', '2'],
+            ].map(([label, value], i) => (
+              <View key={i} style={styles.row}>
+                <Text style={styles.label}>{label}</Text>
+
+                <TouchableOpacity style={styles.select}>
+                  <Text style={styles.selectText}>{value}</Text>
+                  <Ionicons name="chevron-down" size={14} color="#214192" />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            {/* OBSERVAÇÕES */}
+            <Text style={styles.label}>Observações</Text>
+
+            <TextInput
+              multiline
+              placeholder="Paciente acordado, sem queixas, mantendo saturação adequada."
+              placeholderTextColor="#777"
+              style={styles.textArea}
+            />
+
+            {/* BOTÃO COM GRADIENTE */}
+            <LinearGradient
+              colors={['#3A7BD5', '#214192']}
+              style={styles.button}
+            >
+              <TouchableOpacity style={{ width: '100%', alignItems: 'center' }}>
+                <Text style={styles.buttonText}>Salvar Registro</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
+          </ScrollView>
         </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Sinais Vitais</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>98 bpm | SpO2: 99%</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
-        </View>
+        {/* NAVBAR */}
+        <SafeAreaView edges={['bottom']} style={styles.navWrapper}>
+          <View style={styles.nav}>
+            <View style={styles.navItem}>
+              <Ionicons name="home-outline" size={20} color="#fff" />
+            </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Dor (Escala)</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>2</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
-        </View>
+            <View style={styles.navItem}>
+              <Ionicons name="search-outline" size={20} color="#fff" />
+            </View>
 
-        {/* OBSERVAÇÕES */}
-        <Text style={styles.label}>Observações</Text>
-        <TextInput
-          multiline
-          placeholder="Paciente acordado, sem queixas, mantendo saturação adequada."
-          placeholderTextColor="#666"
-          style={styles.textArea}
-        />
+            <View style={styles.navItem}>
+              <Ionicons name="notifications-outline" size={20} color="#fff" />
+            </View>
 
-        {/* BOTÃO */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Salvar Registro</Text>
-        </TouchableOpacity>
+            <View style={styles.navItem}>
+              <Ionicons name="person-outline" size={20} color="#fff" />
+            </View>
+          </View>
+        </SafeAreaView>
 
-      </ScrollView>
-
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        <Ionicons name="home-outline" size={22} color="#fff" />
-        <Ionicons name="search-outline" size={22} color="#fff" />
-        <Ionicons name="notifications-outline" size={22} color="#fff" />
-        <Ionicons name="person-outline" size={22} color="#fff" />
-      </View>
-
-    </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

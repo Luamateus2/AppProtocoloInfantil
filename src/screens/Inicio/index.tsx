@@ -16,7 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../routes/types';
 
 import styles from './styles';
-import { IMAGES } from '../../constants/images';
+import {LogoPrincipal } from '../../constants/images';
 
 type NavProps = NativeStackNavigationProp<RootStackParamList, 'Inicio'>;
 
@@ -32,7 +32,7 @@ export default function Inicio() {
         {/* LOGO */}
         <View style={styles.logoContainer}>
           <Image
-            source={IMAGES.logo}
+            source={LogoPrincipal.logo}
             style={styles.logoImage}
             resizeMode="contain"
           />

@@ -5,90 +5,103 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../routes/types';
+
 import styles from './styles';
 
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'IntraOperatorio'
+>;
+
 export default function IntraOperatorio() {
+  const navigation = useNavigation<NavProps>();
+
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" />
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
-        </TouchableOpacity>
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
 
-        <Text style={styles.headerTitle}>Intra-Operatório</Text>
-
-        <View style={{ width: 22 }} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content}>
-
-        {/* DATA */}
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>12/03/2026</Text>
-        </View>
-
-        {/* CAMPOS */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Horário de Início</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>09:15</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>Intra-Operatório</Text>
+
+          <View style={{ width: 22 }} />
         </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Anestesia</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>Geral Inalatória</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
+        {/* BODY */}
+        <View style={styles.body}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+
+            <View style={styles.dateContainer}>
+              <Text style={styles.dateText}>12/03/2026</Text>
+            </View>
+
+            {[
+              ['Horário de Início', '09:15'],
+              ['Anestesia', 'Geral Inalatória'],
+              ['Via Aérea', 'Máscara Laríngea'],
+              ['Intercorrências', 'Nenhuma'],
+            ].map(([label, value], i) => (
+              <View key={i} style={styles.row}>
+                <Text style={styles.label}>{label}</Text>
+
+                <TouchableOpacity style={styles.select}>
+                  <Text style={styles.selectText}>{value}</Text>
+                  <Ionicons name="chevron-down" size={14} color="#2A5298" />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <Text style={styles.label}>Observações</Text>
+
+            <TextInput
+              multiline
+              placeholder="Procedimento sem intercorrências..."
+              placeholderTextColor="#777"
+              style={styles.textArea}
+            />
+
+            {/* BOTÃO FUNCIONANDO */}
+            <LinearGradient
+              colors={['#3A7BD5', '#2A5298']}
+              style={styles.button}
+            >
+              <TouchableOpacity
+                style={{ width: '100%', alignItems: 'center' }}
+                onPress={() => navigation.navigate('PosOperatorio')}
+              >
+                <Text style={styles.buttonText}>Salvar Registro</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
+          </ScrollView>
         </View>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Via Aérea</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>Máscara Laríngea</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
-        </View>
+        <SafeAreaView edges={['bottom']} style={styles.navWrapper}>
+          <View style={styles.nav}>
+            <Ionicons name="home-outline" size={20} color="#fff" />
+            <Ionicons name="search-outline" size={20} color="#fff" />
+            <Ionicons name="notifications-outline" size={20} color="#fff" />
+            <Ionicons name="person-outline" size={20} color="#fff" />
+          </View>
+        </SafeAreaView>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Intercorrências</Text>
-          <TouchableOpacity style={styles.select}>
-            <Text style={styles.selectText}>Nenhuma</Text>
-            <Ionicons name="chevron-down" size={16} color="#2F5DA8" />
-          </TouchableOpacity>
-        </View>
-
-        {/* OBSERVAÇÕES */}
-        <Text style={styles.label}>Observações</Text>
-        <TextInput
-          multiline
-          placeholder="Procedimento sem intercorrências, vias aéreas mantidas pérvias."
-          placeholderTextColor="#666"
-          style={styles.textArea}
-        />
-
-        {/* BOTÃO */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Salvar Registro</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        <Ionicons name="home-outline" size={22} color="#fff" />
-        <Ionicons name="search-outline" size={22} color="#fff" />
-        <Ionicons name="notifications-outline" size={22} color="#fff" />
-        <Ionicons name="person-outline" size={22} color="#fff" />
-      </View>
-
-    </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

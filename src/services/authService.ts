@@ -3,8 +3,15 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
 } from 'firebase/auth';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
+import { auth, db } from './firebaseConfig';
 
-import { auth } from './firebaseConfig';
+
 function mapAuthError(error: any) {
   const code = error?.code;
 
@@ -56,8 +63,25 @@ export async function login(email: string, senha: string) {
 }
 
 /* ---------------- REGISTER ---------------- */
-export async function register(email: string, senha: string) {
+export async function register(
+  email: string,
+  senha: string,
+  crm: string
+) {
   try {
+    // 🔍 VALIDAR CRM ANTES DE CRIAR USUÁRIO
+    const q = query(
+      collection(db, 'users'),
+      where('crm', '==', crm)
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      throw new Error('CRM já cadastrado');
+    }
+
+    // 🔥 SE PASSOU, CRIA NO AUTH
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -65,11 +89,11 @@ export async function register(email: string, senha: string) {
     );
 
     return userCredential.user;
+
   } catch (error: any) {
-    throw new Error(mapAuthError(error.code));
+    throw new Error(mapAuthError(error));
   }
 }
-
 /* ---------------- RESET PASSWORD ---------------- */
 export async function resetPassword(email: string) {
   try {

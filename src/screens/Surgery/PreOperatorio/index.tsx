@@ -1,99 +1,129 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   ScrollView,
-  SafeAreaView,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { ChevronLeft } from "lucide-react-native";
-import styles from "./styles";
+  StatusBar,
+} from 'react-native';
 
-export default function PreOperatorio() {
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../routes/types';
+
+import styles from './styles';
+
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'PreOperatorio'
+>;
+
+export default function Preoperatorio() {
+  const navigation = useNavigation<NavProps>();
+
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+
+  const formatDate = (d: Date) => d.toLocaleDateString('pt-BR');
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <LinearGradient
-        colors={["#2F6FB6", "#1F4FA3"]}
-        style={styles.header}
-      >
-        <TouchableOpacity>
-          <ChevronLeft color="#fff" size={26} />
-        </TouchableOpacity>
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" />
 
-        <Text style={styles.headerTitle}>Pré-Operatório</Text>
-        <View style={{ width: 26 }} />
-      </LinearGradient>
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* DATE */}
-        <View style={styles.dateBox}>
-          <Text style={styles.dateText}>12/03/2026</Text>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.back}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <Text style={styles.title}>Pré-Operatório</Text>
         </View>
 
-        <Text style={styles.sectionTitle}>
-          Avaliação Pré-Anestésica
-        </Text>
+        <View style={styles.body}>
+          <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* FORM */}
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Horário</Text>
-          <View style={styles.inputBox}>
-            <Text style={styles.value}>08:30</Text>
+            <TouchableOpacity
+              style={styles.date}
+              onPress={() => setShow(true)}
+            >
+              <Text style={styles.dateText}>{formatDate(date)}</Text>
+            </TouchableOpacity>
+
+            {show && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                onChange={(e, d) => {
+                  setShow(false);
+                  if (d) setDate(d);
+                }}
+              />
+            )}
+
+            <Text style={styles.section}>
+              Avaliação Pré-Anestésica
+            </Text>
+
+            {[
+              ['Horário', '08:30'],
+              ['Jejum', 'Sim (8h)'],
+              ['Estado Geral', 'Estável'],
+              ['Via Aérea', 'Mallampati I'],
+              ['Medicação em Uso', 'Nenhuma'],
+            ].map(([label, value], i) => (
+              <View key={i} style={styles.row}>
+                <Text style={styles.label}>{label}</Text>
+
+                <TouchableOpacity style={styles.input}>
+                  <Text style={styles.inputText}>{value}</Text>
+                  <Ionicons name="chevron-down" size={14} color="#214192" />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <Text style={styles.label}>Observações</Text>
+
+            <View style={styles.textArea}>
+              <Text style={styles.placeholder}>
+                Paciente colaborativo
+              </Text>
+            </View>
+
+            {/* BOTÃO FUNCIONANDO */}
+            <LinearGradient
+              colors={['#3A7BD5', '#2A5298']}
+              style={styles.button}
+            >
+              <TouchableOpacity
+                style={{ width: '100%', alignItems: 'center' }}
+                onPress={() => navigation.navigate('IntraOperatorio')}
+              >
+                <Text style={styles.buttonText}>Salvar Registro</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
+          </ScrollView>
+        </View>
+
+        <SafeAreaView edges={['bottom']} style={styles.navWrapper}>
+          <View style={styles.nav}>
+            <Ionicons name="home-outline" size={20} color="#fff" />
+            <Ionicons name="search-outline" size={20} color="#fff" />
+            <Ionicons name="notifications-outline" size={20} color="#fff" />
+            <Ionicons name="person-outline" size={20} color="#fff" />
           </View>
-        </View>
+        </SafeAreaView>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Jejum</Text>
-          <View style={styles.inputBox}>
-            <Text style={styles.value}>Sim (8h)</Text>
-          </View>
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Estado Geral</Text>
-          <View style={styles.inputBox}>
-            <Text style={styles.value}>Estável</Text>
-          </View>
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Via Aérea</Text>
-          <View style={styles.inputBox}>
-            <Text style={styles.value}>Mallampati I</Text>
-          </View>
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Medicação em Uso</Text>
-          <View style={styles.inputBox}>
-            <Text style={styles.value}>Nenhuma</Text>
-          </View>
-        </View>
-
-        {/* OBSERVAÇÕES */}
-        <Text style={styles.label}>Observações</Text>
-        <TextInput
-          multiline
-          placeholder="Paciente colaborativo, sem alterações relevantes"
-          style={styles.textArea}
-        />
-
-        {/* BUTTON */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Salvar Registro</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
-      {/* BOTTOM NAV MOCK */}
-      <View style={styles.bottomBar}>
-        <View style={styles.tabItem} />
-        <View style={styles.tabItem} />
-        <View style={styles.tabItem} />
-        <View style={styles.tabItem} />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

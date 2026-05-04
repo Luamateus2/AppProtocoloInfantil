@@ -1,52 +1,62 @@
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
-  },
-
+const styles = StyleSheet.create({
+  /* HEADER IGUAL AO DESIGN */
   header: {
     height: 100,
-    backgroundColor: '#2F5DA8',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingBottom: 18,
+  },
+
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 18,
   },
 
   headerTitle: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#fff',
+    fontSize:24,
+    fontWeight: '700',
+    paddingBottom:14,
   },
 
-  content: {
-    padding: 16,
+  /* BODY */
+  body: {
+    flex: 1,
+    backgroundColor: '#E9E9E9',
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
 
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2F5DA8',
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#214192',
     marginBottom: 10,
   },
 
   label: {
     fontSize: 12,
-    color: '#2F5DA8',
-    marginTop: 10,
-    marginBottom: 4,
+    color: '#214192',
+    marginBottom: 6,
+    marginTop: 12,
+    fontWeight: '500',
   },
 
   input: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#2F5DA8',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderWidth: 1.5,
+    borderColor: '#214192',
+    fontSize: 13,
   },
 
   textArea: {
-    height: 80,
+    height: 110,
     textAlignVertical: 'top',
   },
 
@@ -59,34 +69,64 @@ export const styles = StyleSheet.create({
     width: '48%',
   },
 
+  select: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderWidth: 1.5,
+    borderColor: '#2A5298',
+  },
+
+  selectText: {
+    fontSize: 13,
+    color: '#777',
+  },
+
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 30,
   },
 
   cancelButton: {
-    borderWidth: 1,
-    borderColor: '#2F5DA8',
-    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#2A5298',
+    borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 30,
   },
 
   cancelText: {
-    color: '#2F5DA8',
-    fontWeight: '500',
+    color: '#2A5298',
+    fontWeight: '600',
   },
 
   saveButton: {
-    backgroundColor: '#2F5DA8',
-    borderRadius: 10,
+    backgroundColor: '#2A5298',
+    borderRadius: 14,
     paddingVertical: 12,
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
   },
 
   saveText: {
-    color: '#FFF',
+    color: '#fff',
     fontWeight: '600',
   },
+
+  bottomWrapper: {
+    backgroundColor: '#2A5298',
+  },
+
+  bottomTab: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    height: 65,
+  },
 });
+
+export default styles;

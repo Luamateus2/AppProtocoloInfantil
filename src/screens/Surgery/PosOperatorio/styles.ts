@@ -1,15 +1,10 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#2F5DA8',
-  },
-
+export default StyleSheet.create({
   header: {
-    height: 100,
-    paddingTop: 50,
+    height: 110,
     paddingHorizontal: 20,
+    paddingBottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -17,74 +12,88 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
   },
 
-  content: {
+  body: {
+    flex: 1,
     backgroundColor: '#EAEAEA',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
     padding: 20,
+    marginTop: -10,
   },
 
   dateContainer: {
     alignSelf: 'center',
     borderWidth: 1,
-    borderColor: '#2F5DA8',
-    paddingVertical: 6,
-    paddingHorizontal: 20,
+    borderColor: '#214192',
+    paddingVertical: 5,
+    paddingHorizontal: 22,
     borderRadius: 20,
     marginBottom: 20,
   },
 
   dateText: {
-    color: '#2F5DA8',
+    color: '#214192',
     fontWeight: '500',
+    fontSize: 12,
   },
 
-  field: {
-    marginBottom: 15,
-  },
-
-  label: {
-    color: '#2F5DA8',
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-
-  select: {
+  /* 🔥 LINHA COM DIVISÃO */
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 0.6,
+    borderBottomColor: '#C5C5C5',
+  },
+
+  label: {
+    color: '#214192',
+    fontWeight: '500',
+    fontSize: 18,
+  },
+
+  /* 🔥 SELECT ESTILO PILL */
+  select: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2F5DA8',
+    borderColor: '#214192',
     borderRadius: 20,
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 12,
+    minWidth: 120,
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
   },
 
   selectText: {
-    color: '#2F5DA8',
-    fontSize: 13,
+    color: '#214192',
+    fontSize: 12,
   },
 
   textArea: {
     borderWidth: 1,
-    borderColor: '#2F5DA8',
+    borderColor: '#214192',
     borderRadius: 12,
     padding: 12,
-    height: 100,
+    height: 90,
     textAlignVertical: 'top',
     backgroundColor: '#fff',
+    marginTop: 8,
     marginBottom: 20,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   button: {
-    backgroundColor: '#2F5DA8',
-    paddingVertical: 14,
     borderRadius: 25,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 10,
   },
@@ -94,13 +103,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  footer: {
+  navWrapper: {
+    backgroundColor: '#214192',
+  },
+
+  nav: {
     height: 70,
-    backgroundColor: '#2F5DA8',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-});
 
-export default styles;
+  navItem: {
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 10,
+    padding: 8,
+  },
+});

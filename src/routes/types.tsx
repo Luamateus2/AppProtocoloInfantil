@@ -8,4 +8,7 @@ export type RootStackParamList = {
   NovaSenha: undefined;
   Historico: undefined;
   Pacientes:undefined;
+  PreOperatorio:undefined;
+  IntraOperatorio:undefined;
+  PosOperatorio:undefined;
 };

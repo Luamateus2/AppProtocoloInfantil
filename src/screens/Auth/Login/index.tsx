@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { RootStackParamList } from '../../../routes/types';
 import { login } from '../../../services/authService';
-import { IMAGES } from '../../../constants/images';
+import { LogoPrincipal } from '../../../constants/images';
 
 import CardModal from '../../../components/Card';
 import styles from './style';
@@ -38,7 +38,6 @@ export default function Login() {
     senha: false,
   });
 
-  // 👇 NOVOS ESTADOS
   const [errorMessage, setErrorMessage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -77,12 +76,10 @@ export default function Login() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* HEADER */}
           <View style={styles.header}>
-            <Image source={IMAGES.logo} style={styles.logo} />
+            <Image source={LogoPrincipal.logo} style={styles.logo} />
           </View>
 
-          {/* CONTENT */}
           <LinearGradient colors={['#4A90E2', '#2F5DA8']} style={styles.content}>
             <Text style={styles.title}>Bem-Vindo</Text>
 
@@ -90,7 +87,6 @@ export default function Login() {
               Acesse sua conta para continuar
             </Text>
 
-            {/* EMAIL */}
             <Text style={styles.label}>Email</Text>
             <TextInput
               placeholder="exemplo@dominio.com"
@@ -112,7 +108,6 @@ export default function Login() {
               </View>
             )}
 
-            {/* SENHA */}
             <Text style={styles.label}>Senha</Text>
             <TextInput
               placeholder="Senha"
@@ -133,12 +128,10 @@ export default function Login() {
               </View>
             )}
 
-            {/* ESQUECI SENHA */}
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('RecuperarSenha')}>
               <Text style={styles.forgot}>Esqueci minha senha</Text>
             </TouchableOpacity>
 
-            {/* BOTÃO LOGIN */}
             <TouchableOpacity
               style={[styles.button, loading && { opacity: 0.6 }]}
               onPress={handleLogin}
@@ -149,7 +142,6 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
 
-            {/* CADASTRO */}
             <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
               <Text style={styles.register}>
                 Não tem conta? <Text style={styles.link}>Cadastre-se</Text>
@@ -158,14 +150,13 @@ export default function Login() {
           </LinearGradient>
         </ScrollView>
 
-        {/* 🔥 CARD DE ERRO FIREBASE */}
         <CardModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         >
           <View>
             <View style={{ alignItems: 'center', marginBottom: 10 }}>
-              <Ionicons name="alert-circle" size={40} color="#E53935" />
+              <Ionicons name="alert-circle" size={40} color="#6B7280" />
             </View>
 
             <Text

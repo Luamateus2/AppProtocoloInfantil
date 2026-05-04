@@ -1,140 +1,142 @@
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
+const styles = StyleSheet.create({
+  header: {
+    padding: 20,
+    paddingBottom: 30,
+    marginBottom:30
   },
 
- header: {
-  backgroundColor: '#2F5DA8',
-  paddingHorizontal: 20,
-  paddingBottom: 70,
-},
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 
-  headerContent: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginTop:20,
-},
-
-  logo: {
-    width: 45,
-    height: 45,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 6,
+  logoBox: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#D9D9D9',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  logoText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-
-  headerTitle: {
-    color: '#FFF',
+  headerText: {
+    color: '#fff',
     flex: 1,
     marginHorizontal: 10,
-    fontSize: 13,
+    fontSize: 12,
   },
 
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 45,
+    height: 45,
+    borderRadius: 50,
   },
 
-  actionsContainer: {
+  /* 🔥 FUNDO BRANCO SEPARADO */
+  body: {
+    flex: 1,
     backgroundColor: '#F4F4F4',
-    paddingHorizontal: 20,
-    marginTop: -25, 
-    marginBottom: 60,
-    paddingTop:20
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 10,
   },
 
-  actionGrid: {
+  menuContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-
-  actionCard: {
-    backgroundColor: '#3E6FD8',
-    width: '23%',
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-
-    // sombra (efeito moderno)
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
-  },
-
-  actionLabel: {
-    color: '#FFF',
-    fontSize: 10,
-    marginTop: 5,
-    textAlign: 'center',
-  },
-
-  content: {
-    flex: 1,
     paddingHorizontal: 20,
+    marginTop: -20,
+  },
+
+  menuCard: {
+    width: 75,
+    height: 90,
+    backgroundColor: '#4A90E2',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+  },
+
+  menuText: {
+    color: '#fff',
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    paddingBottom: 10,
   },
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2F5DA8',
-    marginBottom: 10,
+    fontWeight: '600',
+    color: '#1E3C72',
+  },
+
+  seeAll: {
+    color: '#4A90E2',
+    fontSize: 13,
+  },
+
+  list: {
+    paddingHorizontal: 20,
   },
 
   card: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 10,
     alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#2F5DA8',
+    borderColor: '#4A90E2',
   },
 
-  avatarCircle: {
+  initialCircle: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 50,
     borderWidth: 1.5,
-    borderColor: '#2F5DA8',
+    borderColor: '#4A90E2',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
   },
 
-  avatarCircleText: {
-    color: '#2F5DA8',
-    fontWeight: 'bold',
+  initialText: {
+    color: '#4A90E2',
+    fontWeight: '600',
   },
 
-  patientName: {
-    fontWeight: 'bold',
-    color: '#2F5DA8',
+  name: {
+    fontWeight: '600',
+    color: '#1E3C72',
   },
 
-  patientStatus: {
+  subtitle: {
     fontSize: 12,
     color: '#555',
+    marginTop: 2,
   },
 
-  bottomNav: {
-    backgroundColor: '#2F5DA8',
+  /* 🔥 FOOTER CORRETO */
+  bottomWrapper: {
+    backgroundColor: '#1E3C72',
+  },
+
+  bottomTab: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingTop: 10,
+    justifyContent: 'space-evenly',
+    paddingVertical: 14,
   },
 });
+
+export default styles;
