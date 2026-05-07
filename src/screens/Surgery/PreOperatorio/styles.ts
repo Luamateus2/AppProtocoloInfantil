@@ -2,30 +2,33 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   header: {
-    height: 115,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: 22,
+    height: 110,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
 
   back: {
     position: 'absolute',
     left: 20,
-    bottom: 22,
+    bottom: 20,
   },
 
   title: {
     color: '#fff',
     fontSize: 24,
-    fontWeight: '500',
-    paddingBottom:10,
+    fontWeight: '700',
   },
 
   body: {
     flex: 1,
-    backgroundColor: '#ECECEC',
+    backgroundColor: '#F4F6FA',
     paddingHorizontal: 20,
-    paddingTop: 15,
+    paddingTop: 24,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     marginTop: -10,
   },
 
@@ -34,93 +37,125 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: '#214192',
     borderRadius: 20,
-    paddingVertical: 5,
+    paddingVertical: 6,
     paddingHorizontal: 22,
-    marginBottom: 15,
+    marginBottom: 26,
+    backgroundColor: '#fff',
   },
 
   dateText: {
     color: '#214192',
-    fontSize: 12,
-  },
-
-  section: {
-    color: '#214192',
-    fontWeight: '700',
-    marginBottom: 10,
-    fontSize: 16,
+    fontWeight: '600',
+    fontSize: 13,
   },
 
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 0.6,
-    borderBottomColor: '#C5C5C5',
+    marginBottom: 20,
   },
 
   label: {
     color: '#214192',
-    fontSize: 16,
-    fontWeight: '400',
-    marginBottom:12,
+    fontWeight: '600',
+    fontSize: 15,
+    marginBottom: 10,
   },
 
-  input: {
+  booleanContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+
+  booleanButton: {
+    flex: 1,
+    height: 48,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#D5DCE8',
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  booleanButtonActive: {
+    backgroundColor: '#214192',
+    borderColor: '#214192',
+  },
+
+  booleanButtonActiveRed: {
+    backgroundColor: '#D9534F',
+    borderColor: '#D9534F',
+  },
+
+  booleanText: {
+    color: '#214192',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  booleanTextActive: {
+    color: '#fff',
+  },
+
+  timeButton: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#D5DCE8',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#214192',
-    borderRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    width: 120,
     justifyContent: 'space-between',
-  },
-
-  inputText: {
-    fontSize: 14,
-    color: '#214192',
-    fontWeight: '400',
-  },
-
-  textArea: {
-    borderWidth: 1,
-    borderColor: '#214192',
-    borderRadius: 12,
-    padding: 12,
-    height: 85,
-    marginTop: 12,
-    backgroundColor: '#fff',
+    marginBottom: 20,
 
     shadowColor: '#000',
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 2,
   },
 
-  placeholder: {
-    fontSize: 12,
-    color: '#777',
+  timeText: {
+    color: '#214192',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  textArea: {
+    borderWidth: 1,
+    borderColor: '#D5DCE8',
+    borderRadius: 14,
+    padding: 14,
+    minHeight: 110,
+    textAlignVertical: 'top',
+    backgroundColor: '#fff',
+    color: '#214192',
+    fontSize: 15,
+    marginBottom: 22,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   button: {
-    marginTop: 25,
-    borderRadius: 25,
-    paddingVertical: 14,
+    borderRadius: 18,
+    paddingVertical: 16,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 20,
 
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    shadowColor: '#214192',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
     elevation: 4,
   },
 
   buttonText: {
     color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
+    fontWeight: '700',
+    fontSize: 16,
   },
 
   navWrapper: {
@@ -128,16 +163,17 @@ export default StyleSheet.create({
   },
 
   nav: {
-    height: 70,
+    height: 72,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
+    paddingBottom: 6,
   },
 
   navItem: {
     borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 10,
-    padding: 8,
+    borderColor: 'rgba(255,255,255,0.4)',
+    borderRadius: 14,
+    padding: 10,
   },
 });

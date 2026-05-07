@@ -1,125 +1,167 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+
 import styles from './styles';
+
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../routes/types';
 
-type NavProps = NativeStackNavigationProp<RootStackParamList, 'Pacientes'>;
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'Pacientes'
+>;
 
 export default function Pacientes() {
   const navigation = useNavigation<NavProps>();
 
+  const [busca, setBusca] = useState('');
+
+  const pacientes = [
+    {
+      id: 1,
+      nome: 'João Silva',
+      idade: 5,
+      peso: 22.5,
+      asa: 'ASA I',
+      cirurgia: 'Adenoidectomia',
+      comorbidade: 'Nenhuma',
+      data: '12/03/2026',
+    },
+    {
+      id: 2,
+      nome: 'Maria Souza',
+      idade: 8,
+      peso: 31.2,
+      asa: 'ASA II',
+      cirurgia: 'Amigdalectomia',
+      comorbidade: 'Asma',
+      data: '10/03/2026',
+    },
+    {
+      id: 3,
+      nome: 'Pedro Carlos',
+      idade: 6,
+      peso: 25.7,
+      asa: 'ASA I',
+      cirurgia: 'Laringoscopia',
+      comorbidade: 'Rinite',
+      data: '14/03/2026',
+    },
+  ];
+
   return (
-    <SafeAreaView style={styles.container}>
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" />
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Pacientes</Text>
-      </View>
-
-      {/* BUSCA */}
-      <View style={styles.searchContainer}>
-        <LinearGradient
-          colors={['#4A90E2', '#1E3C72']}
-          style={styles.searchBox}
-        >
-          <TextInput
-            placeholder="João Silva"
-            placeholderTextColor="#FFF"
-            style={styles.searchInput}
-          />
-        </LinearGradient>
-
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterText}>≡</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* SUGESTÕES */}
-      <View style={styles.suggestions}>
-        <Text style={styles.suggestionText}>João Silva</Text>
-        <Text style={styles.suggestionText}>João Vitor</Text>
-        <Text style={styles.suggestionText}>João Fernandes</Text>
-        <Text style={styles.suggestionText}>João Pereira</Text>
-      </View>
-
-      {/* LISTA */}
-      <ScrollView contentContainerStyle={styles.list}>
-
-        {/* CARD */}
-        <View style={styles.card}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>JS</Text>
-          </View>
-
-          <View style={styles.cardInfo}>
-            <Text style={styles.name}>João Silva</Text>
-            <Text style={styles.details}>
-              5 anos • Cirurgia: Adenoidectomia
-            </Text>
-            <Text style={styles.details}>
-              Último registro: 12/03/2026
-            </Text>
-          </View>
-
-          <Text style={styles.arrow}>↗</Text>
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Pacientes</Text>
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>MS</Text>
+        <View style={styles.body}>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBox}>
+              <Ionicons
+                name="search-outline"
+                size={20}
+                color="#214192"
+              />
+
+              <TextInput
+                value={busca}
+                onChangeText={setBusca}
+                placeholder="Buscar paciente..."
+                placeholderTextColor="#8A94A6"
+                style={styles.searchInput}
+              />
+            </View>
+
+            <TouchableOpacity style={styles.filterButton}>
+              <Ionicons
+                name="options-outline"
+                size={20}
+                color="#fff"
+              />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.cardInfo}>
-            <Text style={styles.name}>Maria Souza</Text>
-            <Text style={styles.details}>
-              8 anos • Cirurgia: Amigdalectomia
-            </Text>
-            <Text style={styles.details}>
-              Último registro: 10/03/2026
-            </Text>
-          </View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 30 }}
+          >
+            {pacientes.map((paciente) => (
+              <TouchableOpacity
+                key={paciente.id}
+                style={styles.card}
+                activeOpacity={0.8}
+              >
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>
+                    {paciente.nome
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .slice(0, 2)}
+                  </Text>
+                </View>
 
-          <Text style={styles.arrow}>↗</Text>
+                <View style={styles.cardInfo}>
+                  <Text style={styles.name}>
+                    {paciente.nome}
+                  </Text>
+
+                  <Text style={styles.details}>
+                    {paciente.idade} anos • {paciente.peso} kg
+                  </Text>
+
+                  <Text style={styles.details}>
+                    {paciente.asa} • {paciente.cirurgia}
+                  </Text>
+
+                  <Text style={styles.details}>
+                    Comorbidade: {paciente.comorbidade}
+                  </Text>
+
+                  <Text style={styles.details}>
+                    Cadastro: {paciente.data}
+                  </Text>
+                </View>
+
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color="#214192"
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>PC</Text>
+        <SafeAreaView edges={['bottom']} style={styles.navWrapper}>
+          <View style={styles.nav}>
+            <Ionicons name="home-outline" size={20} color="#fff" />
+            <Ionicons name="search-outline" size={20} color="#fff" />
+            <Ionicons
+              name="notifications-outline"
+              size={20}
+              color="#fff"
+            />
+            <Ionicons name="person-outline" size={20} color="#fff" />
           </View>
-
-          <View style={styles.cardInfo}>
-            <Text style={styles.name}>Pedro Carlos</Text>
-            <Text style={styles.details}>
-              6 anos • Cirurgia: Laringoscopia
-            </Text>
-            <Text style={styles.details}>
-              Último registro: 14/03/2026
-            </Text>
-          </View>
-
-          <Text style={styles.arrow}>↗</Text>
-        </View>
-
-      </ScrollView>
-
-      {/* BOTTOM NAV */}
-      <View style={styles.bottomNav}>
-        <Text style={styles.navItem}>🏠</Text>
-        <Text style={styles.navItem}>🔍</Text>
-        <Text style={styles.navItem}>🔔</Text>
-        <Text style={styles.navItem}>👤</Text>
-      </View>
-
-    </SafeAreaView>
+        </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

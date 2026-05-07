@@ -44,21 +44,11 @@ export default function Cadastro() {
           <Text style={styles.headerTitle}>Novo Paciente</Text>
         </View>
 
-        {/* BODY */}
         <View style={styles.body}>
           <ScrollView showsVerticalScrollIndicator={false}>
 
             <Text style={styles.sectionTitle}>Dados do Paciente</Text>
 
-            {/* NOME */}
-            <Text style={styles.label}>Nome Completo</Text>
-            <TextInput
-              placeholder="Ex: João Silva"
-              placeholderTextColor="#999"
-              style={styles.input}
-            />
-
-            {/* DATA + IDADE */}
             <View style={styles.row}>
               <View style={styles.half}>
                 <Text style={styles.label}>Data de Nascimento</Text>
@@ -79,10 +69,9 @@ export default function Cadastro() {
               </View>
             </View>
 
-            {/* ASA + PESO */}
             <View style={styles.row}>
               <View style={styles.half}>
-                <Text style={styles.label}>ASA</Text>
+                <Text style={styles.label}>Classificação ASA</Text>
 
                 <TouchableOpacity style={styles.select}>
                   <Text style={styles.selectText}>Selecione</Text>
@@ -100,7 +89,6 @@ export default function Cadastro() {
               </View>
             </View>
 
-            {/* PROCEDIMENTO */}
             <Text style={styles.label}>Procedimento Cirúrgico</Text>
             <TextInput
               placeholder="Ex: Adenoidectomia"
@@ -108,15 +96,13 @@ export default function Cadastro() {
               style={styles.input}
             />
 
-            {/* COMORBIDADES */}
-            <Text style={styles.label}>Comorbidades</Text>
+            <Text style={styles.label}>Comorbidade Respiratória</Text>
             <TextInput
               placeholder="Ex: Asma, cardiopatia..."
               placeholderTextColor="#999"
               style={styles.input}
             />
 
-            {/* OBSERVAÇÕES */}
             <Text style={styles.label}>Observações</Text>
             <TextInput
               placeholder="Informações adicionais..."
@@ -125,7 +111,6 @@ export default function Cadastro() {
               multiline
             />
 
-            {/* BOTÕES */}
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={styles.cancelButton}
@@ -145,7 +130,6 @@ export default function Cadastro() {
           </ScrollView>
         </View>
 
-        {/* NAVBAR */}
         <SafeAreaView edges={['bottom']} style={styles.bottomWrapper}>
           <View style={styles.bottomTab}>
             <Ionicons name="home-outline" size={22} color="#fff" />

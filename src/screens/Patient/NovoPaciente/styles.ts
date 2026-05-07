@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  /* HEADER IGUAL AO DESIGN */
   header: {
     height: 100,
     justifyContent: 'flex-end',
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
     paddingBottom:14,
   },
 
-  /* BODY */
   body: {
     flex: 1,
     backgroundColor: '#E9E9E9',
@@ -38,7 +36,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#214192',
     marginBottom: 6,
     marginTop: 12,

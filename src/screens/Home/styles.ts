@@ -1,141 +1,234 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  header: {
-    padding: 20,
-    paddingBottom: 30,
-    marginBottom:30
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F8',
   },
 
-  headerTop: {
+  /* HEADER */
+
+  headerGradient: {
+    height: 180,
+  },
+
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 16,
     justifyContent: 'space-between',
   },
 
   logoBox: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#D9D9D9',
+    width: 48,
+    height: 48,
+    backgroundColor: '#E8E8E8',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 2,
+  },
+
+  logoText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#333',
   },
 
   headerText: {
-    color: '#fff',
     flex: 1,
-    marginHorizontal: 10,
-    fontSize: 12,
+    color: '#FFFFFF',
+    fontSize: 11,
+    marginHorizontal: 18,
   },
 
   avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 50,
+    width: 48,
+    height: 48,
+    borderRadius: 999,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
   },
 
-  /* 🔥 FUNDO BRANCO SEPARADO */
+  /* BODY */
+
   body: {
     flex: 1,
     backgroundColor: '#F4F4F4',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 10,
+    marginTop: -20,
+    paddingTop: 24,
   },
+
+  /* MENU */
 
   menuContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: -20,
+    paddingHorizontal: 24,
   },
 
   menuCard: {
-    width: 75,
-    height: 90,
-    backgroundColor: '#4A90E2',
-    borderRadius: 12,
+    width: 74,
+    height: 92,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
+
+    backgroundColor: '#3563C7',
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 5,
+
+    elevation: 6,
   },
 
   menuText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 11,
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 8,
+    lineHeight: 14,
   },
+
+  /* SECTION */
 
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
-    paddingBottom: 10,
+    alignItems: 'center',
+
+    paddingHorizontal: 24,
+    marginTop: 30,
+    marginBottom: 18,
   },
 
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E3C72',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2346A0',
   },
 
   seeAll: {
-    color: '#4A90E2',
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3563C7',
   },
 
+  /* LIST */
+
   list: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
 
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#4A90E2',
+
+    backgroundColor: '#FFFFFF',
+
+    borderWidth: 1.5,
+    borderColor: '#3563C7',
+
+    borderRadius: 18,
+
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+
+    marginBottom: 14,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+
+    elevation: 4,
   },
 
   initialCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 999,
+
     borderWidth: 1.5,
-    borderColor: '#4A90E2',
+    borderColor: '#3563C7',
+
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+
+    marginRight: 14,
   },
 
   initialText: {
-    color: '#4A90E2',
-    fontWeight: '600',
+    color: '#2346A0',
+    fontWeight: '700',
+    fontSize: 18,
+  },
+
+  infoContainer: {
+    flex: 1,
   },
 
   name: {
-    fontWeight: '600',
-    color: '#1E3C72',
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2346A0',
   },
 
   subtitle: {
-    fontSize: 12,
-    color: '#555',
-    marginTop: 2,
+    marginTop: 4,
+    fontSize: 13,
+    color: '#5A6A85',
   },
 
-  /* 🔥 FOOTER CORRETO */
-  bottomWrapper: {
-    backgroundColor: '#1E3C72',
+  /* FOOTER */
+
+  footerSafe: {
+    backgroundColor: '#2346A0',
   },
 
   bottomTab: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingVertical: 14,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+
+    paddingTop: 14,
+    paddingBottom: 12,
+
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.15)',
+  },
+
+  tabButton: {
+    width: 42,
+    height: 42,
+
+    borderRadius: 12,
+
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  tabButtonActive: {
+    width: 42,
+    height: 42,
+
+    borderRadius: 12,
+
+    backgroundColor: '#FFFFFF',
+
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

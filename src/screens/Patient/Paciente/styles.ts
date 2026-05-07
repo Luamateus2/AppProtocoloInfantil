@@ -3,94 +3,105 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F4',
   },
 
   header: {
-    height: 100,
-    backgroundColor: '#2F5DA8',
-    justifyContent: 'center',
+    height: 110,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
 
   headerTitle: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
+  },
+
+  body: {
+    flex: 1,
+    backgroundColor: '#F4F6FA',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingTop: 24,
+    paddingHorizontal: 20,
+    marginTop: -10,
   },
 
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    marginBottom: 22,
   },
 
   searchBox: {
     flex: 1,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    justifyContent: 'center',
+    height: 52,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D5DCE8',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   searchInput: {
-    color: '#FFF',
-    height: 40,
+    flex: 1,
+    marginLeft: 10,
+    color: '#214192',
+    fontSize: 15,
   },
 
   filterButton: {
-    marginLeft: 10,
-    backgroundColor: '#2F5DA8',
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    marginLeft: 12,
+    backgroundColor: '#214192',
     justifyContent: 'center',
     alignItems: 'center',
-  },
 
-  filterText: {
-    color: '#FFF',
-    fontSize: 18,
-  },
-
-  suggestions: {
-    backgroundColor: '#6C8CD5',
-    marginHorizontal: 16,
-    borderRadius: 10,
-    padding: 10,
-  },
-
-  suggestionText: {
-    color: '#FFF',
-    marginBottom: 4,
-  },
-
-  list: {
-    padding: 16,
+    shadowColor: '#214192',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
   },
 
   card: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
     alignItems: 'center',
-    elevation: 2,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 3,
   },
 
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E6ECF5',
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#E8EEF9',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: 14,
   },
 
   avatarText: {
-    color: '#2F5DA8',
-    fontWeight: '600',
+    color: '#214192',
+    fontWeight: '700',
+    fontSize: 16,
   },
 
   cardInfo: {
@@ -98,30 +109,34 @@ export default StyleSheet.create({
   },
 
   name: {
-    fontWeight: '600',
-    color: '#2F5DA8',
+    color: '#214192',
+    fontWeight: '700',
+    fontSize: 16,
+    marginBottom: 4,
   },
 
   details: {
-    fontSize: 12,
-    color: '#555',
+    color: '#6B7280',
+    fontSize: 13,
+    marginBottom: 2,
   },
 
-  arrow: {
-    fontSize: 18,
-    color: '#2F5DA8',
+  navWrapper: {
+    backgroundColor: '#214192',
   },
 
-  bottomNav: {
-    height: 70,
-    backgroundColor: '#2F5DA8',
+  nav: {
+    height: 72,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    paddingBottom: 6,
   },
 
   navItem: {
-    color: '#FFF',
-    fontSize: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.4)',
+    borderRadius: 14,
+    padding: 10,
   },
 });
