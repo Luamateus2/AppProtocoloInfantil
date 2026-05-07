@@ -22,8 +22,6 @@ export default StyleSheet.create({
   body: {
     flex: 1,
     backgroundColor: '#F4F6FA',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
     paddingTop: 24,
     paddingHorizontal: 20,
     marginTop: -10,

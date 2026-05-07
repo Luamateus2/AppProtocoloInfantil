@@ -1,119 +1,309 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  StatusBar,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from './styles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../routes/types';
 
-type NavProps = NativeStackNavigationProp<RootStackParamList, 'Historico'>;
+import {
+  useNavigation,
+} from '@react-navigation/native';
+
+import {
+  SafeAreaView,
+} from 'react-native-safe-area-context';
+
+import {
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
+
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+} from 'firebase/firestore';
+
+import { LinearGradient } from 'expo-linear-gradient';
+
+import { db } from '../../../services/firebaseConfig';
+
+import AppFooter from '../../../components/Footer';
+
+import styles from './styles';
+
+import {
+  RootStackParamList,
+} from '../../../routes/types';
+
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'Historico'
+>;
+
+type HistoricoItem = {
+  id: string;
+  paciente: string;
+  data: string;
+  titulo: string;
+  descricao: string;
+};
 
 export default function Historico() {
+
   const navigation = useNavigation<NavProps>();
 
+  const [loading, setLoading] = useState(true);
+
+  const [historico,
+    setHistorico] =
+    useState<HistoricoItem[]>([]);
+
+  async function buscarHistorico() {
+
+    try {
+
+      setLoading(true);
+
+      const q = query(
+        collection(db, 'pacientes'),
+        orderBy('createdAt', 'desc')
+      );
+
+      const querySnapshot =
+        await getDocs(q);
+
+      const lista: HistoricoItem[] = [];
+
+      querySnapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        /* PRÉ */
+
+        if (data.preOperatorio) {
+
+          lista.push({
+            id: `${doc.id}-pre`,
+
+            paciente:
+              data.nomeCompleto || 'Paciente',
+
+            data:
+              data.createdAt
+                ?.toDate?.()
+                ?.toLocaleString('pt-BR') ||
+              'Sem data',
+
+            titulo: 'Pré-Operatório',
+
+            descricao:
+              data.preOperatorio
+                ?.observacoes ||
+              'Registro pré-operatório realizado.',
+          });
+        }
+
+        /* INTRA */
+
+        if (data.intraOperatorio) {
+
+          lista.push({
+            id: `${doc.id}-intra`,
+
+            paciente:
+              data.nomeCompleto || 'Paciente',
+
+            data:
+              data.createdAt
+                ?.toDate?.()
+                ?.toLocaleString('pt-BR') ||
+              'Sem data',
+
+            titulo: 'Intra-Operatório',
+
+            descricao:
+              data.intraOperatorio
+                ?.observacoes ||
+              'Registro intra-operatório realizado.',
+          });
+        }
+
+        /* PÓS */
+
+        if (data.posOperatorio) {
+
+          lista.push({
+            id: `${doc.id}-pos`,
+
+            paciente:
+              data.nomeCompleto || 'Paciente',
+
+            data:
+              data.createdAt
+                ?.toDate?.()
+                ?.toLocaleString('pt-BR') ||
+              'Sem data',
+
+            titulo: 'Pós-Operatório',
+
+            descricao:
+              data.posOperatorio
+                ?.observacoes ||
+              'Registro pós-operatório realizado.',
+          });
+        }
+
+      });
+
+      setHistorico(lista);
+
+    } catch (error) {
+
+      console.log(error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  }
+
+  useEffect(() => {
+
+    buscarHistorico();
+
+  }, []);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <LinearGradient
+      colors={['#214192', '#4293D5']}
+      style={{ flex: 1 }}
+    >
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Histórico</Text>
-      </View>
+      <StatusBar barStyle="light-content" />
 
-      {/* NOME PACIENTE */}
-      <View style={styles.patientContainer}>
-        <Text style={styles.patientName}>João Silva</Text>
-      </View>
+      <SafeAreaView
+        style={{ flex: 1 }}
+        edges={['top']}
+      >
 
-      {/* LINHA + LISTA */}
-      <View style={styles.timelineContainer}>
+        {/* HEADER */}
 
-        {/* LINHA VERTICAL */}
-        <View style={styles.line} />
+        <View style={styles.header}>
 
-        <ScrollView contentContainerStyle={styles.list}>
+          <Text style={styles.headerTitle}>
+            Histórico
+          </Text>
 
-          {/* ITEM */}
-          <View style={styles.itemRow}>
-            <View style={styles.circle} />
+        </View>
 
-            <View style={styles.card}>
-              <Text style={styles.date}>12/03/2026 - 10:30</Text>
-              <Text style={styles.title}>Pós-Operatório</Text>
-              <Text style={styles.description}>
-                Paciente estável, alta em breve.
-              </Text>
-              <Text style={styles.arrow}>↗</Text>
-            </View>
-          </View>
+        {/* LINHA + LISTA */}
 
-          <View style={styles.itemRow}>
-            <View style={styles.circle} />
+        <View style={styles.timelineContainer}>
 
-            <View style={styles.card}>
-              <Text style={styles.date}>12/03/2026 - 09:15</Text>
-              <Text style={styles.title}>Intra-Operatório</Text>
-              <Text style={styles.description}>
-                Anestesia Geral, sem intercorrências.
-              </Text>
-              <Text style={styles.arrow}>↗</Text>
-            </View>
-          </View>
+          <View style={styles.line} />
 
-          <View style={styles.itemRow}>
-            <View style={styles.circle} />
+          {loading ? (
 
-            <View style={styles.card}>
-              <Text style={styles.date}>12/03/2026 - 08:30</Text>
-              <Text style={styles.title}>Pré-Operatório</Text>
-              <Text style={styles.description}>
-                Avaliação OK, jejum adequado.
-              </Text>
-              <Text style={styles.arrow}>↗</Text>
-            </View>
-          </View>
+            <ActivityIndicator
+              size="large"
+              color="#214192"
+              style={{ marginTop: 40 }}
+            />
 
-          <View style={styles.itemRow}>
-            <View style={styles.circle} />
+          ) : (
 
-            <View style={styles.card}>
-              <Text style={styles.date}>11/03/2026 - 11:00</Text>
-              <Text style={styles.title}>Exames</Text>
-              <Text style={styles.description}>
-                Taxas OK, para realizar procedimento.
-              </Text>
-              <Text style={styles.arrow}>↗</Text>
-            </View>
-          </View>
+            <ScrollView
+              contentContainerStyle={{
+                ...styles.list,
+                paddingBottom: 120,
+              }}
+              showsVerticalScrollIndicator={false}
+            >
 
-          <View style={styles.itemRow}>
-            <View style={styles.circle} />
+              {historico.map((item) => (
 
-            <View style={styles.card}>
-              <Text style={styles.date}>10/03/2026 - 09:30</Text>
-              <Text style={styles.title}>Consulta</Text>
-              <Text style={styles.description}>
-                Avaliação prévia realizada.
-              </Text>
-              <Text style={styles.arrow}>↗</Text>
-            </View>
-          </View>
+                <View
+                  key={item.id}
+                  style={styles.itemRow}
+                >
 
-        </ScrollView>
-      </View>
+                  <View style={styles.circle} />
 
-      {/* BOTTOM NAV */}
-      <View style={styles.bottomNav}>
-        <Text style={styles.navItem}>🏠</Text>
-        <Text style={styles.navItem}>🔍</Text>
-        <Text style={styles.navItem}>🔔</Text>
-        <Text style={styles.navItem}>👤</Text>
-      </View>
+                  <View style={styles.card}>
 
-    </SafeAreaView>
+                    <Text style={styles.date}>
+                      {item.data}
+                    </Text>
+
+                    <Text style={styles.title}>
+                      {item.titulo}
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontWeight: '600',
+                        color: '#214192',
+                        marginBottom: 5,
+                      }}
+                    >
+                      {item.paciente}
+                    </Text>
+
+                    <Text style={styles.description}>
+                      {item.descricao}
+                    </Text>
+
+                    <Text style={styles.arrow}>
+                      ↗
+                    </Text>
+
+                  </View>
+
+                </View>
+
+              ))}
+
+              {!loading &&
+                historico.length === 0 && (
+
+                <View
+                  style={{
+                    marginTop: 40,
+                    alignItems: 'center',
+                  }}
+                >
+
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: '#214192',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Nenhum histórico encontrado
+                  </Text>
+
+                </View>
+
+              )}
+
+            </ScrollView>
+
+          )}
+
+        </View>
+
+        {/* FOOTER PADRÃO */}
+
+        <AppFooter />
+
+      </SafeAreaView>
+
+    </LinearGradient>
   );
 }

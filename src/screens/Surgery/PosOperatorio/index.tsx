@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   View,
   Text,
@@ -7,59 +8,161 @@ import {
   ScrollView,
   StatusBar,
   Platform,
+  Alert,
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import {
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
+
+import {
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
+
+import { db } from '../../../services/firebaseConfig';
+
+import { RootStackParamList } from '../../../routes/types';
+
+import AppFooter from '../../../components/Footer';
+
 import styles from './styles';
 
+type NavProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'PosOperatorio'
+>;
+
+type RouteParams = RouteProp<
+  RootStackParamList,
+  'PosOperatorio'
+>;
+
 export default function PosOperatorio() {
-  const navigation = useNavigation();
+
+  const navigation = useNavigation<NavProps>();
+
+  const route = useRoute<RouteParams>();
+
+  const { pacienteId } = route.params;
 
   const [eva, setEva] = useState('');
-  const [riscoObstrucao, setRiscoObstrucao] = useState<boolean | null>(null);
-  const [alimentacaoPrecoce, setAlimentacaoPrecoce] = useState<
-    boolean | null
-  >(null);
 
-  const [criterioAlta, setCriterioAlta] = useState<boolean | null>(null);
+  const [riscoObstrucao,
+    setRiscoObstrucao] =
+    useState<boolean | null>(null);
 
-  const [tempoAlta, setTempoAlta] = useState(new Date());
+  const [alimentacaoPrecoce,
+    setAlimentacaoPrecoce] =
+    useState<boolean | null>(null);
 
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [criterioAlta,
+    setCriterioAlta] =
+    useState<boolean | null>(null);
 
-  const [observacoes, setObservacoes] = useState('');
+  const [tempoAlta,
+    setTempoAlta] =
+    useState(new Date());
 
-  const [loading, setLoading] = useState(false);
+  const [showTimePicker,
+    setShowTimePicker] =
+    useState(false);
 
-  function salvarRegistro() {
-    setLoading(true);
+  const [observacoes,
+    setObservacoes] =
+    useState('');
 
-    setTimeout(() => {
-      setLoading(false);
-      alert('Registro salvo com sucesso');
-    }, 1200);
-  }
+  const [loading,
+    setLoading] =
+    useState(false);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return date.toLocaleTimeString(
+      'pt-BR',
+      {
+        hour: '2-digit',
+        minute: '2-digit',
+      }
+    );
   };
 
-  const onChangeTime = (_: any, selectedDate?: Date) => {
+  const onChangeTime = (
+    _: any,
+    selectedDate?: Date
+  ) => {
+
     setShowTimePicker(false);
 
     if (selectedDate) {
       setTempoAlta(selectedDate);
     }
   };
+
+  async function salvarRegistro() {
+
+    try {
+
+      setLoading(true);
+
+      const pacienteRef = doc(
+        db,
+        'pacientes',
+        pacienteId
+      );
+
+      await updateDoc(pacienteRef, {
+        posOperatorio: {
+
+          eva,
+
+          riscoObstrucao,
+
+          alimentacaoPrecoce,
+
+          criterioAlta,
+
+          tempoAlta:
+            formatTime(tempoAlta),
+
+          observacoes,
+        },
+      });
+
+      Alert.alert(
+        'Sucesso',
+        'Registro salvo com sucesso.'
+      );
+
+      navigation.navigate('Home');
+
+    } catch (error) {
+
+      console.log(error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível salvar.'
+      );
+
+    } finally {
+
+      setLoading(false);
+    }
+  }
 
   const BooleanSelector = ({
     label,
@@ -71,20 +174,26 @@ export default function PosOperatorio() {
     onChange: (value: boolean) => void;
   }) => (
     <View style={styles.row}>
-      <Text style={styles.label}>{label}</Text>
+
+      <Text style={styles.label}>
+        {label}
+      </Text>
 
       <View style={styles.booleanContainer}>
+
         <TouchableOpacity
           style={[
             styles.booleanButton,
-            value === true && styles.booleanButtonActive,
+            value === true &&
+              styles.booleanButtonActive,
           ]}
           onPress={() => onChange(true)}
         >
           <Text
             style={[
               styles.booleanText,
-              value === true && styles.booleanTextActive,
+              value === true &&
+                styles.booleanTextActive,
             ]}
           >
             Sim
@@ -94,46 +203,82 @@ export default function PosOperatorio() {
         <TouchableOpacity
           style={[
             styles.booleanButton,
-            value === false && styles.booleanButtonActiveRed,
+            value === false &&
+              styles.booleanButtonActiveRed,
           ]}
           onPress={() => onChange(false)}
         >
           <Text
             style={[
               styles.booleanText,
-              value === false && styles.booleanTextActive,
+              value === false &&
+                styles.booleanTextActive,
             ]}
           >
             Não
           </Text>
         </TouchableOpacity>
+
       </View>
+
     </View>
   );
 
   return (
-    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+    <LinearGradient
+      colors={['#214192', '#4293D5']}
+      style={{ flex: 1 }}
+    >
+
       <StatusBar barStyle="light-content" />
 
-      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+      <SafeAreaView
+        style={{ flex: 1 }}
+        edges={['top']}
+      >
+
+        {/* HEADER */}
+
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
+
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={22}
+              color="#fff"
+            />
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>Pós-Operatório</Text>
+          <Text style={styles.headerTitle}>
+            Pós-Operatório
+          </Text>
 
           <View style={{ width: 22 }} />
+
         </View>
 
+        {/* BODY */}
+
         <View style={styles.body}>
+
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 30 }}
+            contentContainerStyle={{
+              paddingBottom: 120,
+            }}
           >
+
             <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>12/03/2026</Text>
+
+              <Text style={styles.dateText}>
+                12/03/2026
+              </Text>
+
             </View>
+
+            {/* EVA */}
 
             <Text style={styles.label}>
               Escala de dor (EVA de 0 a 10)
@@ -148,6 +293,8 @@ export default function PosOperatorio() {
               maxLength={2}
               style={styles.input}
             />
+
+            {/* BOOLEANOS */}
 
             <BooleanSelector
               label="Risco de obstrução de vias aéreas"
@@ -167,14 +314,19 @@ export default function PosOperatorio() {
               onChange={setCriterioAlta}
             />
 
+            {/* TEMPO */}
+
             <Text style={styles.label}>
               Tempo até alta
             </Text>
 
             <TouchableOpacity
               style={styles.timeButton}
-              onPress={() => setShowTimePicker(true)}
+              onPress={() =>
+                setShowTimePicker(true)
+              }
             >
+
               <Text style={styles.timeText}>
                 {formatTime(tempoAlta)}
               </Text>
@@ -184,6 +336,7 @@ export default function PosOperatorio() {
                 size={20}
                 color="#214192"
               />
+
             </TouchableOpacity>
 
             {showTimePicker && (
@@ -191,10 +344,16 @@ export default function PosOperatorio() {
                 value={tempoAlta}
                 mode="time"
                 is24Hour
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display={
+                  Platform.OS === 'ios'
+                    ? 'spinner'
+                    : 'default'
+                }
                 onChange={onChangeTime}
               />
             )}
+
+            {/* OBSERVAÇÕES */}
 
             <Text style={styles.label}>
               Observações pós-operatórias
@@ -209,32 +368,42 @@ export default function PosOperatorio() {
               style={styles.textArea}
             />
 
+            {/* BOTÃO */}
+
             <LinearGradient
               colors={['#3A7BD5', '#214192']}
               style={styles.button}
             >
+
               <TouchableOpacity
                 onPress={salvarRegistro}
                 disabled={loading}
-                style={{ width: '100%', alignItems: 'center' }}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                }}
               >
+
                 <Text style={styles.buttonText}>
-                  {loading ? 'Salvando...' : 'Salvar Registro'}
+                  {loading
+                    ? 'Salvando...'
+                    : 'Salvar Registro'}
                 </Text>
+
               </TouchableOpacity>
+
             </LinearGradient>
+
           </ScrollView>
+
         </View>
 
-        <SafeAreaView edges={['bottom']} style={styles.navWrapper}>
-          <View style={styles.nav}>
-            <Ionicons name="home-outline" size={20} color="#fff" />
-            <Ionicons name="search-outline" size={20} color="#fff" />
-            <Ionicons name="notifications-outline" size={20} color="#fff" />
-            <Ionicons name="person-outline" size={20} color="#fff" />
-          </View>
-        </SafeAreaView>
+        {/* FOOTER PADRÃO */}
+
+        <AppFooter />
+
       </SafeAreaView>
+
     </LinearGradient>
   );
 }

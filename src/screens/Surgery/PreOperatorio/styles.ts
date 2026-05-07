@@ -176,4 +176,15 @@ export default StyleSheet.create({
     borderRadius: 14,
     padding: 10,
   },
+  input: {
+  minHeight: 110,
+  backgroundColor: '#fff',
+  borderRadius: 16,
+  paddingHorizontal: 16,
+  paddingTop: 14,
+  color: '#214192',
+  fontSize: 15,
+  marginTop: 10,
+  textAlignVertical: 'top',
+},
 });

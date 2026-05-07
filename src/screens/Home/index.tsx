@@ -16,6 +16,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList } from '../../routes/types';
+
+import AppFooter from '../../components/Footer';
+
 import styles from './styles';
 
 type NavigationProps = NativeStackNavigationProp<
@@ -86,13 +89,11 @@ export default function Home() {
 
       {/* HEADER */}
       <LinearGradient
-        colors={['#4D9FFF', '#2346A0']}
+        colors={['#214192', '#4293D5']}
         style={styles.headerGradient}
       >
         <SafeAreaView edges={['top']}>
-
           <View style={styles.header}>
-
             <View style={styles.logoBox}>
               <Text style={styles.logoText}>LOGO</Text>
             </View>
@@ -119,7 +120,6 @@ export default function Home() {
             paddingBottom: 120,
           }}
         >
-
           {/* MENU */}
           <View style={styles.menuContainer}>
             {menu.map((item, index) => (
@@ -130,6 +130,14 @@ export default function Home() {
                 onPress={() => {
                   if (item.label.includes('Novo')) {
                     navigation.navigate('NovoPaciente');
+                  }
+
+                  if (item.label.includes('Pacientes')) {
+                    navigation.navigate('Pacientes');
+                  }
+
+                  if (item.label.includes('Histórico')) {
+                    navigation.navigate('Historico');
                   }
                 }}
               >
@@ -167,7 +175,6 @@ export default function Home() {
                 key={item.id}
                 style={styles.card}
               >
-
                 <View style={styles.initialCircle}>
                   <Text style={styles.initialText}>
                     {item.iniciais}
@@ -186,54 +193,11 @@ export default function Home() {
               </TouchableOpacity>
             ))}
           </View>
-
         </ScrollView>
       </View>
 
-      {/* BOTTOM TAB */}
-      <SafeAreaView
-        edges={['bottom']}
-        style={styles.footerSafe}
-      >
-        <LinearGradient
-          colors={['#3563C7', '#2346A0']}
-          style={styles.bottomTab}
-        >
-
-          <TouchableOpacity style={styles.tabButtonActive}>
-            <Ionicons
-              name="home-outline"
-              size={24}
-              color="#2346A0"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tabButton}>
-            <Ionicons
-              name="search-outline"
-              size={24}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tabButton}>
-            <Ionicons
-              name="notifications-outline"
-              size={24}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.tabButton}>
-            <Ionicons
-              name="people-outline"
-              size={24}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-
-        </LinearGradient>
-      </SafeAreaView>
+      {/* FOOTER PADRÃO */}
+      <AppFooter />
     </View>
   );
 }
