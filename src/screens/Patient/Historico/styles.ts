@@ -1,111 +1,128 @@
+// styles.ts
+
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
-  },
 
   header: {
-    height: 100,
-    backgroundColor: '#2F5DA8',
+    height: 90,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   headerTitle: {
     color: '#FFF',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '700',
   },
 
-  patientContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-
-  patientName: {
-    borderWidth: 1,
-    borderColor: '#2F5DA8',
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 6,
-    color: '#2F5DA8',
-    fontWeight: '500',
-  },
-
-  timelineContainer: {
+  content: {
     flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-  },
-
-  line: {
-    width: 2,
-    backgroundColor: '#2F5DA8',
-    marginRight: 10,
+    backgroundColor: '#FFF',
+    paddingTop: 20,
+    paddingHorizontal: 20,
   },
 
   list: {
-    paddingBottom: 20,
+    paddingBottom: 120,
+  },
+
+  absoluteLine: {
+    position: 'absolute',
+    left: 26,
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: '#2F5DA8',
   },
 
   itemRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 18,
+  },
+
+  circleContainer: {
+    width: 30,
+    alignItems: 'center',
+    zIndex: 10,
   },
 
   circle: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     backgroundColor: '#2F5DA8',
-    marginRight: 10,
-    marginTop: 10,
+    marginTop: 18,
+    borderWidth: 3,
+    borderColor: '#FFF',
   },
 
   card: {
     flex: 1,
     backgroundColor: '#FFF',
-    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#2F5DA8',
+    borderRadius: 14,
     padding: 12,
-    elevation: 2,
+    marginLeft: 10,
+    minHeight: 90,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+
+    elevation: 3,
   },
 
   date: {
-    fontSize: 12,
-    color: '#555',
+    fontSize: 11,
+    color: '#777',
+    marginBottom: 4,
   },
 
   title: {
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
     color: '#2F5DA8',
-    marginTop: 4,
+    marginBottom: 2,
+  },
+
+  patient: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#214192',
+    marginBottom: 4,
   },
 
   description: {
     fontSize: 12,
-    color: '#555',
+    color: '#666',
+    paddingRight: 20,
+    lineHeight: 18,
   },
 
   arrow: {
     position: 'absolute',
-    right: 10,
-    top: 10,
+    right: 12,
+    top: 12,
+    fontSize: 16,
     color: '#2F5DA8',
+    fontWeight: '700',
   },
 
-  bottomNav: {
-    height: 70,
-    backgroundColor: '#2F5DA8',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  emptyContainer: {
+    marginTop: 40,
     alignItems: 'center',
   },
 
-  navItem: {
-    color: '#FFF',
-    fontSize: 20,
+  emptyText: {
+    fontSize: 16,
+    color: '#214192',
+    fontWeight: '600',
   },
+
 });

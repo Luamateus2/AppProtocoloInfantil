@@ -1,4 +1,5 @@
 import React, {
+  useEffect,
   useState,
 } from 'react';
 
@@ -16,11 +17,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { LinearGradient } from 'expo-linear-gradient';
-
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import {
@@ -35,30 +32,32 @@ import {
 
 import {
   doc,
+  getDoc,
   updateDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+
+import { RootStackParamList } from '../../../routes/types';
+
 import AppFooter from '../../../components/Footer/Footer';
-import Header from '../../../components/HeaderSecundario';
+
 import styles from './styles';
 
 type NavProps =
   NativeStackNavigationProp<
     RootStackParamList,
-    'PreOperatorio'
+    'EditarPreOperatorio'
   >;
 
-type RouteParams =
-  RouteProp<
-    RootStackParamList,
-    'PreOperatorio'
-  >;
+type RouteParams = RouteProp<
+  RootStackParamList,
+  'EditarPreOperatorio'
+>;
 
-export default function Preoperatorio() {
+export default function EditarPreoperatorio() {
+
   const navigation =
     useNavigation<NavProps>();
 
@@ -68,10 +67,16 @@ export default function Preoperatorio() {
   const { pacienteId } =
     route.params;
 
-  const [loading, setLoading] =
+  const [loading,
+    setLoading] =
     useState(false);
 
-  const [date, setDate] =
+  const [loadingPaciente,
+    setLoadingPaciente] =
+    useState(true);
+
+  const [date,
+    setDate] =
     useState(new Date());
 
   const [showDate,
@@ -82,15 +87,12 @@ export default function Preoperatorio() {
     setTempoJejum] =
     useState(new Date());
 
-  const [
-    showTimePicker,
-    setShowTimePicker,
-  ] = useState(false);
+  const [showTimePicker,
+    setShowTimePicker] =
+    useState(false);
 
-  const [
-    jejumLiquidos,
-    setJejumLiquidos,
-  ] =
+  const [jejumLiquidos,
+    setJejumLiquidos] =
     useState<boolean | null>(
       null
     );
@@ -103,10 +105,8 @@ export default function Preoperatorio() {
       null
     );
 
-  const [
-    viaAereaDificil,
-    setViaAereaDificil,
-  ] =
+  const [viaAereaDificil,
+    setViaAereaDificil] =
     useState<boolean | null>(
       null
     );
@@ -119,10 +119,9 @@ export default function Preoperatorio() {
       null
     );
 
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
+  const [observacoes,
+    setObservacoes] =
+    useState('');
 
   const formatDate = (
     d: Date
@@ -138,16 +137,68 @@ export default function Preoperatorio() {
       'pt-BR',
       {
         hour: '2-digit',
-        minute: '2-digit',
+        minute:
+          '2-digit',
       }
     );
   };
+
+  function parseDate(
+    dateString: string
+  ) {
+
+    if (!dateString)
+      return new Date();
+
+    const [
+      day,
+      month,
+      year,
+    ] =
+      dateString.split('/');
+
+    return new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day)
+    );
+  }
+
+  function parseTime(
+    timeString: string
+  ) {
+
+    const date =
+      new Date();
+
+    if (!timeString)
+      return date;
+
+    const [
+      hours,
+      minutes,
+    ] =
+      timeString.split(':');
+
+    date.setHours(
+      Number(hours)
+    );
+
+    date.setMinutes(
+      Number(minutes)
+    );
+
+    return date;
+  }
 
   const onChangeTime = (
     _: any,
     selectedDate?: Date
   ) => {
-    setShowTimePicker(false);
+
+    setShowTimePicker(
+      false
+    );
 
     if (selectedDate) {
       setTempoJejum(
@@ -156,8 +207,105 @@ export default function Preoperatorio() {
     }
   };
 
-  async function salvarPreOperatorio() {
+  /* CARREGAR DADOS */
+
+  async function carregarDados() {
+
     try {
+
+      const pacienteRef =
+        doc(
+          db,
+          'pacientes',
+          pacienteId
+        );
+
+      const snapshot =
+        await getDoc(
+          pacienteRef
+        );
+
+      if (
+        !snapshot.exists()
+      ) {
+
+        Alert.alert(
+          'Erro',
+          'Paciente não encontrado.'
+        );
+
+        navigation.goBack();
+
+        return;
+      }
+
+      const data =
+        snapshot.data();
+
+      const pre =
+        data.preOperatorio;
+
+      if (!pre)
+        return;
+
+      setDate(
+        parseDate(
+          pre.data
+        )
+      );
+
+      setJejumLiquidos(
+        pre.jejumLiquidos ??
+          null
+      );
+
+      setTempoJejum(
+        parseTime(
+          pre.tempoJejum
+        )
+      );
+
+      setCarboidratoPreOperatorio(
+        pre.carboidratoPreOperatorio ??
+          null
+      );
+
+      setViaAereaDificil(
+        pre.viaAereaDificil ??
+          null
+      );
+
+      setAvaliacaoAnsiedade(
+        pre.avaliacaoAnsiedade ??
+          null
+      );
+
+      setObservacoes(
+        pre.observacoes ||
+          ''
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível carregar os dados.'
+      );
+
+    } finally {
+
+      setLoadingPaciente(
+        false
+      );
+    }
+  }
+
+  async function salvarEdicao() {
+
+    try {
+
       setLoading(true);
 
       const pacienteRef =
@@ -171,6 +319,7 @@ export default function Preoperatorio() {
         pacienteRef,
         {
           preOperatorio: {
+
             data:
               formatDate(
                 date
@@ -191,26 +340,39 @@ export default function Preoperatorio() {
 
             observacoes,
           },
+
+          updatedAt:
+            serverTimestamp(),
         }
       );
 
       navigation.navigate(
-        'IntraOperatorio',
+        'EditarIntraOperatorio',
         {
           pacienteId,
         }
       );
+
     } catch (error) {
+
       console.log(error);
 
       Alert.alert(
         'Erro',
         'Não foi possível salvar.'
       );
+
     } finally {
+
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+
+    carregarDados();
+
+  }, []);
 
   const BooleanSelector = ({
     label,
@@ -218,13 +380,20 @@ export default function Preoperatorio() {
     onChange,
   }: {
     label: string;
-    value: boolean | null;
+    value:
+      | boolean
+      | null;
     onChange: (
       value: boolean
     ) => void;
   }) => (
     <View style={styles.row}>
-      <Text style={styles.label}>
+
+      <Text
+        style={
+          styles.label
+        }
+      >
         {label}
       </Text>
 
@@ -233,10 +402,12 @@ export default function Preoperatorio() {
           styles.booleanContainer
         }
       >
+
         <TouchableOpacity
           style={[
             styles.booleanButton,
-            value === true &&
+            value ===
+              true &&
               styles.booleanButtonActive,
           ]}
           onPress={() =>
@@ -246,7 +417,8 @@ export default function Preoperatorio() {
           <Text
             style={[
               styles.booleanText,
-              value === true &&
+              value ===
+                true &&
                 styles.booleanTextActive,
             ]}
           >
@@ -257,7 +429,8 @@ export default function Preoperatorio() {
         <TouchableOpacity
           style={[
             styles.booleanButton,
-            value === false &&
+            value ===
+              false &&
               styles.booleanButtonActiveRed,
           ]}
           onPress={() =>
@@ -267,14 +440,17 @@ export default function Preoperatorio() {
           <Text
             style={[
               styles.booleanText,
-              value === false &&
+              value ===
+                false &&
                 styles.booleanTextActive,
             ]}
           >
             Não
           </Text>
         </TouchableOpacity>
+
       </View>
+
     </View>
   );
 
@@ -286,6 +462,7 @@ export default function Preoperatorio() {
       ]}
       style={{ flex: 1 }}
     >
+
       <StatusBar
         barStyle="light-content"
       />
@@ -294,22 +471,62 @@ export default function Preoperatorio() {
         style={{ flex: 1 }}
         edges={['top']}
       >
-        {/* HEADER */}
-        <Header title="Pré-Operatório" />
 
-        {/* BODY */}
-        <View style={styles.body}>
+        <View
+          style={
+            styles.header
+          }
+        >
+
+          <TouchableOpacity
+            style={
+              styles.back
+            }
+            onPress={() =>
+              navigation.goBack()
+            }
+          >
+            <Ionicons
+              name="arrow-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+
+          <Text
+            style={
+              styles.title
+            }
+          >
+            Editar
+            Pré-Operatório
+          </Text>
+
+          <View
+            style={{
+              width: 22,
+            }}
+          />
+
+        </View>
+
+        <View
+          style={styles.body}
+        >
+
           <ScrollView
             showsVerticalScrollIndicator={
               false
             }
             contentContainerStyle={{
-              paddingBottom:
-                120,
+              paddingBottom: 120,
             }}
           >
+
             <TouchableOpacity
-              style={styles.date}
+              style={
+                styles.date
+              }
               onPress={() =>
                 setShowDate(
                   true
@@ -321,7 +538,9 @@ export default function Preoperatorio() {
                   styles.dateText
                 }
               >
-                {formatDate(date)}
+                {formatDate(
+                  date
+                )}
               </Text>
             </TouchableOpacity>
 
@@ -336,9 +555,10 @@ export default function Preoperatorio() {
                     : 'default'
                 }
                 onChange={(
-                  event,
+                  _,
                   selectedDate
                 ) => {
+
                   setShowDate(
                     false
                   );
@@ -365,7 +585,9 @@ export default function Preoperatorio() {
             />
 
             <Text
-              style={styles.label}
+              style={
+                styles.label
+              }
             >
               Tempo de jejum
             </Text>
@@ -416,12 +638,102 @@ export default function Preoperatorio() {
               />
             )}
 
-            {/* resto continua igual */}
+            <BooleanSelector
+              label="Carboidrato pré-operatório administrado"
+              value={
+                carboidratoPreOperatorio
+              }
+              onChange={
+                setCarboidratoPreOperatorio
+              }
+            />
+
+            <BooleanSelector
+              label="Avaliação de via aérea difícil"
+              value={
+                viaAereaDificil
+              }
+              onChange={
+                setViaAereaDificil
+              }
+            />
+
+            <BooleanSelector
+              label="Avaliação de ansiedade"
+              value={
+                avaliacaoAnsiedade
+              }
+              onChange={
+                setAvaliacaoAnsiedade
+              }
+            />
+
+            <Text
+              style={
+                styles.label
+              }
+            >
+              Observações
+            </Text>
+
+            <TextInput
+              placeholder="Digite observações..."
+              placeholderTextColor="#999"
+              style={
+                styles.input
+              }
+              multiline
+              value={
+                observacoes
+              }
+              onChangeText={
+                setObservacoes
+              }
+            />
+
+            <LinearGradient
+              colors={[
+                '#3A7BD5',
+                '#2A5298',
+              ]}
+              style={
+                styles.button
+              }
+            >
+              <TouchableOpacity
+                style={{
+                  width: '100%',
+                  alignItems:
+                    'center',
+                }}
+                onPress={
+                  salvarEdicao
+                }
+                disabled={
+                  loading ||
+                  loadingPaciente
+                }
+              >
+                <Text
+                  style={
+                    styles.buttonText
+                  }
+                >
+                  {loading
+                    ? 'Salvando...'
+                    : 'Próximo'}
+                </Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
           </ScrollView>
+
         </View>
 
         <AppFooter />
+
       </SafeAreaView>
+
     </LinearGradient>
   );
 }

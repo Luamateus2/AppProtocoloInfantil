@@ -1,3 +1,5 @@
+import Pacientes from "../screens/Patient/Paciente";
+
 export type RootStackParamList = {
   Inicio: undefined;
   Login: undefined;
@@ -8,7 +10,19 @@ export type RootStackParamList = {
   NovaSenha: undefined;
   Historico: undefined;
   Pacientes:undefined;
-  
+  Settings:undefined;
+  EditarPaciente: {
+  pacienteId: string;
+};
+ EditarPreOperatorio: {
+  pacienteId: string;
+};
+ EditarIntraOperatorio: {
+  pacienteId: string;
+};
+EditarPosOperatorio: {
+  pacienteId: string;
+};
   PreOperatorio: {
     pacienteId: string;
   };
@@ -20,4 +34,6 @@ export type RootStackParamList = {
   PosOperatorio: {
     pacienteId: string;
   };
+
+  
 };

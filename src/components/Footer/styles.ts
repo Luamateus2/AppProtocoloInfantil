@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import {
+  StyleSheet,
+} from 'react-native';
 
 const styles = StyleSheet.create({
 
@@ -10,32 +12,33 @@ const styles = StyleSheet.create({
     bottom: 0,
 
     backgroundColor: 'transparent',
-
-    paddingHorizontal: 20,
-    paddingBottom: 10,
   },
 
   container: {
-    height: 68,
+    width: '100%',
+    height: 95,
 
-    borderRadius: 20,
+    paddingBottom: 20,
+
+    backgroundColor: '#214192',
 
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
 
-    paddingHorizontal: 8,
+    paddingHorizontal: 24,
 
     shadowColor: '#000',
+
     shadowOffset: {
       width: 0,
-      height: -2,
+      height: -4,
     },
 
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.12,
     shadowRadius: 8,
 
-    elevation: 12,
+    elevation: 10,
   },
 
   tabButton: {
@@ -45,21 +48,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  iconBox: {
-    width: 42,
-    height: 42,
+  iconWrapper: {
+    width: 54,
+    height: 54,
 
-    borderRadius: 14,
+    borderRadius: 18,
 
-    borderWidth: 1.5,
+    borderWidth: 1.6,
     borderColor: '#FFFFFF',
 
     alignItems: 'center',
     justifyContent: 'center',
+
+    backgroundColor: 'transparent',
   },
 
-  activeIconBox: {
+  activeWrapper: {
     backgroundColor: '#FFFFFF',
+
     borderColor: '#FFFFFF',
   },
 

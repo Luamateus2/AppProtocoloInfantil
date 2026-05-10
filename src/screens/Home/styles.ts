@@ -1,9 +1,32 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F3F4F8',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#F3F4F8',
+  },
+
+  /* LOGO - TELA INICIO */
+
+  logoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  logoImage: {
+    width:50,
+    height:50,
+  },
+
+  footer: {
+    width: '100%',
+    paddingHorizontal: 24,
   },
 
   /* HEADER */
@@ -20,20 +43,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  logoBox: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#E8E8E8',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 2,
-  },
-
-  logoText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#333',
-  },
+logoBox: {
+  width: 48,
+  height: 48,
+  backgroundColor: '#E8E8E8',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 2,
+  overflow: 'hidden',
+},
 
   headerText: {
     flex: 1,
@@ -50,16 +68,12 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
 
-  /* BODY */
-
   body: {
     flex: 1,
     backgroundColor: '#F4F4F4',
     marginTop: -20,
     paddingTop: 24,
   },
-
-  /* MENU */
 
   menuContainer: {
     flexDirection: 'row',
@@ -186,6 +200,38 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 13,
     color: '#5A6A85',
+  },
+
+  /* BOTÃO INICIO */
+
+  button: {
+    width: '100%',
+    height: 58,
+
+    backgroundColor: '#214192',
+
+    borderRadius: 18,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    marginBottom: 20,
+
+    shadowColor: '#214192',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+
+    elevation: 6,
+  },
+
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
 
   /* FOOTER */

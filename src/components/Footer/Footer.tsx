@@ -18,10 +18,6 @@ import {
   SafeAreaView,
 } from 'react-native-safe-area-context';
 
-import {
-  LinearGradient,
-} from 'expo-linear-gradient';
-
 import styles from './styles';
 
 export default function AppFooter() {
@@ -50,15 +46,13 @@ export default function AppFooter() {
   ];
 
   return (
+
     <SafeAreaView
       edges={['bottom']}
       style={styles.safeArea}
     >
 
-      <LinearGradient
-        colors={['#2F5CC8', '#2447A5']}
-        style={styles.container}
-      >
+      <View style={styles.container}>
 
         {tabs.map((tab) => {
 
@@ -69,7 +63,7 @@ export default function AppFooter() {
 
             <TouchableOpacity
               key={tab.route}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               style={styles.tabButton}
               onPress={() =>
                 navigation.navigate(tab.route)
@@ -78,19 +72,19 @@ export default function AppFooter() {
 
               <View
                 style={[
-                  styles.iconBox,
+                  styles.iconWrapper,
 
                   active &&
-                    styles.activeIconBox,
+                    styles.activeWrapper,
                 ]}
               >
 
                 <Ionicons
                   name={tab.icon as any}
-                  size={20}
+                  size={24}
                   color={
                     active
-                      ? '#2447A5'
+                      ? '#214192'
                       : '#FFFFFF'
                   }
                 />
@@ -102,8 +96,9 @@ export default function AppFooter() {
           );
         })}
 
-      </LinearGradient>
+      </View>
 
     </SafeAreaView>
+
   );
 }

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+} from 'react';
 
 import {
   View,
@@ -36,65 +38,99 @@ import {
 
 import { db } from '../../../services/firebaseConfig';
 
-import { RootStackParamList } from '../../../routes/types';
+import {
+  RootStackParamList,
+} from '../../../routes/types';
 
-import AppFooter from '../../../components/Footer';
+import AppFooter from '../../../components/Footer/Footer';
+import Header from '../../../components/HeaderSecundario';
 
 import styles from './styles';
 
-type NavProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'IntraOperatorio'
->;
+type NavProps =
+  NativeStackNavigationProp<
+    RootStackParamList,
+    'IntraOperatorio'
+  >;
 
-type RouteParams = RouteProp<
-  RootStackParamList,
-  'IntraOperatorio'
->;
+type RouteParams =
+  RouteProp<
+    RootStackParamList,
+    'IntraOperatorio'
+  >;
 
 export default function IntraOperatorio() {
 
-  const navigation = useNavigation<NavProps>();
+  const navigation =
+    useNavigation<NavProps>();
 
-  const route = useRoute<RouteParams>();
+  const route =
+    useRoute<RouteParams>();
 
-  const { pacienteId } = route.params;
+  const { pacienteId } =
+    route.params;
 
-  const [loading, setLoading] = useState(false);
-
-  const [ventilacaoProtetora,
-    setVentilacaoProtetora] =
-    useState<boolean | null>(null);
-
-  const [analgesiaMultimodal,
-    setAnalgesiaMultimodal] =
-    useState<boolean | null>(null);
-
-  const [dexametasona,
-    setDexametasona] =
-    useState<boolean | null>(null);
-
-  const [monitorizacaoCapnografica,
-    setMonitorizacaoCapnografica] =
-    useState<boolean | null>(null);
-
-  const [tempoCirurgia,
-    setTempoCirurgia] =
-    useState(new Date());
-
-  const [showTimePicker,
-    setShowTimePicker] =
+  const [loading,
+    setLoading] =
     useState(false);
 
-  const [complicacoes,
-    setComplicacoes] =
-    useState('');
+  const [
+    ventilacaoProtetora,
+    setVentilacaoProtetora,
+  ] =
+    useState<boolean | null>(
+      null
+    );
 
-  const [observacoes,
-    setObservacoes] =
-    useState('');
+  const [
+    analgesiaMultimodal,
+    setAnalgesiaMultimodal,
+  ] =
+    useState<boolean | null>(
+      null
+    );
 
-  const formatTime = (date: Date) => {
+  const [
+    dexametasona,
+    setDexametasona,
+  ] =
+    useState<boolean | null>(
+      null
+    );
+
+  const [
+    monitorizacaoCapnografica,
+    setMonitorizacaoCapnografica,
+  ] =
+    useState<boolean | null>(
+      null
+    );
+
+  const [
+    tempoCirurgia,
+    setTempoCirurgia,
+  ] =
+    useState(new Date());
+
+  const [
+    showTimePicker,
+    setShowTimePicker,
+  ] =
+    useState(false);
+
+  const [
+    complicacoes,
+    setComplicacoes,
+  ] = useState('');
+
+  const [
+    observacoes,
+    setObservacoes,
+  ] = useState('');
+
+  const formatTime = (
+    date: Date
+  ) => {
     return date.toLocaleTimeString(
       'pt-BR',
       {
@@ -109,10 +145,16 @@ export default function IntraOperatorio() {
     selectedDate?: Date
   ) => {
 
-    setShowTimePicker(false);
+    setShowTimePicker(
+      false
+    );
 
-    if (selectedDate) {
-      setTempoCirurgia(selectedDate);
+    if (
+      selectedDate
+    ) {
+      setTempoCirurgia(
+        selectedDate
+      );
     }
   };
 
@@ -122,31 +164,37 @@ export default function IntraOperatorio() {
 
       setLoading(true);
 
-      const pacienteRef = doc(
-        db,
-        'pacientes',
-        pacienteId
+      const pacienteRef =
+        doc(
+          db,
+          'pacientes',
+          pacienteId
+        );
+
+      await updateDoc(
+        pacienteRef,
+        {
+          intraOperatorio: {
+
+            ventilacaoProtetora,
+
+            analgesiaMultimodal,
+
+            dexametasona,
+
+            monitorizacaoCapnografica,
+
+            tempoCirurgia:
+              formatTime(
+                tempoCirurgia
+              ),
+
+            complicacoes,
+
+            observacoes,
+          },
+        }
       );
-
-      await updateDoc(pacienteRef, {
-        intraOperatorio: {
-
-          ventilacaoProtetora,
-
-          analgesiaMultimodal,
-
-          dexametasona,
-
-          monitorizacaoCapnografica,
-
-          tempoCirurgia:
-            formatTime(tempoCirurgia),
-
-          complicacoes,
-
-          observacoes,
-        },
-      });
 
       navigation.navigate(
         'PosOperatorio',
@@ -167,6 +215,7 @@ export default function IntraOperatorio() {
     } finally {
 
       setLoading(false);
+
     }
   }
 
@@ -177,7 +226,9 @@ export default function IntraOperatorio() {
   }: {
     label: string;
     value: boolean | null;
-    onChange: (value: boolean) => void;
+    onChange: (
+      value: boolean
+    ) => void;
   }) => (
     <View style={styles.row}>
 
@@ -185,7 +236,11 @@ export default function IntraOperatorio() {
         {label}
       </Text>
 
-      <View style={styles.booleanContainer}>
+      <View
+        style={
+          styles.booleanContainer
+        }
+      >
 
         <TouchableOpacity
           style={[
@@ -193,7 +248,9 @@ export default function IntraOperatorio() {
             value === true &&
               styles.booleanButtonActive,
           ]}
-          onPress={() => onChange(true)}
+          onPress={() =>
+            onChange(true)
+          }
         >
           <Text
             style={[
@@ -212,7 +269,9 @@ export default function IntraOperatorio() {
             value === false &&
               styles.booleanButtonActiveRed,
           ]}
-          onPress={() => onChange(false)}
+          onPress={() =>
+            onChange(false)
+          }
         >
           <Text
             style={[
@@ -232,11 +291,16 @@ export default function IntraOperatorio() {
 
   return (
     <LinearGradient
-      colors={['#214192', '#4293D5']}
+      colors={[
+        '#214192',
+        '#4293D5',
+      ]}
       style={{ flex: 1 }}
     >
 
-      <StatusBar barStyle="light-content" />
+      <StatusBar
+        barStyle="light-content"
+      />
 
       <SafeAreaView
         style={{ flex: 1 }}
@@ -244,49 +308,42 @@ export default function IntraOperatorio() {
       >
 
         {/* HEADER */}
-
-        <View style={styles.header}>
-
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons
-              name="arrow-back"
-              size={22}
-              color="#fff"
-            />
-          </TouchableOpacity>
-
-          <Text style={styles.headerTitle}>
-            Intra-Operatório
-          </Text>
-
-          <View style={{ width: 22 }} />
-
-        </View>
+        <Header title="Intra-Operatório" />
 
         {/* BODY */}
-
         <View style={styles.body}>
 
           <ScrollView
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={
+              false
+            }
             contentContainerStyle={{
-              paddingBottom: 120,
+              paddingBottom:
+                120,
             }}
           >
 
-            <View style={styles.dateContainer}>
-
-              <Text style={styles.dateText}>
-                12/03/2026
+            <View
+              style={
+                styles.dateContainer
+              }
+            >
+              <Text
+                style={
+                  styles.dateText
+                }
+              >
+                {new Date().toLocaleDateString(
+                  'pt-BR'
+                )}
               </Text>
-
             </View>
 
             <BooleanSelector
               label="Ventilação protetora"
-              value={ventilacaoProtetora}
+              value={
+                ventilacaoProtetora
+              }
               onChange={
                 setVentilacaoProtetora
               }
@@ -294,7 +351,9 @@ export default function IntraOperatorio() {
 
             <BooleanSelector
               label="Analgesia multimodal"
-              value={analgesiaMultimodal}
+              value={
+                analgesiaMultimodal
+              }
               onChange={
                 setAnalgesiaMultimodal
               }
@@ -302,8 +361,12 @@ export default function IntraOperatorio() {
 
             <BooleanSelector
               label="Dexametasona administrada"
-              value={dexametasona}
-              onChange={setDexametasona}
+              value={
+                dexametasona
+              }
+              onChange={
+                setDexametasona
+              }
             />
 
             <BooleanSelector
@@ -316,21 +379,29 @@ export default function IntraOperatorio() {
               }
             />
 
-            {/* TEMPO */}
-
             <Text style={styles.label}>
               Tempo de cirurgia
             </Text>
 
             <TouchableOpacity
-              style={styles.timeButton}
+              style={
+                styles.timeButton
+              }
               onPress={() =>
-                setShowTimePicker(true)
+                setShowTimePicker(
+                  true
+                )
               }
             >
 
-              <Text style={styles.timeText}>
-                {formatTime(tempoCirurgia)}
+              <Text
+                style={
+                  styles.timeText
+                }
+              >
+                {formatTime(
+                  tempoCirurgia
+                )}
               </Text>
 
               <Ionicons
@@ -343,70 +414,89 @@ export default function IntraOperatorio() {
 
             {showTimePicker && (
               <DateTimePicker
-                value={tempoCirurgia}
+                value={
+                  tempoCirurgia
+                }
                 mode="time"
                 is24Hour
                 display={
-                  Platform.OS === 'ios'
+                  Platform.OS ===
+                  'ios'
                     ? 'spinner'
                     : 'default'
                 }
-                onChange={onChangeTime}
+                onChange={
+                  onChangeTime
+                }
               />
             )}
-
-            {/* COMPLICAÇÕES */}
 
             <Text style={styles.label}>
               Complicações intra-operatórias
             </Text>
 
             <TextInput
-              value={complicacoes}
+              value={
+                complicacoes
+              }
               onChangeText={
                 setComplicacoes
               }
               placeholder="Descreva se houver..."
               placeholderTextColor="#777"
               multiline
-              style={styles.textArea}
+              style={
+                styles.textArea
+              }
             />
-
-            {/* OBSERVAÇÕES */}
 
             <Text style={styles.label}>
               Observações
             </Text>
 
             <TextInput
-              value={observacoes}
+              value={
+                observacoes
+              }
               onChangeText={
                 setObservacoes
               }
               multiline
               placeholder="Observações adicionais..."
               placeholderTextColor="#777"
-              style={styles.textArea}
+              style={
+                styles.textArea
+              }
             />
 
-            {/* BOTÃO */}
-
             <LinearGradient
-              colors={['#3A7BD5', '#2A5298']}
-              style={styles.button}
+              colors={[
+                '#3A7BD5',
+                '#2A5298',
+              ]}
+              style={
+                styles.button
+              }
             >
 
               <TouchableOpacity
                 style={{
                   width: '100%',
-                  alignItems: 'center',
+                  alignItems:
+                    'center',
                 }}
                 onPress={
                   salvarIntraOperatorio
                 }
-                disabled={loading}
+                disabled={
+                  loading
+                }
               >
-                <Text style={styles.buttonText}>
+                <Text
+                  style={
+                    styles.buttonText
+                  }
+                >
                   {loading
                     ? 'Salvando...'
                     : 'Próximo'}
@@ -418,8 +508,6 @@ export default function IntraOperatorio() {
           </ScrollView>
 
         </View>
-
-        {/* FOOTER PADRÃO */}
 
         <AppFooter />
 

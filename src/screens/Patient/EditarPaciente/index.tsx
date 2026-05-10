@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   View,
@@ -12,12 +15,14 @@ import {
 
 import { LinearGradient } from 'expo-linear-gradient';
 
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { Ionicons } from '@expo/vector-icons';
 
 import {
   useNavigation,
+  useRoute,
+  RouteProp,
 } from '@react-navigation/native';
 
 import {
@@ -25,123 +30,239 @@ import {
 } from '@react-navigation/native-stack';
 
 import {
-  addDoc,
-  collection,
+  doc,
+  getDoc,
+  updateDoc,
   serverTimestamp,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
 
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+import { RootStackParamList } from '../../../routes/types';
 
 import AppFooter from '../../../components/Footer/Footer';
-import Header from '../../../components/HeaderSecundario';
 
 import styles from './styles';
 
 type NavProps =
   NativeStackNavigationProp<
     RootStackParamList,
-    'Cadastro'
+    'EditarPaciente'
   >;
 
-export default function Cadastro() {
+type RouteParams = RouteProp<
+  RootStackParamList,
+  'EditarPaciente'
+>;
+
+export default function EditarPaciente() {
+
   const navigation =
     useNavigation<NavProps>();
 
+  const route =
+    useRoute<RouteParams>();
+
+  const { pacienteId } =
+    route.params;
+
   /* STATES */
 
-  const [
-    nomeCompleto,
-    setNomeCompleto,
-  ] = useState('');
-
-  const [
-    dataNascimento,
-    setDataNascimento,
-  ] = useState('');
-
-  const [idade, setIdade] =
+  const [nomeCompleto,
+    setNomeCompleto] =
     useState('');
 
-  const [asa, setAsa] =
+  const [dataNascimento,
+    setDataNascimento] =
     useState('');
 
-  const [peso, setPeso] =
+  const [idade,
+    setIdade] =
     useState('');
 
-  const [
-    procedimento,
-    setProcedimento,
-  ] = useState('');
+  const [asa,
+    setAsa] =
+    useState('');
 
-  const [
-    comorbidade,
-    setComorbidade,
-  ] = useState('');
+  const [peso,
+    setPeso] =
+    useState('');
 
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
+  const [procedimento,
+    setProcedimento] =
+    useState('');
 
-  const [loading, setLoading] =
+  const [comorbidade,
+    setComorbidade] =
+    useState('');
+
+  const [observacoes,
+    setObservacoes] =
+    useState('');
+
+  const [loading,
+    setLoading] =
     useState(false);
 
-  /* SALVAR PACIENTE */
+  const [loadingPaciente,
+    setLoadingPaciente] =
+    useState(true);
 
-  async function salvarPaciente() {
+  /* CARREGAR PACIENTE */
+
+  async function carregarPaciente() {
+
     try {
-      setLoading(true);
 
-      const docRef =
-        await addDoc(
-          collection(
-            db,
-            'pacientes'
-          ),
-          {
-            nomeCompleto,
-
-            dataNascimento,
-
-            idade,
-
-            asa,
-
-            peso,
-
-            procedimento,
-
-            comorbidade,
-
-            observacoes,
-
-            createdAt:
-              serverTimestamp(),
-          }
+      const pacienteRef =
+        doc(
+          db,
+          'pacientes',
+          pacienteId
         );
 
-      navigation.navigate(
-        'PreOperatorio',
-        {
-          pacienteId:
-            docRef.id,
-        }
+      const snapshot =
+        await getDoc(
+          pacienteRef
+        );
+
+      if (
+        !snapshot.exists()
+      ) {
+
+        Alert.alert(
+          'Erro',
+          'Paciente não encontrado.'
+        );
+
+        navigation.goBack();
+
+        return;
+      }
+
+      const data =
+        snapshot.data();
+
+      setNomeCompleto(
+        data.nomeCompleto ||
+          ''
       );
+
+      setDataNascimento(
+        data.dataNascimento ||
+          ''
+      );
+
+      setIdade(
+        data.idade || ''
+      );
+
+      setAsa(
+        data.asa || ''
+      );
+
+      setPeso(
+        data.peso || ''
+      );
+
+      setProcedimento(
+        data.procedimento ||
+          ''
+      );
+
+      setComorbidade(
+        data.comorbidade ||
+          ''
+      );
+
+      setObservacoes(
+        data.observacoes ||
+          ''
+      );
+
     } catch (error) {
+
       console.log(error);
 
       Alert.alert(
         'Erro',
-        'Não foi possível salvar o paciente.'
+        'Não foi possível carregar o paciente.'
       );
+
     } finally {
+
+      setLoadingPaciente(
+        false
+      );
+    }
+  }
+
+  /* EDITAR PACIENTE */
+
+  async function editarPaciente() {
+
+    try {
+
+      setLoading(true);
+
+      const pacienteRef =
+        doc(
+          db,
+          'pacientes',
+          pacienteId
+        );
+
+      await updateDoc(
+        pacienteRef,
+        {
+          nomeCompleto,
+
+          dataNascimento,
+
+          idade,
+
+          asa,
+
+          peso,
+
+          procedimento,
+
+          comorbidade,
+
+          observacoes,
+
+          updatedAt:
+            serverTimestamp(),
+        }
+      );
+
+      navigation.navigate(
+        'EditarIntraOperatorio',
+        {
+          pacienteId,
+        }
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível atualizar o paciente.'
+      );
+
+    } finally {
+
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+
+    carregarPaciente();
+
+  }, []);
 
   return (
     <LinearGradient
@@ -151,6 +272,7 @@ export default function Cadastro() {
       ]}
       style={{ flex: 1 }}
     >
+
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -161,22 +283,57 @@ export default function Cadastro() {
         style={{ flex: 1 }}
         edges={['top']}
       >
-        {/* HEADER REUTILIZÁVEL */}
-        <Header
-          title="Novo Paciente"
-        />
+
+        {/* HEADER */}
+
+        <View
+          style={styles.header}
+        >
+
+          <TouchableOpacity
+            style={
+              styles.backButton
+            }
+            onPress={() =>
+              navigation.goBack()
+            }
+          >
+            <Ionicons
+              name="arrow-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+
+          <Text
+            style={
+              styles.headerTitle
+            }
+          >
+            Editar Paciente
+          </Text>
+
+          <View
+            style={{
+              width: 22,
+            }}
+          />
+
+        </View>
 
         {/* BODY */}
+
         <View style={styles.body}>
+
           <ScrollView
             showsVerticalScrollIndicator={
               false
             }
             contentContainerStyle={{
-              paddingBottom:
-                120,
+              paddingBottom: 120,
             }}
           >
+
             <Text
               style={
                 styles.sectionTitle
@@ -185,7 +342,8 @@ export default function Cadastro() {
               Dados do Paciente
             </Text>
 
-            {/* NOME COMPLETO */}
+            {/* NOME */}
+
             <Text
               style={styles.label}
             >
@@ -195,9 +353,7 @@ export default function Cadastro() {
             <TextInput
               placeholder="Digite o nome completo"
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
+              style={styles.input}
               value={
                 nomeCompleto
               }
@@ -207,14 +363,15 @@ export default function Cadastro() {
             />
 
             {/* DATA + IDADE */}
+
             <View
               style={styles.row}
             >
+
               <View
-                style={
-                  styles.half
-                }
+                style={styles.half}
               >
+
                 <Text
                   style={
                     styles.label
@@ -237,13 +394,13 @@ export default function Cadastro() {
                     setDataNascimento
                   }
                 />
+
               </View>
 
               <View
-                style={
-                  styles.half
-                }
+                style={styles.half}
               >
+
                 <Text
                   style={
                     styles.label
@@ -264,18 +421,21 @@ export default function Cadastro() {
                   }
                   keyboardType="numeric"
                 />
+
               </View>
+
             </View>
 
             {/* ASA + PESO */}
+
             <View
               style={styles.row}
             >
+
               <View
-                style={
-                  styles.half
-                }
+                style={styles.half}
               >
+
                 <Text
                   style={
                     styles.label
@@ -290,6 +450,7 @@ export default function Cadastro() {
                     styles.select
                   }
                 >
+
                   <Text
                     style={
                       styles.selectText
@@ -298,14 +459,21 @@ export default function Cadastro() {
                     {asa ||
                       'Selecione'}
                   </Text>
+
+                  <Ionicons
+                    name="chevron-down"
+                    size={18}
+                    color="#214192"
+                  />
+
                 </TouchableOpacity>
+
               </View>
 
               <View
-                style={
-                  styles.half
-                }
+                style={styles.half}
               >
+
                 <Text
                   style={
                     styles.label
@@ -326,10 +494,13 @@ export default function Cadastro() {
                   }
                   keyboardType="numeric"
                 />
+
               </View>
+
             </View>
 
             {/* PROCEDIMENTO */}
+
             <Text
               style={styles.label}
             >
@@ -340,9 +511,7 @@ export default function Cadastro() {
             <TextInput
               placeholder="Ex: Adenoidectomia"
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
+              style={styles.input}
               value={
                 procedimento
               }
@@ -352,6 +521,7 @@ export default function Cadastro() {
             />
 
             {/* COMORBIDADE */}
+
             <Text
               style={styles.label}
             >
@@ -362,9 +532,7 @@ export default function Cadastro() {
             <TextInput
               placeholder="Ex: Asma, cardiopatia..."
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
+              style={styles.input}
               value={
                 comorbidade
               }
@@ -374,6 +542,7 @@ export default function Cadastro() {
             />
 
             {/* OBSERVAÇÕES */}
+
             <Text
               style={styles.label}
             >
@@ -397,11 +566,13 @@ export default function Cadastro() {
             />
 
             {/* BOTÕES */}
+
             <View
               style={
                 styles.buttonRow
               }
             >
+
               <TouchableOpacity
                 style={
                   styles.cancelButton
@@ -424,10 +595,11 @@ export default function Cadastro() {
                   styles.saveButton
                 }
                 onPress={
-                  salvarPaciente
+                  editarPaciente
                 }
                 disabled={
-                  loading
+                  loading ||
+                  loadingPaciente
                 }
               >
                 <Text
@@ -440,13 +612,17 @@ export default function Cadastro() {
                     : 'Próximo'}
                 </Text>
               </TouchableOpacity>
+
             </View>
+
           </ScrollView>
+
         </View>
 
-        {/* FOOTER */}
         <AppFooter />
+
       </SafeAreaView>
+
     </LinearGradient>
   );
 }

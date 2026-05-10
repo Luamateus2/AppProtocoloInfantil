@@ -1,3 +1,5 @@
+// Historico.tsx
+
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -31,7 +33,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { db } from '../../../services/firebaseConfig';
 
-import AppFooter from '../../../components/Footer';
+import AppFooter from '../../../components/Footer/Footer';
 
 import styles from './styles';
 
@@ -179,6 +181,7 @@ export default function Historico() {
   }, []);
 
   return (
+
     <LinearGradient
       colors={['#214192', '#4293D5']}
       style={{ flex: 1 }}
@@ -201,11 +204,9 @@ export default function Historico() {
 
         </View>
 
-        {/* LINHA + LISTA */}
+        {/* CONTEÚDO */}
 
-        <View style={styles.timelineContainer}>
-
-          <View style={styles.line} />
+        <View style={styles.content}>
 
           {loading ? (
 
@@ -218,12 +219,13 @@ export default function Historico() {
           ) : (
 
             <ScrollView
-              contentContainerStyle={{
-                ...styles.list,
-                paddingBottom: 120,
-              }}
+              contentContainerStyle={styles.list}
               showsVerticalScrollIndicator={false}
             >
+
+              {/* LINHA DA TIMELINE */}
+
+              <View style={styles.absoluteLine} />
 
               {historico.map((item) => (
 
@@ -232,7 +234,15 @@ export default function Historico() {
                   style={styles.itemRow}
                 >
 
-                  <View style={styles.circle} />
+                  {/* BOLINHA */}
+
+                  <View style={styles.circleContainer}>
+
+                    <View style={styles.circle} />
+
+                  </View>
+
+                  {/* CARD */}
 
                   <View style={styles.card}>
 
@@ -244,13 +254,7 @@ export default function Historico() {
                       {item.titulo}
                     </Text>
 
-                    <Text
-                      style={{
-                        fontWeight: '600',
-                        color: '#214192',
-                        marginBottom: 5,
-                      }}
-                    >
+                    <Text style={styles.patient}>
                       {item.paciente}
                     </Text>
 
@@ -259,7 +263,7 @@ export default function Historico() {
                     </Text>
 
                     <Text style={styles.arrow}>
-                      ↗
+                      →
                     </Text>
 
                   </View>
@@ -271,20 +275,9 @@ export default function Historico() {
               {!loading &&
                 historico.length === 0 && (
 
-                <View
-                  style={{
-                    marginTop: 40,
-                    alignItems: 'center',
-                  }}
-                >
+                <View style={styles.emptyContainer}>
 
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: '#214192',
-                      fontWeight: '600',
-                    }}
-                  >
+                  <Text style={styles.emptyText}>
                     Nenhum histórico encontrado
                   </Text>
 
@@ -297,8 +290,6 @@ export default function Historico() {
           )}
 
         </View>
-
-        {/* FOOTER PADRÃO */}
 
         <AppFooter />
 

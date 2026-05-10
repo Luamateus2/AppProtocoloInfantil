@@ -28,8 +28,6 @@ export default function Inicio() {
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       
       <View style={styles.container}>
-
-        {/* LOGO */}
         <View style={styles.logoContainer}>
           <Image
             source={LogoPrincipal.logo}
@@ -38,7 +36,6 @@ export default function Inicio() {
           />
         </View>
 
-        {/* BOTÃO */}
         <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
            <TouchableOpacity activeOpacity={0.85} style={styles.button} onPress={() => navigation.navigate('Login')}>
             <Text style={styles.buttonText}>Entrar</Text>

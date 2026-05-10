@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   View,
@@ -12,9 +15,9 @@ import {
 
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { useNavigation } from '@react-navigation/native';
-
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -37,212 +40,217 @@ import {
   RootStackParamList,
 } from '../../../routes/types';
 
-import AppFooter from '../../../components/Footer';
+import {
+  useNavigation,
+} from '@react-navigation/native';
 
-type NavProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'Pacientes'
->;
+import AppFooter from '../../../components/Footer/Footer';
+import Header from '../../../components/HeaderSecundario';
+
+type NavProps =
+  NativeStackNavigationProp<
+    RootStackParamList,
+    'Pacientes'
+  >;
 
 type PacienteType = {
   id: string;
-
   nomeCompleto: string;
-
   idade: string;
-
   peso: string;
-
   asa: string;
-
   procedimento: string;
-
   comorbidade: string;
-
   dataNascimento: string;
 };
 
 export default function Pacientes() {
+  const navigation =
+    useNavigation<NavProps>();
 
-  const navigation = useNavigation<NavProps>();
+  const [busca, setBusca] =
+    useState('');
 
-  const [busca, setBusca] = useState('');
+  const [loading, setLoading] =
+    useState(true);
 
-  const [loading, setLoading] = useState(true);
-
-  const [pacientes,
-    setPacientes] = useState<PacienteType[]>([]);
+  const [
+    pacientes,
+    setPacientes,
+  ] = useState<
+    PacienteType[]
+  >([]);
 
   async function buscarPacientes() {
-
     try {
-
       setLoading(true);
 
       const q = query(
-        collection(db, 'pacientes'),
-        orderBy('createdAt', 'desc')
+        collection(
+          db,
+          'pacientes'
+        ),
+        orderBy(
+          'createdAt',
+          'desc'
+        )
       );
 
-      const querySnapshot = await getDocs(q);
+      const querySnapshot =
+        await getDocs(q);
 
-      const lista: PacienteType[] = [];
+      const lista:
+        PacienteType[] = [];
 
-      querySnapshot.forEach((doc) => {
-
-        lista.push({
-          id: doc.id,
-          ...doc.data(),
-        } as PacienteType);
-
-      });
+      querySnapshot.forEach(
+        (doc) => {
+          lista.push({
+            id: doc.id,
+            ...doc.data(),
+          } as PacienteType);
+        }
+      );
 
       setPacientes(lista);
-
     } catch (error) {
-
       console.log(error);
-
     } finally {
-
       setLoading(false);
-
     }
   }
 
   useEffect(() => {
-
     buscarPacientes();
-
   }, []);
 
   /* PESQUISA */
 
-  const pacientesFiltrados = pacientes.filter(
-    (paciente) => {
+  const pacientesFiltrados =
+    pacientes.filter(
+      (paciente) => {
+        const nome =
+          paciente.nomeCompleto
+            ?.toLowerCase()
+            .trim();
 
-      const nome =
-        paciente.nomeCompleto
-          ?.toLowerCase()
-          .trim();
+        const textoBusca =
+          busca
+            .toLowerCase()
+            .trim();
 
-      const textoBusca =
-        busca
-          .toLowerCase()
-          .trim();
-
-      return nome.includes(textoBusca);
-    }
-  );
+        return nome.includes(
+          textoBusca
+        );
+      }
+    );
 
   return (
     <LinearGradient
-      colors={['#214192', '#4293D5']}
+      colors={[
+        '#214192',
+        '#4293D5',
+      ]}
       style={{ flex: 1 }}
     >
-
-      <StatusBar barStyle="light-content" />
+      <StatusBar
+        barStyle="light-content"
+      />
 
       <SafeAreaView
         style={{ flex: 1 }}
         edges={['top']}
       >
-
         {/* HEADER */}
-
-        <View style={styles.header}>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.goBack()}
-          >
-
-            <Ionicons
-              name="arrow-back-outline"
-              size={26}
-              color="#FFFFFF"
-            />
-
-          </TouchableOpacity>
-
-          <Text style={styles.headerTitle}>
-            Pacientes
-          </Text>
-
-          <View style={{ width: 26 }} />
-
-        </View>
+        <Header
+          title="Pacientes"
+        />
 
         {/* BODY */}
-
         <View style={styles.body}>
-
-          {/* CAMPO BUSCA */}
-
-          <View style={styles.searchContainer}>
-
-            <View style={styles.searchBox}>
-
+          {/* PESQUISA */}
+          <View
+            style={
+              styles.searchContainer
+            }
+          >
+            <LinearGradient
+              colors={[
+                '#4C91E6',
+                '#214192',
+              ]}
+              start={{
+                x: 0,
+                y: 0,
+              }}
+              end={{
+                x: 1,
+                y: 0,
+              }}
+              style={
+                styles.searchBox
+              }
+            >
               <Ionicons
-                name="search-outline"
+                name="search"
                 size={20}
-                color="#214192"
+                color="#FFFFFF"
               />
 
               <TextInput
                 value={busca}
-                onChangeText={setBusca}
-                placeholder="Buscar paciente..."
-                placeholderTextColor="#8A94A6"
-                style={styles.searchInput}
+                onChangeText={
+                  setBusca
+                }
+                placeholder="João Silva"
+                placeholderTextColor="rgba(255,255,255,0.8)"
+                style={
+                  styles.searchInput
+                }
               />
-
-            </View>
+            </LinearGradient>
 
             <TouchableOpacity
-              style={styles.filterButton}
+              style={
+                styles.filterButton
+              }
             >
-
               <Ionicons
-                name="options-outline"
-                size={20}
+                name="filter"
+                size={18}
                 color="#fff"
               />
-
             </TouchableOpacity>
-
           </View>
 
           {/* LOADING */}
-
           {loading ? (
-
             <ActivityIndicator
               size="large"
               color="#214192"
-              style={{ marginTop: 40 }}
+              style={{
+                marginTop: 40,
+              }}
             />
-
           ) : (
-
             <ScrollView
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={
+                false
+              }
               contentContainerStyle={{
-                paddingBottom: 120,
+                paddingBottom:
+                  120,
               }}
             >
-
               {/* SEM RESULTADO */}
-
-              {pacientesFiltrados.length === 0 && (
-
+              {pacientesFiltrados.length ===
+                0 && (
                 <View
                   style={{
                     marginTop: 40,
-                    alignItems: 'center',
+                    alignItems:
+                      'center',
                   }}
                 >
-
                   <Ionicons
                     name="people-outline"
                     size={50}
@@ -252,93 +260,149 @@ export default function Pacientes() {
                   <Text
                     style={{
                       marginTop: 10,
-                      color: '#214192',
+                      color:
+                        '#214192',
                       fontSize: 16,
-                      fontWeight: '600',
+                      fontWeight:
+                        '600',
                     }}
                   >
-                    Nenhum paciente encontrado
+                    Nenhum paciente
+                    encontrado
                   </Text>
-
                 </View>
-
               )}
 
               {/* LISTA */}
+              {pacientesFiltrados.map(
+                (
+                  paciente
+                ) => (
+                  <TouchableOpacity
+                    key={
+                      paciente.id
+                    }
+                    style={
+                      styles.card
+                    }
+                    activeOpacity={
+                      0.8
+                    }
+                  >
+                    {/* AVATAR */}
+                    <View
+                      style={
+                        styles.avatar
+                      }
+                    >
+                      <Text
+                        style={
+                          styles.avatarText
+                        }
+                      >
+                        {paciente.nomeCompleto
+                          ?.split(
+                            ' '
+                          )
+                          .map(
+                            (
+                              n
+                            ) =>
+                              n[0]
+                          )
+                          .join('')
+                          .slice(
+                            0,
+                            2
+                          )}
+                      </Text>
+                    </View>
 
-              {pacientesFiltrados.map((paciente) => (
+                    {/* INFO */}
+                    <View
+                      style={
+                        styles.cardInfo
+                      }
+                    >
+                      <Text
+                        style={
+                          styles.name
+                        }
+                      >
+                        {
+                          paciente.nomeCompleto
+                        }
+                      </Text>
 
-                <TouchableOpacity
-                  key={paciente.id}
-                  style={styles.card}
-                  activeOpacity={0.8}
-                >
+                      <Text
+                        style={
+                          styles.details
+                        }
+                      >
+                        {
+                          paciente.idade
+                        }{' '}
+                        anos •{' '}
+                        {
+                          paciente.peso
+                        }{' '}
+                        kg
+                      </Text>
 
-                  {/* AVATAR */}
+                      <Text
+                        style={
+                          styles.details
+                        }
+                      >
+                        ASA:{' '}
+                        {
+                          paciente.asa
+                        }{' '}
+                        •{' '}
+                        {
+                          paciente.procedimento
+                        }
+                      </Text>
 
-                  <View style={styles.avatar}>
+                      <Text
+                        style={
+                          styles.details
+                        }
+                      >
+                        Comorbidade:{' '}
+                        {
+                          paciente.comorbidade
+                        }
+                      </Text>
 
-                    <Text style={styles.avatarText}>
+                      <Text
+                        style={
+                          styles.details
+                        }
+                      >
+                        Nascimento:{' '}
+                        {
+                          paciente.dataNascimento
+                        }
+                      </Text>
+                    </View>
 
-                      {paciente.nomeCompleto
-                        ?.split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .slice(0, 2)}
-
-                    </Text>
-
-                  </View>
-
-                  {/* INFORMAÇÕES */}
-
-                  <View style={styles.cardInfo}>
-
-                    <Text style={styles.name}>
-                      {paciente.nomeCompleto}
-                    </Text>
-
-                    <Text style={styles.details}>
-                      {paciente.idade} anos • {paciente.peso} kg
-                    </Text>
-
-                    <Text style={styles.details}>
-                      {paciente.asa} • {paciente.procedimento}
-                    </Text>
-
-                    <Text style={styles.details}>
-                      Comorbidade: {paciente.comorbidade}
-                    </Text>
-
-                    <Text style={styles.details}>
-                      Nascimento: {paciente.dataNascimento}
-                    </Text>
-
-                  </View>
-
-                  {/* SETA */}
-
-                  <Ionicons
-                    name="chevron-forward"
-                    size={20}
-                    color="#214192"
-                  />
-
-                </TouchableOpacity>
-
-              ))}
-
+                    {/* SETA */}
+                    <Ionicons
+                      name="return-up-forward"
+                      size={22}
+                      color="#2A4FB2"
+                    />
+                  </TouchableOpacity>
+                )
+              )}
             </ScrollView>
-
           )}
-
         </View>
 
-
+        {/* FOOTER */}
         <AppFooter />
-
       </SafeAreaView>
-
     </LinearGradient>
   );
 }

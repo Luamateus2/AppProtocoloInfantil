@@ -1,4 +1,5 @@
 import React, {
+  useEffect,
   useState,
 } from 'react';
 
@@ -33,37 +34,31 @@ import {
 
 import {
   doc,
-  updateDoc,
-  addDoc,
-  collection,
-  serverTimestamp,
   getDoc,
+  updateDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
 
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+import { RootStackParamList } from '../../../routes/types';
 
 import AppFooter from '../../../components/Footer/Footer';
-import Header from '../../../components/HeaderSecundario';
 
 import styles from './styles';
 
 type NavProps =
   NativeStackNavigationProp<
     RootStackParamList,
-    'PosOperatorio'
+    'EditarIntraOperatorio'
   >;
 
-type RouteParams =
-  RouteProp<
-    RootStackParamList,
-    'PosOperatorio'
-  >;
+type RouteParams = RouteProp<
+  RootStackParamList,
+  'EditarIntraOperatorio'
+>;
 
-export default function PosOperatorio() {
+export default function EditarIntraOperatorio() {
 
   const navigation =
     useNavigation<NavProps>();
@@ -74,56 +69,58 @@ export default function PosOperatorio() {
   const { pacienteId } =
     route.params;
 
-  const [eva, setEva] =
-    useState('');
-
-  const [
-    riscoObstrucao,
-    setRiscoObstrucao,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    alimentacaoPrecoce,
-    setAlimentacaoPrecoce,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    criterioAlta,
-    setCriterioAlta,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    tempoAlta,
-    setTempoAlta,
-  ] =
-    useState(new Date());
-
-  const [
-    showTimePicker,
-    setShowTimePicker,
-  ] = useState(false);
-
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
-
   const [loading,
     setLoading] =
     useState(false);
 
-  const formatTime = (
+  const [loadingPaciente,
+    setLoadingPaciente] =
+    useState(true);
+
+  const [ventilacaoProtetora,
+    setVentilacaoProtetora] =
+    useState<boolean | null>(
+      null
+    );
+
+  const [analgesiaMultimodal,
+    setAnalgesiaMultimodal] =
+    useState<boolean | null>(
+      null
+    );
+
+  const [dexametasona,
+    setDexametasona] =
+    useState<boolean | null>(
+      null
+    );
+
+  const [
+    monitorizacaoCapnografica,
+    setMonitorizacaoCapnografica,
+  ] = useState<boolean | null>(
+    null
+  );
+
+  const [tempoCirurgia,
+    setTempoCirurgia] =
+    useState(new Date());
+
+  const [showTimePicker,
+    setShowTimePicker] =
+    useState(false);
+
+  const [complicacoes,
+    setComplicacoes] =
+    useState('');
+
+  const [observacoes,
+    setObservacoes] =
+    useState('');
+
+  function formatTime(
     date: Date
-  ) => {
+  ) {
     return date.toLocaleTimeString(
       'pt-BR',
       {
@@ -131,23 +128,148 @@ export default function PosOperatorio() {
         minute: '2-digit',
       }
     );
-  };
+  }
+
+  function parseTime(
+    timeString: string
+  ) {
+
+    const date =
+      new Date();
+
+    if (!timeString)
+      return date;
+
+    const [
+      hours,
+      minutes,
+    ] =
+      timeString.split(':');
+
+    date.setHours(
+      Number(hours)
+    );
+
+    date.setMinutes(
+      Number(minutes)
+    );
+
+    return date;
+  }
 
   const onChangeTime = (
     _: any,
     selectedDate?: Date
   ) => {
 
-    setShowTimePicker(false);
+    setShowTimePicker(
+      false
+    );
 
     if (selectedDate) {
-      setTempoAlta(
+      setTempoCirurgia(
         selectedDate
       );
     }
   };
 
-  async function salvarRegistro() {
+  /* CARREGAR DADOS */
+
+  async function carregarDados() {
+
+    try {
+
+      const pacienteRef =
+        doc(
+          db,
+          'pacientes',
+          pacienteId
+        );
+
+      const snapshot =
+        await getDoc(
+          pacienteRef
+        );
+
+      if (
+        !snapshot.exists()
+      ) {
+
+        Alert.alert(
+          'Erro',
+          'Paciente não encontrado.'
+        );
+
+        navigation.goBack();
+
+        return;
+      }
+
+      const data =
+        snapshot.data();
+
+      const intra =
+        data.intraOperatorio;
+
+      if (!intra)
+        return;
+
+      setVentilacaoProtetora(
+        intra.ventilacaoProtetora ??
+          null
+      );
+
+      setAnalgesiaMultimodal(
+        intra.analgesiaMultimodal ??
+          null
+      );
+
+      setDexametasona(
+        intra.dexametasona ??
+          null
+      );
+
+      setMonitorizacaoCapnografica(
+        intra.monitorizacaoCapnografica ??
+          null
+      );
+
+      setTempoCirurgia(
+        parseTime(
+          intra.tempoCirurgia
+        )
+      );
+
+      setComplicacoes(
+        intra.complicacoes ||
+          ''
+      );
+
+      setObservacoes(
+        intra.observacoes ||
+          ''
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível carregar os dados.'
+      );
+
+    } finally {
+
+      setLoadingPaciente(
+        false
+      );
+    }
+  }
+
+  /* SALVAR */
+
+  async function salvarEdicao() {
 
     try {
 
@@ -163,60 +285,36 @@ export default function PosOperatorio() {
       await updateDoc(
         pacienteRef,
         {
-          posOperatorio: {
-            eva,
-            riscoObstrucao,
-            alimentacaoPrecoce,
-            criterioAlta,
-            tempoAlta:
+          intraOperatorio: {
+
+            ventilacaoProtetora,
+
+            analgesiaMultimodal,
+
+            dexametasona,
+
+            monitorizacaoCapnografica,
+
+            tempoCirurgia:
               formatTime(
-                tempoAlta
+                tempoCirurgia
               ),
+
+            complicacoes,
+
             observacoes,
           },
-        }
-      );
 
-      const pacienteSnap =
-        await getDoc(
-          pacienteRef
-        );
-
-      const pacienteData =
-        pacienteSnap.data();
-
-      await addDoc(
-        collection(
-          db,
-          'historico'
-        ),
-        {
-          pacienteId,
-
-          nome:
-            pacienteData?.nomeCompleto ||
-            'Paciente',
-
-          tipo:
-            'Pós-operatório',
-
-          data:
-            new Date().toLocaleDateString(
-              'pt-BR'
-            ),
-
-          createdAt:
+          updatedAt:
             serverTimestamp(),
         }
       );
 
-      Alert.alert(
-        'Sucesso',
-        'Registro salvo com sucesso.'
-      );
-
       navigation.navigate(
-        'Home'
+        'EditarPosOperatorio',
+        {
+          pacienteId,
+        }
       );
 
     } catch (error) {
@@ -234,13 +332,21 @@ export default function PosOperatorio() {
     }
   }
 
+  useEffect(() => {
+
+    carregarDados();
+
+  }, []);
+
   const BooleanSelector = ({
     label,
     value,
     onChange,
   }: {
     label: string;
-    value: boolean | null;
+    value:
+      | boolean
+      | null;
     onChange: (
       value: boolean
     ) => void;
@@ -322,10 +428,37 @@ export default function PosOperatorio() {
         edges={['top']}
       >
 
-        {/* HEADER REUTILIZÁVEL */}
-        <Header title="Pós-Operatório" />
+        <View
+          style={styles.header}
+        >
 
-        {/* BODY */}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.goBack()
+            }
+          >
+            <Ionicons
+              name="arrow-back"
+              size={22}
+              color="#fff"
+            />
+          </TouchableOpacity>
+
+          <Text
+            style={
+              styles.headerTitle
+            }
+          >
+            Editar
+            Intra-Operatório
+          </Text>
+
+          <View
+            style={{ width: 22 }}
+          />
+
+        </View>
+
         <View style={styles.body}>
 
           <ScrollView
@@ -333,82 +466,54 @@ export default function PosOperatorio() {
               false
             }
             contentContainerStyle={{
-              paddingBottom:
-                120,
+              paddingBottom: 120,
             }}
           >
 
-            <View
-              style={
-                styles.dateContainer
+            <BooleanSelector
+              label="Ventilação protetora"
+              value={
+                ventilacaoProtetora
               }
-            >
-              <Text
-                style={
-                  styles.dateText
-                }
-              >
-                {new Date().toLocaleDateString(
-                  'pt-BR'
-                )}
-              </Text>
-            </View>
-
-            <Text
-              style={styles.label}
-            >
-              Escala de dor
-              (EVA de 0 a 10)
-            </Text>
-
-            <TextInput
-              value={eva}
-              onChangeText={
-                setEva
-              }
-              keyboardType="numeric"
-              placeholder="Ex: 7"
-              placeholderTextColor="#777"
-              maxLength={2}
-              style={
-                styles.input
+              onChange={
+                setVentilacaoProtetora
               }
             />
 
             <BooleanSelector
-              label="Risco de obstrução de vias aéreas"
+              label="Analgesia multimodal"
               value={
-                riscoObstrucao
+                analgesiaMultimodal
               }
               onChange={
-                setRiscoObstrucao
+                setAnalgesiaMultimodal
               }
             />
 
             <BooleanSelector
-              label="Alimentação precoce"
+              label="Dexametasona administrada"
               value={
-                alimentacaoPrecoce
+                dexametasona
               }
               onChange={
-                setAlimentacaoPrecoce
+                setDexametasona
               }
             />
 
             <BooleanSelector
-              label="Critério de alta"
+              label="Monitorização capnográfica"
               value={
-                criterioAlta
+                monitorizacaoCapnografica
               }
               onChange={
-                setCriterioAlta
+                setMonitorizacaoCapnografica
               }
             />
 
             <Text
               style={styles.label}
             >
-              Tempo até alta
+              Tempo de cirurgia
             </Text>
 
             <TouchableOpacity
@@ -421,14 +526,13 @@ export default function PosOperatorio() {
                 )
               }
             >
-
               <Text
                 style={
                   styles.timeText
                 }
               >
                 {formatTime(
-                  tempoAlta
+                  tempoCirurgia
                 )}
               </Text>
 
@@ -437,13 +541,12 @@ export default function PosOperatorio() {
                 size={20}
                 color="#214192"
               />
-
             </TouchableOpacity>
 
             {showTimePicker && (
               <DateTimePicker
                 value={
-                  tempoAlta
+                  tempoCirurgia
                 }
                 mode="time"
                 is24Hour
@@ -462,19 +565,39 @@ export default function PosOperatorio() {
             <Text
               style={styles.label}
             >
-              Observações
-              pós-operatórias
+              Complicações
             </Text>
 
             <TextInput
+              value={
+                complicacoes
+              }
+              onChangeText={
+                setComplicacoes
+              }
               multiline
+              placeholder="Descreva se houver..."
+              placeholderTextColor="#777"
+              style={
+                styles.textArea
+              }
+            />
+
+            <Text
+              style={styles.label}
+            >
+              Observações
+            </Text>
+
+            <TextInput
               value={
                 observacoes
               }
               onChangeText={
                 setObservacoes
               }
-              placeholder="Digite observações..."
+              multiline
+              placeholder="Observações adicionais..."
               placeholderTextColor="#777"
               style={
                 styles.textArea
@@ -484,7 +607,7 @@ export default function PosOperatorio() {
             <LinearGradient
               colors={[
                 '#3A7BD5',
-                '#214192',
+                '#2A5298',
               ]}
               style={
                 styles.button
@@ -492,17 +615,18 @@ export default function PosOperatorio() {
             >
 
               <TouchableOpacity
-                onPress={
-                  salvarRegistro
-                }
-                disabled={
-                  loading
-                }
                 style={{
                   width: '100%',
                   alignItems:
                     'center',
                 }}
+                onPress={
+                  salvarEdicao
+                }
+                disabled={
+                  loading ||
+                  loadingPaciente
+                }
               >
                 <Text
                   style={
@@ -511,7 +635,7 @@ export default function PosOperatorio() {
                 >
                   {loading
                     ? 'Salvando...'
-                    : 'Salvar Registro'}
+                    : 'Próximo'}
                 </Text>
               </TouchableOpacity>
 
