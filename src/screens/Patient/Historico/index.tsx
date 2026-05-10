@@ -34,6 +34,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { db } from '../../../services/firebaseConfig';
 
 import AppFooter from '../../../components/Footer/Footer';
+import Header from '../../../components/HeaderSecundario';
 
 import styles from './styles';
 
@@ -194,15 +195,11 @@ export default function Historico() {
         edges={['top']}
       >
 
-        {/* HEADER */}
-
-        <View style={styles.header}>
-
-          <Text style={styles.headerTitle}>
-            Histórico
-          </Text>
-
-        </View>
+         {/* HEADER REUTILIZÁVEL */}
+                <Header
+                  title="Histórico"
+                />
+        
 
         {/* CONTEÚDO */}
 

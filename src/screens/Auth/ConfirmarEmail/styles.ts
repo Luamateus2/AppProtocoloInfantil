@@ -3,81 +3,104 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eaeaea',
+  },
+
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
 
   header: {
-    height: 140,
+    height: 120,
+    backgroundColor: '#2F63B5',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   logo: {
-    width: 160,
-    height: 50,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 220,
+    height: 70,
   },
 
   content: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#F6F6F6',
     alignItems: 'center',
+    paddingHorizontal: 30,
+    paddingTop: 35,
   },
 
   topRow: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-  },
-
-  back: {
-    fontSize: 20,
-    marginRight: 10,
-    color: '#1E3C72',
+    marginBottom: 40,
   },
 
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E3C72',
+    fontWeight: '700',
+    color: '#2C4FA3',
+    marginLeft: 12,
   },
 
-  icon: {
-    marginVertical: 30,
+  iconContainer: {
+    marginBottom: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  confirmarImage: {
+    width: 180,
+    height: 180,
   },
 
   text: {
-    textAlign: 'center',
+    fontSize: 18,
     color: '#333',
-    marginBottom: 10,
+    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: 16,
   },
 
   email: {
-    color: '#1E3C72',
-    fontWeight: 'bold',
-    marginBottom: 15,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#4A90E2',
+    marginBottom: 22,
+    textAlign: 'center',
   },
 
-  textSmall: {
+  description: {
+    fontSize: 16,
+    color: '#444',
     textAlign: 'center',
-    color: '#333',
-    marginBottom: 30,
-    fontSize: 13,
+    lineHeight: 24,
+    marginBottom: 40,
+    paddingHorizontal: 10,
+  },
+
+  buttonWrapper: {
+    width: '100%',
+    marginTop: 10,
   },
 
   button: {
-    backgroundColor: '#4A90E2',
-    borderRadius: 25,
-    paddingVertical: 15,
-    paddingHorizontal: 40,
+    height: 58,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+
+  footer: {
+    height: 18,
+    backgroundColor: '#2F63B5',
   },
 });
 

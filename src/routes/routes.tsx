@@ -4,6 +4,7 @@ import Inicio from "../screens/Inicio";
 import Login from "../screens/Auth/Login";
 import Cadastro from "../screens/Auth/Cadastro";
 import RecuperarSenha from "../screens/Auth/RecuperarSenha";
+import ConfirmarEmail from "../screens/Auth/ConfirmarEmail";
 import Home from "../screens/Home";
 import NovoPaciente from "../screens/Patient/NovoPaciente";
 import NovaSenha from "../screens/Auth/NovaSenha";
@@ -25,6 +26,7 @@ export default function Routes() {
       <Stack.Screen name = "Inicio" component={Inicio} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Cadastro" component={Cadastro} />
+      <Stack.Screen name ="ConfirmarEmail" component={ConfirmarEmail}/>
       <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
       <Stack.Screen name = "Home" component={Home} />
       <Stack.Screen name = "NovoPaciente" component={NovoPaciente} />

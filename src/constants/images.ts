@@ -5,3 +5,6 @@ export const LogoPrincipal = {
 export const LogoSecundaria = {
   logo: require('../../assets/images/logotransparente.png'),
 };
+export const ConfirmarEmail = {
+  logo: require('../../assets/images/confirmar.png')
+}

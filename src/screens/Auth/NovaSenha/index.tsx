@@ -1,84 +1,109 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Image,
 } from 'react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+
 import styles from './styles';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../routes/types';
+import { LogoSecundaria } from '../../../constants/images';
 
-type NavProps = NativeStackNavigationProp<RootStackParamList, 'NovaSenha'>;
+export default function RecuperarSenha() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-export default function NovaSenha() {
-  const navigation = useNavigation<NavProps>();
+  const navigation = useNavigation<any>();
+
+  function handleContinuar() {
+    if (!email.trim()) {
+      alert('Digite seu email');
+      return;
+    }
+
+    navigation.navigate('ConfirmarEmail', {
+      email: email.trim(),
+    });
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      
-      {/* HEADER */}
-      <View style={styles.header}>
-        <View style={styles.logo}>
-          <Text>LOGO</Text>
-        </View>
-      </View>
-
-      {/* CONTEÚDO */}
-      <View style={styles.content}>
-        <Text style={styles.title}>Criar Nova senha</Text>
-
-        <Text style={styles.subtitle}>
-          Crie uma senha forte para manter sua conta protegida.
-          Depois é só confirmar e voltar ao aplicativo.
-        </Text>
-
-        <TextInput
-          placeholder="Senha"
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Confirmar senha"
-          secureTextEntry
-          style={styles.input}
-        />
-
-        {/* REGRAS */}
-        <View style={styles.requisitos}>
-          <Text style={styles.requisito}>• Mínimo de 8 caracteres</Text>
-          <Text style={styles.requisito}>• Uma letra maiúscula</Text>
-          <Text style={styles.requisito}>• Uma letra minúscula</Text>
-          <Text style={styles.requisito}>• Um número</Text>
-          <Text style={styles.requisito}>• Um caractere especial (!@#$...)</Text>
-        </View>
-
-        {/* BOTÕES */}
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.goBack()}
+    <LinearGradient
+      colors={['#4A90E2', '#1E3C72']}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView
+        style={{ flex: 1 }}
+        edges={['top']}
+      >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={
+            Platform.OS === 'ios'
+              ? 'padding'
+              : undefined
+          }
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
           >
-            <View style={styles.cancelButton}>
-              <Text style={styles.cancelText}>Cancelar</Text>
+            <View style={styles.top}>
+              <Image
+                source={LogoSecundaria.logo}
+                style={styles.logo}
+              />
             </View>
-          </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.8}>
-            <LinearGradient
-              colors={['#4A90E2', '#1E3C72']}
-              style={styles.saveButton}
-            >
-              <Text style={styles.saveText}>Salvar</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <View style={styles.content}>
+              <Text style={styles.title}>
+                Esqueceu a senha?
+              </Text>
 
-    </SafeAreaView>
+              <Text style={styles.description}>
+                Digite o e-mail cadastrado
+                para continuar.
+              </Text>
+
+              <Text style={styles.label}>
+                Email
+              </Text>
+
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Digite seu email"
+                placeholderTextColor="#999"
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <TouchableOpacity
+                style={styles.buttonWrapper}
+                onPress={handleContinuar}
+                disabled={loading}
+              >
+                <LinearGradient
+                  colors={['#4293D5', '#214192']}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    Continuar
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

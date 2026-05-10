@@ -1,87 +1,87 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
-  },
-
-  header: {
-    height: 120,
-    backgroundColor: '#2F5DA8',
-    justifyContent: 'center',
+  top: {
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 40,
+    marginBottom: 30,
   },
 
   logo: {
-    backgroundColor: '#DDD',
-    paddingHorizontal: 40,
-    paddingVertical: 10,
-    borderRadius: 6,
+    width: 180,
+    height: 180,
+    resizeMode: 'contain',
   },
 
   content: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: '#FFF',
+    marginHorizontal: 20,
+    borderRadius: 28,
+    paddingHorizontal: 25,
+    paddingVertical: 30,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    marginBottom: 30,
   },
 
   title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2F5DA8',
-    marginBottom: 8,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#214192',
+    marginBottom: 12,
+    textAlign: 'center',
   },
 
-  subtitle: {
-    fontSize: 13,
-    color: '#2F5DA8',
-    marginBottom: 20,
+  description: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 28,
+  },
+
+  label: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#214192',
+    marginBottom: 10,
   },
 
   input: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#2F5DA8',
-    marginBottom: 12,
+    height: 58,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    borderWidth: 1.5,
+    borderColor: '#D9E2F2',
+    fontSize: 15,
+    color: '#1F2937',
+    marginBottom: 25,
   },
 
-  requisitos: {
-    marginBottom: 20,
+  buttonWrapper: {
+    borderRadius: 18,
+    overflow: 'hidden',
   },
 
-  requisito: {
-    fontSize: 12,
-    color: '#2F5DA8',
-    marginBottom: 4,
+  button: {
+    height: 58,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 18,
   },
 
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  cancelButton: {
-    borderWidth: 1,
-    borderColor: '#2F5DA8',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-  },
-
-  cancelText: {
-    color: '#2F5DA8',
-    fontWeight: '500',
-  },
-
-  saveButton: {
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-  },
-
-  saveText: {
+  buttonText: {
     color: '#FFF',
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '700',
   },
 });

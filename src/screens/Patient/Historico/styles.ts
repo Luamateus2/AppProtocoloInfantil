@@ -4,17 +4,7 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
 
-  header: {
-    height: 90,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  headerTitle: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: '700',
-  },
+ 
 
   content: {
     flex: 1,
