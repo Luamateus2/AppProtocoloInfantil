@@ -7,4 +7,7 @@ export const LogoSecundaria = {
 };
 export const ConfirmarEmail = {
   logo: require('../../assets/images/confirmar.png')
-}
+};
+export const voltarIcon = {
+  logo: require('../../assets/images/voltar.png')
+};

@@ -1,190 +1,106 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  header: {
-    height: 110,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-
-  back: {
-    position: 'absolute',
-    left: 20,
-    bottom: 20,
-  },
-
-  title: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '700',
-  },
-
   body: {
     flex: 1,
-    backgroundColor: '#F4F6FA',
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    marginTop: -10,
+    backgroundColor: '#ECECEC',
+    paddingHorizontal: 22,
+    paddingTop: 18,
   },
 
   date: {
     alignSelf: 'center',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#214192',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 22,
-    marginBottom: 26,
+    borderRadius: 30,
+    paddingVertical: 8,
+    paddingHorizontal: 28,
     backgroundColor: '#fff',
+    marginBottom: 18,
   },
 
   dateText: {
     color: '#214192',
-    fontWeight: '600',
     fontSize: 13,
+    fontWeight: '700',
+  },
+
+  section: {
+    color: '#214192',
+    fontWeight: '800',
+    fontSize: 18,
+    marginBottom: 14,
   },
 
   row: {
-    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: 1.2,
+    borderBottomColor: '#CFCFCF',
   },
 
   label: {
     color: '#214192',
-    fontWeight: '600',
-    fontSize: 15,
-    marginBottom: 10,
-  },
-
-  booleanContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-
-  booleanButton: {
+    fontSize: 16,
+    fontWeight: '700',
     flex: 1,
-    height: 48,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#D5DCE8',
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
-  booleanButtonActive: {
-    backgroundColor: '#214192',
-    borderColor: '#214192',
-  },
-
-  booleanButtonActiveRed: {
-    backgroundColor: '#D9534F',
-    borderColor: '#D9534F',
-  },
-
-  booleanText: {
-    color: '#214192',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-
-  booleanTextActive: {
-    color: '#fff',
-  },
-
-  timeButton: {
-    height: 52,
-    borderWidth: 1,
-    borderColor: '#D5DCE8',
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
+  input: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
-
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 2,
+    borderColor: '#214192',
+    borderRadius: 18,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    width: 140,
+    backgroundColor: '#fff',
   },
 
-  timeText: {
+  inputText: {
     color: '#214192',
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: '600',
   },
 
-  textArea: {
-    borderWidth: 1,
-    borderColor: '#D5DCE8',
-    borderRadius: 14,
-    padding: 14,
-    minHeight: 110,
-    textAlignVertical: 'top',
+  dropdown: {
     backgroundColor: '#fff',
-    color: '#214192',
-    fontSize: 15,
-    marginBottom: 22,
+    borderRadius: 10,
+    marginTop: 6,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
 
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+  option: {
+    padding: 10,
+  },
+
+  textArea: {
+    borderWidth: 2,
+    borderColor: '#214192',
+    borderRadius: 14,
+    height: 110,
+    backgroundColor: '#fff',
+    padding: 14,
+    textAlignVertical: 'top',
+    marginTop: 8,
   },
 
   button: {
-    borderRadius: 18,
-    paddingVertical: 16,
+    marginTop: 30,
+    borderRadius: 30,
+    paddingVertical: 14,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-
-    shadowColor: '#214192',
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 4,
   },
 
   buttonText: {
     color: '#fff',
+    fontSize: 15,
     fontWeight: '700',
-    fontSize: 16,
   },
-
-  navWrapper: {
-    backgroundColor: '#214192',
-  },
-
-  nav: {
-    height: 72,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingBottom: 6,
-  },
-
-  navItem: {
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.4)',
-    borderRadius: 14,
-    padding: 10,
-  },
-  input: {
-  minHeight: 110,
-  backgroundColor: '#fff',
-  borderRadius: 16,
-  paddingHorizontal: 16,
-  paddingTop: 14,
-  color: '#214192',
-  fontSize: 15,
-  marginTop: 10,
-  textAlignVertical: 'top',
-},
 });

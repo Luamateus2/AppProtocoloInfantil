@@ -1,190 +1,143 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  header: {
-    height: 110,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-
-  headerTitle: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '700',
+  container: {
+    flex: 1,
+    backgroundColor: '#214192',
   },
 
   body: {
     flex: 1,
-    backgroundColor: '#F4F6FA',
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    marginTop: -10,
+    backgroundColor: '#ECECEC',
+    paddingHorizontal: 22,
+    paddingTop: 18,
   },
 
   dateContainer: {
     alignSelf: 'center',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#214192',
-    paddingVertical: 6,
-    paddingHorizontal: 22,
-    borderRadius: 20,
-    marginBottom: 26,
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    borderRadius: 30,
+    marginBottom: 18,
     backgroundColor: '#fff',
   },
 
   dateText: {
     color: '#214192',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 13,
   },
 
   row: {
-    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1.2,
+    borderBottomColor: '#CFCFCF',
   },
 
   label: {
     color: '#214192',
-    fontWeight: '600',
-    fontSize: 15,
-    marginBottom: 10,
-  },
-
-  booleanContainer: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-
-  booleanButton: {
+    fontWeight: '700',
+    fontSize: 16,
     flex: 1,
-    height: 48,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: '#D5DCE8',
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginRight: 12,
   },
 
-  booleanButtonActive: {
-    backgroundColor: '#214192',
-    borderColor: '#214192',
-  },
-
-  booleanButtonActiveRed: {
-    backgroundColor: '#D9534F',
-    borderColor: '#D9534F',
-  },
-
-  booleanText: {
-    color: '#214192',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-
-  booleanTextActive: {
-    color: '#fff',
-  },
-
-  timeButton: {
-    height: 52,
-    borderWidth: 1,
-    borderColor: '#D5DCE8',
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
+  select: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
 
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
-  },
+    borderWidth: 2,
+    borderColor: '#214192',
+    borderRadius: 18,
 
-  timeText: {
-    color: '#214192',
-    fontSize: 15,
-    fontWeight: '600',
-  },
+    paddingVertical: 7,
+    paddingHorizontal: 10,
 
-  input: {
-    height: 52,
-    borderWidth: 1,
-    borderColor: '#D5DCE8',
-    borderRadius: 14,
-    paddingHorizontal: 16,
+    minWidth: 150,
+    maxWidth: 180,
+
     backgroundColor: '#fff',
+  },
+
+  selectText: {
     color: '#214192',
-    fontSize: 15,
-    marginBottom: 20,
+    fontSize: 13,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 6,
+  },
+
+  dropdown: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginTop: 6,
+
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+
+    overflow: 'hidden',
 
     shadowColor: '#000',
-    shadowOpacity: 0.04,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
+  },
+
+  option: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E5E5E5',
+  },
+
+  obsLabel: {
+    color: '#214192',
+    fontWeight: '700',
+    fontSize: 16,
+    marginTop: 16,
+    marginBottom: 10,
   },
 
   textArea: {
-    borderWidth: 1,
-    borderColor: '#D5DCE8',
+    borderWidth: 2,
+    borderColor: '#214192',
     borderRadius: 14,
-    padding: 14,
-    minHeight: 110,
-    textAlignVertical: 'top',
-    backgroundColor: '#fff',
-    color: '#214192',
-    fontSize: 15,
-    marginBottom: 22,
+    padding: 12,
+    height: 95,
 
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: '#fff',
+    textAlignVertical: 'top',
+
+    fontSize: 13,
+    color: '#000',
   },
 
   button: {
-    borderRadius: 18,
-    paddingVertical: 16,
+    backgroundColor: '#214192',
+    borderRadius: 30,
+    paddingVertical: 14,
+
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 20,
 
-    shadowColor: '#214192',
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
+    marginTop: 25,
+    marginBottom: 30,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
     elevation: 4,
   },
 
   buttonText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 16,
-  },
-
-  navWrapper: {
-    backgroundColor: '#214192',
-  },
-
-  nav: {
-    height: 72,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingBottom: 6,
-  },
-
-  navItem: {
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.4)',
-    borderRadius: 14,
-    padding: 10,
+    fontSize: 14,
   },
 });

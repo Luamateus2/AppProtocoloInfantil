@@ -16,9 +16,9 @@ const styles = StyleSheet.create({
 
   headerTitle: {
     color: '#fff',
-    fontSize:24,
+    fontSize: 24,
     fontWeight: '700',
-    paddingBottom:14,
+    paddingBottom: 14,
   },
 
   body: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderWidth: 1.5,
+    borderWidth: 2.5,
     borderColor: '#214192',
     fontSize: 13,
   },
@@ -75,13 +75,41 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderWidth: 1.5,
+    borderWidth: 2.5,
     borderColor: '#2A5298',
   },
 
   selectText: {
     fontSize: 13,
     color: '#777',
+  },
+
+  /* DROPDOWN ASA */
+  dropdown: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#D9D9D9',
+    marginTop: 6,
+    overflow: 'hidden',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  option: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E5E5E5',
+  },
+
+  optionText: {
+    fontSize: 14,
+    color: '#214192',
+    fontWeight: '500',
   },
 
   buttonRow: {

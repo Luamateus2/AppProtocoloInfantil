@@ -1,6 +1,4 @@
-import React, {
-  useState,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   View,
@@ -8,19 +6,13 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Platform,
   TextInput,
   Alert,
 } from 'react-native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-
 import { LinearGradient } from 'expo-linear-gradient';
-
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import {
@@ -29,398 +21,293 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 
-import {
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
   doc,
+  getDoc,
   updateDoc,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+
+import { RootStackParamList } from '../../../routes/types';
+
+import HeaderSecundario from '../../../components/HeaderSecundario';
 import AppFooter from '../../../components/Footer/Footer';
-import Header from '../../../components/HeaderSecundario';
+
 import styles from './styles';
 
 type NavProps =
-  NativeStackNavigationProp<
-    RootStackParamList,
-    'PreOperatorio'
-  >;
+  NativeStackNavigationProp<RootStackParamList>;
 
-type RouteParams =
-  RouteProp<
-    RootStackParamList,
-    'PreOperatorio'
-  >;
+type RouteProps =
+  RouteProp<RootStackParamList, 'PreOperatorio'>;
 
-export default function Preoperatorio() {
-  const navigation =
-    useNavigation<NavProps>();
+export default function EditarPreOperatorio() {
+  const navigation = useNavigation<NavProps>();
+  const route = useRoute<RouteProps>();
 
-  const route =
-    useRoute<RouteParams>();
+  const { pacienteId } = route.params;
 
-  const { pacienteId } =
-    route.params;
+  /* STATES */
+  const [date, setDate] = useState(new Date());
+  const [showDate, setShowDate] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [horario, setHorario] = useState(new Date());
+  const [showHorario, setShowHorario] = useState(false);
 
-  const [date, setDate] =
-    useState(new Date());
+  const [jejum, setJejum] = useState(new Date());
+  const [showJejum, setShowJejum] = useState(false);
 
-  const [showDate,
-    setShowDate] =
-    useState(false);
+  const [estadoGeral, setEstadoGeral] = useState('');
+  const [viaAerea, setViaAerea] = useState('');
+  const [medicacao, setMedicacao] = useState('');
+  const [observacoes, setObservacoes] = useState('');
 
-  const [tempoJejum,
-    setTempoJejum] =
-    useState(new Date());
+  const [openSelect, setOpenSelect] = useState('');
 
-  const [
-    showTimePicker,
-    setShowTimePicker,
-  ] = useState(false);
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString('pt-BR');
 
-  const [
-    jejumLiquidos,
-    setJejumLiquidos,
-  ] =
-    useState<boolean | null>(
-      null
-    );
+  const formatHour = (d: Date) =>
+    d.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
-  const [
-    carboidratoPreOperatorio,
-    setCarboidratoPreOperatorio,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    viaAereaDificil,
-    setViaAereaDificil,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    avaliacaoAnsiedade,
-    setAvaliacaoAnsiedade,
-  ] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
-
-  const formatDate = (
-    d: Date
-  ) =>
-    d.toLocaleDateString(
-      'pt-BR'
-    );
-
-  const formatTime = (
-    date: Date
-  ) => {
-    return date.toLocaleTimeString(
-      'pt-BR',
-      {
-        hour: '2-digit',
-        minute: '2-digit',
-      }
-    );
-  };
-
-  const onChangeTime = (
-    _: any,
-    selectedDate?: Date
-  ) => {
-    setShowTimePicker(false);
-
-    if (selectedDate) {
-      setTempoJejum(
-        selectedDate
-      );
-    }
-  };
-
-  async function salvarPreOperatorio() {
+  /* CARREGAR DADOS */
+  async function carregarDados() {
     try {
-      setLoading(true);
+      const ref = doc(db, 'preOperatorio', pacienteId);
+      const snap = await getDoc(ref);
 
-      const pacienteRef =
-        doc(
-          db,
-          'pacientes',
-          pacienteId
-        );
+      if (snap.exists()) {
+        const data = snap.data();
 
-      await updateDoc(
-        pacienteRef,
-        {
-          preOperatorio: {
-            data:
-              formatDate(
-                date
-              ),
-
-            jejumLiquidos,
-
-            tempoJejum:
-              formatTime(
-                tempoJejum
-              ),
-
-            carboidratoPreOperatorio,
-
-            viaAereaDificil,
-
-            avaliacaoAnsiedade,
-
-            observacoes,
-          },
-        }
-      );
-
-      navigation.navigate(
-        'IntraOperatorio',
-        {
-          pacienteId,
-        }
-      );
+        setEstadoGeral(data.estadoGeral || 'Estável');
+        setViaAerea(data.viaAerea || 'Mallampati I');
+        setMedicacao(data.medicacao || 'Nenhuma');
+        setObservacoes(data.observacoes || '');
+      }
     } catch (error) {
       console.log(error);
-
-      Alert.alert(
-        'Erro',
-        'Não foi possível salvar.'
-      );
-    } finally {
-      setLoading(false);
     }
   }
 
-  const BooleanSelector = ({
-    label,
-    value,
-    onChange,
-  }: {
-    label: string;
-    value: boolean | null;
-    onChange: (
-      value: boolean
-    ) => void;
-  }) => (
-    <View style={styles.row}>
-      <Text style={styles.label}>
-        {label}
-      </Text>
+  /* SALVAR E ATUALIZAR */
+  async function salvar() {
+    try {
+      const ref = doc(db, 'preOperatorio', pacienteId);
 
-      <View
-        style={
-          styles.booleanContainer
-        }
-      >
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === true &&
-              styles.booleanButtonActive,
-          ]}
-          onPress={() =>
-            onChange(true)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === true &&
-                styles.booleanTextActive,
-            ]}
-          >
-            Sim
-          </Text>
-        </TouchableOpacity>
+      await updateDoc(ref, {
+        data: formatDate(date),
+        horario: formatHour(horario),
+        jejum: formatHour(jejum),
+        estadoGeral,
+        viaAerea,
+        medicacao,
+        observacoes,
+      });
 
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === false &&
-              styles.booleanButtonActiveRed,
-          ]}
-          onPress={() =>
-            onChange(false)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === false &&
-                styles.booleanTextActive,
-            ]}
-          >
-            Não
-          </Text>
-        </TouchableOpacity>
-      </View>
+      navigation.navigate('IntraOperatorio', {
+        pacienteId,
+      });
+
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Erro', 'Não foi possível salvar');
+    }
+  }
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  const SelectBox = ({ value }: any) => (
+    <View style={styles.input}>
+      <Text style={styles.inputText}>{value}</Text>
+      <Ionicons name="chevron-down" size={18} color="#214192" />
     </View>
   );
 
   return (
-    <LinearGradient
-      colors={[
-        '#214192',
-        '#4293D5',
-      ]}
-      style={{ flex: 1 }}
-    >
-      <StatusBar
-        barStyle="light-content"
-      />
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" />
 
-      <SafeAreaView
-        style={{ flex: 1 }}
-        edges={['top']}
-      >
-        {/* HEADER */}
-        <Header title="Pré-Operatório" />
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
 
-        {/* BODY */}
+        <HeaderSecundario title="Pré-Operatório" />
+
         <View style={styles.body}>
-          <ScrollView
-            showsVerticalScrollIndicator={
-              false
-            }
-            contentContainerStyle={{
-              paddingBottom:
-                120,
-            }}
-          >
-            <TouchableOpacity
-              style={styles.date}
-              onPress={() =>
-                setShowDate(
-                  true
-                )
-              }
-            >
-              <Text
-                style={
-                  styles.dateText
-                }
-              >
-                {formatDate(date)}
-              </Text>
+          <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+
+            {/* DATA */}
+            <TouchableOpacity style={styles.date} onPress={() => setShowDate(true)}>
+              <Text style={styles.dateText}>{formatDate(date)}</Text>
             </TouchableOpacity>
 
             {showDate && (
               <DateTimePicker
                 value={date}
                 mode="date"
-                display={
-                  Platform.OS ===
-                  'ios'
-                    ? 'spinner'
-                    : 'default'
-                }
-                onChange={(
-                  event,
-                  selectedDate
-                ) => {
-                  setShowDate(
-                    false
-                  );
-
-                  if (
-                    selectedDate
-                  ) {
-                    setDate(
-                      selectedDate
-                    );
-                  }
+                onChange={(e, d) => {
+                  setShowDate(false);
+                  if (d) setDate(d);
                 }}
               />
             )}
 
-            <BooleanSelector
-              label="Jejum de líquidos"
-              value={
-                jejumLiquidos
-              }
-              onChange={
-                setJejumLiquidos
-              }
-            />
+            <Text style={styles.section}>Avaliação Pré-Anestésica</Text>
 
-            <Text
-              style={styles.label}
-            >
-              Tempo de jejum
-            </Text>
+            {/* HORÁRIO */}
+            <View style={styles.row}>
+              <Text style={styles.label}>Horário</Text>
 
-            <TouchableOpacity
-              style={
-                styles.timeButton
-              }
-              onPress={() =>
-                setShowTimePicker(
-                  true
-                )
-              }
-            >
-              <Text
-                style={
-                  styles.timeText
-                }
-              >
-                {formatTime(
-                  tempoJejum
-                )}
-              </Text>
+              <TouchableOpacity onPress={() => setShowHorario(true)}>
+                <SelectBox value={formatHour(horario)} />
+              </TouchableOpacity>
+            </View>
 
-              <Ionicons
-                name="time-outline"
-                size={20}
-                color="#214192"
-              />
-            </TouchableOpacity>
-
-            {showTimePicker && (
+            {showHorario && (
               <DateTimePicker
-                value={
-                  tempoJejum
-                }
+                value={horario}
                 mode="time"
                 is24Hour
-                display={
-                  Platform.OS ===
-                  'ios'
-                    ? 'spinner'
-                    : 'default'
-                }
-                onChange={
-                  onChangeTime
-                }
+                onChange={(e, d) => {
+                  setShowHorario(false);
+                  if (d) setHorario(d);
+                }}
               />
             )}
 
-            {/* resto continua igual */}
+            {/* JEJUM */}
+            <View style={styles.row}>
+              <Text style={styles.label}>Jejum</Text>
+
+              <TouchableOpacity onPress={() => setShowJejum(true)}>
+                <SelectBox value={formatHour(jejum)} />
+              </TouchableOpacity>
+            </View>
+
+            {showJejum && (
+              <DateTimePicker
+                value={jejum}
+                mode="time"
+                is24Hour
+                onChange={(e, d) => {
+                  setShowJejum(false);
+                  if (d) setJejum(d);
+                }}
+              />
+            )}
+
+            {/* ESTADO GERAL */}
+            <View style={styles.row}>
+              <Text style={styles.label}>Estado Geral</Text>
+
+              <TouchableOpacity onPress={() =>
+                setOpenSelect(openSelect === 'estado' ? '' : 'estado')
+              }>
+                <SelectBox value={estadoGeral} />
+              </TouchableOpacity>
+            </View>
+
+            {openSelect === 'estado' && (
+              <View style={styles.dropdown}>
+                {['Estável', 'Regular', 'Crítico'].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    style={styles.option}
+                    onPress={() => {
+                      setEstadoGeral(item);
+                      setOpenSelect('');
+                    }}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {/* VIA AÉREA */}
+            <View style={styles.row}>
+              <Text style={styles.label}>Via Aérea</Text>
+
+              <TouchableOpacity onPress={() =>
+                setOpenSelect(openSelect === 'via' ? '' : 'via')
+              }>
+                <SelectBox value={viaAerea} />
+              </TouchableOpacity>
+            </View>
+
+            {openSelect === 'via' && (
+              <View style={styles.dropdown}>
+                {['Mallampati I', 'Mallampati II', 'Mallampati III'].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    style={styles.option}
+                    onPress={() => {
+                      setViaAerea(item);
+                      setOpenSelect('');
+                    }}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {/* MEDICAÇÃO */}
+            <View style={styles.row}>
+              <Text style={styles.label}>Medicação</Text>
+
+              <TouchableOpacity onPress={() =>
+                setOpenSelect(openSelect === 'med' ? '' : 'med')
+              }>
+                <SelectBox value={medicacao} />
+              </TouchableOpacity>
+            </View>
+
+            {openSelect === 'med' && (
+              <View style={styles.dropdown}>
+                {['Nenhuma', 'Anti-hipertensivo', 'Anticoagulante'].map(item => (
+                  <TouchableOpacity
+                    key={item}
+                    style={styles.option}
+                    onPress={() => {
+                      setMedicacao(item);
+                      setOpenSelect('');
+                    }}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {/* OBS */}
+            <Text style={styles.label}>Observações</Text>
+
+            <TextInput
+              style={styles.textArea}
+              multiline
+              value={observacoes}
+              onChangeText={setObservacoes}
+            />
+
+            {/* BOTÃO */}
+            <LinearGradient colors={['#3A7BD5', '#2A5298']} style={styles.button}>
+              <TouchableOpacity onPress={salvar}>
+                <Text style={styles.buttonText}>Salvar e Continuar</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
           </ScrollView>
         </View>
 
         <AppFooter />
+
       </SafeAreaView>
     </LinearGradient>
   );

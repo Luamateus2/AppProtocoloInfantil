@@ -44,10 +44,10 @@ import styles from './styles';
 type NavProps =
   NativeStackNavigationProp<
     RootStackParamList,
-    'Cadastro'
+    'NovoPaciente'
   >;
 
-export default function Cadastro() {
+export default function NovoPaciente() {
   const navigation =
     useNavigation<NavProps>();
 

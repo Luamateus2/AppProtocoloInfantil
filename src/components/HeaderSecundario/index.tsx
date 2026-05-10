@@ -9,8 +9,9 @@ import {
 import {
   useNavigation,
 } from '@react-navigation/native';
+import { Image } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
+import { voltarIcon } from '../../constants/images';
 
 import styles from './styles';
 
@@ -35,10 +36,13 @@ export default function Header({
             navigation.goBack()
           }
         >
-          <Ionicons
-            name="arrow-undo-outline"             
-            size={22}
-            color="#fff"
+          <Image
+            source={voltarIcon.logo}
+            style={{
+              width: 22,
+              height: 22,
+              resizeMode: 'contain',
+            }}
           />
         </TouchableOpacity>
       ) : (

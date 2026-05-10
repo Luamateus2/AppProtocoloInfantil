@@ -12,11 +12,23 @@ export type RootStackParamList = {
   Historico: undefined;
   Pacientes:undefined;
   Settings:undefined;
-  EditarPaciente: {
+
+EditarPaciente: {
   pacienteId: string;
 };
- EditarPreOperatorio: {
+
+EditarPreOperatorio: {
   pacienteId: string;
+  pacienteEditado?: {
+    nomeCompleto: string;
+    dataNascimento: string;
+    idade: string;
+    asa: string;
+    peso: string;
+    procedimento: string;
+    comorbidade: string;
+    observacoes: string;
+  };
 };
  EditarIntraOperatorio: {
   pacienteId: string;

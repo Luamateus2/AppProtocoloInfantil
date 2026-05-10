@@ -1,6 +1,4 @@
-import React, {
-  useState,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   View,
@@ -9,15 +7,10 @@ import {
   TextInput,
   ScrollView,
   StatusBar,
-  Platform,
   Alert,
 } from 'react-native';
 
-import { LinearGradient } from 'expo-linear-gradient';
-
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {
   useNavigation,
@@ -25,494 +18,280 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 
-import DateTimePicker from '@react-native-community/datetimepicker';
-
 import {
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
 
 import {
+  Ionicons,
+} from '@expo/vector-icons';
+
+import {
   doc,
+  getDoc,
   updateDoc,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
 
-import {
-  RootStackParamList,
-} from '../../../routes/types';
-
-import AppFooter from '../../../components/Footer/Footer';
-import Header from '../../../components/HeaderSecundario';
+import { RootStackParamList } from '../../../routes/types';
 
 import styles from './styles';
 
+// COMPONENTES
+import HeaderSecundario from '../../../components/HeaderSecundario';
+import AppFooter from '../../../components/Footer/Footer';
+
 type NavProps =
-  NativeStackNavigationProp<
-    RootStackParamList,
-    'IntraOperatorio'
-  >;
+  NativeStackNavigationProp<RootStackParamList>;
 
-type RouteParams =
-  RouteProp<
-    RootStackParamList,
-    'IntraOperatorio'
-  >;
+type RouteProps =
+  RouteProp<RootStackParamList, 'IntraOperatorio'>;
 
-export default function IntraOperatorio() {
+export default function EditarIntraOperatorio() {
 
-  const navigation =
-    useNavigation<NavProps>();
+  const navigation = useNavigation<NavProps>();
+  const route = useRoute<RouteProps>();
 
-  const route =
-    useRoute<RouteParams>();
+  const { pacienteId } = route.params;
 
-  const { pacienteId } =
-    route.params;
+  /* STATES */
+  const [date, setDate] = useState(new Date());
+  const [showDate, setShowDate] = useState(false);
 
-  const [loading,
-    setLoading] =
-    useState(false);
+  const [horarioInicio, setHorarioInicio] = useState(new Date());
+  const [showHorario, setShowHorario] = useState(false);
 
-  const [
-    ventilacaoProtetora,
-    setVentilacaoProtetora,
-  ] =
-    useState<boolean | null>(
-      null
-    );
+  const [anestesia, setAnestesia] = useState('');
+  const [viaAerea, setViaAerea] = useState('');
+  const [intercorrencias, setIntercorrencias] = useState('');
+  const [observacoes, setObservacoes] = useState('');
 
-  const [
-    analgesiaMultimodal,
-    setAnalgesiaMultimodal,
-  ] =
-    useState<boolean | null>(
-      null
-    );
+  const [openSelect, setOpenSelect] = useState('');
 
-  const [
-    dexametasona,
-    setDexametasona,
-  ] =
-    useState<boolean | null>(
-      null
-    );
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString('pt-BR');
 
-  const [
-    monitorizacaoCapnografica,
-    setMonitorizacaoCapnografica,
-  ] =
-    useState<boolean | null>(
-      null
-    );
+  const formatHour = (d: Date) =>
+    d.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
-  const [
-    tempoCirurgia,
-    setTempoCirurgia,
-  ] =
-    useState(new Date());
-
-  const [
-    showTimePicker,
-    setShowTimePicker,
-  ] =
-    useState(false);
-
-  const [
-    complicacoes,
-    setComplicacoes,
-  ] = useState('');
-
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
-
-  const formatTime = (
-    date: Date
-  ) => {
-    return date.toLocaleTimeString(
-      'pt-BR',
-      {
-        hour: '2-digit',
-        minute: '2-digit',
-      }
-    );
-  };
-
-  const onChangeTime = (
-    _: any,
-    selectedDate?: Date
-  ) => {
-
-    setShowTimePicker(
-      false
-    );
-
-    if (
-      selectedDate
-    ) {
-      setTempoCirurgia(
-        selectedDate
-      );
-    }
-  };
-
-  async function salvarIntraOperatorio() {
-
+  /* CARREGAR */
+  async function carregarDados() {
     try {
+      const ref = doc(db, 'intraOperatorio', pacienteId);
+      const snap = await getDoc(ref);
 
-      setLoading(true);
+      if (snap.exists()) {
+        const data = snap.data();
 
-      const pacienteRef =
-        doc(
-          db,
-          'pacientes',
-          pacienteId
-        );
-
-      await updateDoc(
-        pacienteRef,
-        {
-          intraOperatorio: {
-
-            ventilacaoProtetora,
-
-            analgesiaMultimodal,
-
-            dexametasona,
-
-            monitorizacaoCapnografica,
-
-            tempoCirurgia:
-              formatTime(
-                tempoCirurgia
-              ),
-
-            complicacoes,
-
-            observacoes,
-          },
-        }
-      );
-
-      navigation.navigate(
-        'PosOperatorio',
-        {
-          pacienteId,
-        }
-      );
+        setAnestesia(data.anestesia || 'Geral Inalatória');
+        setViaAerea(data.viaAerea || 'Máscara Laríngea');
+        setIntercorrencias(data.intercorrencias || 'Nenhuma');
+        setObservacoes(data.observacoes || '');
+      }
 
     } catch (error) {
-
       console.log(error);
-
-      Alert.alert(
-        'Erro',
-        'Não foi possível salvar.'
-      );
-
-    } finally {
-
-      setLoading(false);
-
     }
   }
 
-  const BooleanSelector = ({
-    label,
-    value,
-    onChange,
-  }: {
-    label: string;
-    value: boolean | null;
-    onChange: (
-      value: boolean
-    ) => void;
-  }) => (
-    <View style={styles.row}>
+  /* SALVAR */
+  async function salvar() {
+    try {
+      const ref = doc(db, 'intraOperatorio', pacienteId);
 
-      <Text style={styles.label}>
-        {label}
-      </Text>
+      await updateDoc(ref, {
+        data: formatDate(date),
+        horarioInicio: formatHour(horarioInicio),
+        anestesia,
+        viaAerea,
+        intercorrencias,
+        observacoes,
+      });
 
-      <View
-        style={
-          styles.booleanContainer
-        }
-      >
+      navigation.navigate('PosOperatorio', {
+        pacienteId,
+      });
 
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === true &&
-              styles.booleanButtonActive,
-          ]}
-          onPress={() =>
-            onChange(true)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === true &&
-                styles.booleanTextActive,
-            ]}
-          >
-            Sim
-          </Text>
-        </TouchableOpacity>
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Erro', 'Não foi possível salvar');
+    }
+  }
 
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === false &&
-              styles.booleanButtonActiveRed,
-          ]}
-          onPress={() =>
-            onChange(false)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === false &&
-                styles.booleanTextActive,
-            ]}
-          >
-            Não
-          </Text>
-        </TouchableOpacity>
+  useEffect(() => {
+    carregarDados();
+  }, []);
 
-      </View>
-
+  const SelectBox = ({ value }: any) => (
+    <View style={styles.select}>
+      <Text style={styles.selectText}>{value}</Text>
+      <Ionicons name="chevron-down" size={18} color="#214192" />
     </View>
   );
 
   return (
-    <LinearGradient
-      colors={[
-        '#214192',
-        '#4293D5',
-      ]}
-      style={{ flex: 1 }}
-    >
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
 
-      <StatusBar
-        barStyle="light-content"
-      />
+      <HeaderSecundario title="Intra-Operatório" />
 
-      <SafeAreaView
-        style={{ flex: 1 }}
-        edges={['top']}
-      >
+      <View style={styles.body}>
+        <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* HEADER */}
-        <Header title="Intra-Operatório" />
-
-        {/* BODY */}
-        <View style={styles.body}>
-
-          <ScrollView
-            showsVerticalScrollIndicator={
-              false
-            }
-            contentContainerStyle={{
-              paddingBottom:
-                120,
-            }}
+          {/* DATA */}
+          <TouchableOpacity
+            style={styles.dateContainer}
+            onPress={() => setShowDate(true)}
           >
-
-            <View
-              style={
-                styles.dateContainer
-              }
-            >
-              <Text
-                style={
-                  styles.dateText
-                }
-              >
-                {new Date().toLocaleDateString(
-                  'pt-BR'
-                )}
-              </Text>
-            </View>
-
-            <BooleanSelector
-              label="Ventilação protetora"
-              value={
-                ventilacaoProtetora
-              }
-              onChange={
-                setVentilacaoProtetora
-              }
-            />
-
-            <BooleanSelector
-              label="Analgesia multimodal"
-              value={
-                analgesiaMultimodal
-              }
-              onChange={
-                setAnalgesiaMultimodal
-              }
-            />
-
-            <BooleanSelector
-              label="Dexametasona administrada"
-              value={
-                dexametasona
-              }
-              onChange={
-                setDexametasona
-              }
-            />
-
-            <BooleanSelector
-              label="Monitorização capnográfica"
-              value={
-                monitorizacaoCapnografica
-              }
-              onChange={
-                setMonitorizacaoCapnografica
-              }
-            />
-
-            <Text style={styles.label}>
-              Tempo de cirurgia
+            <Text style={styles.dateText}>
+              {formatDate(date)}
             </Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              style={
-                styles.timeButton
-              }
-              onPress={() =>
-                setShowTimePicker(
-                  true
-                )
-              }
-            >
+          {showDate && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              onChange={(e, d) => {
+                setShowDate(false);
+                if (d) setDate(d);
+              }}
+            />
+          )}
 
-              <Text
-                style={
-                  styles.timeText
-                }
-              >
-                {formatTime(
-                  tempoCirurgia
-                )}
-              </Text>
+          {/* HORÁRIO */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Horário de Início</Text>
 
-              <Ionicons
-                name="time-outline"
-                size={20}
-                color="#214192"
-              />
-
+            <TouchableOpacity onPress={() => setShowHorario(true)}>
+              <SelectBox value={formatHour(horarioInicio)} />
             </TouchableOpacity>
+          </View>
 
-            {showTimePicker && (
-              <DateTimePicker
-                value={
-                  tempoCirurgia
-                }
-                mode="time"
-                is24Hour
-                display={
-                  Platform.OS ===
-                  'ios'
-                    ? 'spinner'
-                    : 'default'
-                }
-                onChange={
-                  onChangeTime
-                }
-              />
-            )}
-
-            <Text style={styles.label}>
-              Complicações intra-operatórias
-            </Text>
-
-            <TextInput
-              value={
-                complicacoes
-              }
-              onChangeText={
-                setComplicacoes
-              }
-              placeholder="Descreva se houver..."
-              placeholderTextColor="#777"
-              multiline
-              style={
-                styles.textArea
-              }
+          {showHorario && (
+            <DateTimePicker
+              value={horarioInicio}
+              mode="time"
+              is24Hour
+              onChange={(e, d) => {
+                setShowHorario(false);
+                if (d) setHorarioInicio(d);
+              }}
             />
+          )}
 
-            <Text style={styles.label}>
-              Observações
-            </Text>
+          {/* ANESTESIA */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Anestesia</Text>
 
-            <TextInput
-              value={
-                observacoes
-              }
-              onChangeText={
-                setObservacoes
-              }
-              multiline
-              placeholder="Observações adicionais..."
-              placeholderTextColor="#777"
-              style={
-                styles.textArea
-              }
-            />
+            <TouchableOpacity onPress={() =>
+              setOpenSelect(openSelect === 'anestesia' ? '' : 'anestesia')
+            }>
+              <SelectBox value={anestesia} />
+            </TouchableOpacity>
+          </View>
 
-            <LinearGradient
-              colors={[
-                '#3A7BD5',
-                '#2A5298',
-              ]}
-              style={
-                styles.button
-              }
-            >
-
-              <TouchableOpacity
-                style={{
-                  width: '100%',
-                  alignItems:
-                    'center',
-                }}
-                onPress={
-                  salvarIntraOperatorio
-                }
-                disabled={
-                  loading
-                }
-              >
-                <Text
-                  style={
-                    styles.buttonText
-                  }
+          {openSelect === 'anestesia' && (
+            <View style={styles.dropdown}>
+              {['Geral Inalatória', 'Raquidiana', 'Sedação', 'Local'].map(item => (
+                <TouchableOpacity
+                  key={item}
+                  style={styles.option}
+                  onPress={() => {
+                    setAnestesia(item);
+                    setOpenSelect('');
+                  }}
                 >
-                  {loading
-                    ? 'Salvando...'
-                    : 'Próximo'}
-                </Text>
-              </TouchableOpacity>
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
-            </LinearGradient>
+          {/* VIA AÉREA */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Via Aérea</Text>
 
-          </ScrollView>
+            <TouchableOpacity onPress={() =>
+              setOpenSelect(openSelect === 'via' ? '' : 'via')
+            }>
+              <SelectBox value={viaAerea} />
+            </TouchableOpacity>
+          </View>
 
-        </View>
+          {openSelect === 'via' && (
+            <View style={styles.dropdown}>
+              {[
+                'Máscara Laríngea',
+                'Intubação Orotraqueal',
+                'Cateter Nasal',
+                'Ventilação Espontânea',
+              ].map(item => (
+                <TouchableOpacity
+                  key={item}
+                  style={styles.option}
+                  onPress={() => {
+                    setViaAerea(item);
+                    setOpenSelect('');
+                  }}
+                >
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
-        <AppFooter />
+          {/* INTERCORRÊNCIAS */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Intercorrências</Text>
 
-      </SafeAreaView>
+            <TouchableOpacity onPress={() =>
+              setOpenSelect(openSelect === 'inter' ? '' : 'inter')
+            }>
+              <SelectBox value={intercorrencias} />
+            </TouchableOpacity>
+          </View>
 
-    </LinearGradient>
+          {openSelect === 'inter' && (
+            <View style={styles.dropdown}>
+              {['Nenhuma', 'Hipotensão', 'Bradicardia', 'Dessaturação'].map(item => (
+                <TouchableOpacity
+                  key={item}
+                  style={styles.option}
+                  onPress={() => {
+                    setIntercorrencias(item);
+                    setOpenSelect('');
+                  }}
+                >
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
+          {/* OBS */}
+          <Text style={styles.obsLabel}>Observações</Text>
+
+          <TextInput
+            style={styles.textArea}
+            multiline
+            value={observacoes}
+            onChangeText={setObservacoes}
+          />
+
+          {/* BOTÃO */}
+          <TouchableOpacity style={styles.button} onPress={salvar}>
+            <Text style={styles.buttonText}>Salvar e Continuar</Text>
+          </TouchableOpacity>
+
+        </ScrollView>
+      </View>
+
+      <AppFooter />
+    </View>
   );
 }
