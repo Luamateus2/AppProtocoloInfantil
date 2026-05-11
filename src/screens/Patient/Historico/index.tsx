@@ -29,11 +29,15 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from 'firebase/firestore';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import AppFooter from '../../../components/Footer/Footer';
 import Header from '../../../components/HeaderSecundario';
@@ -91,6 +95,12 @@ export default function Historico() {
   }
 
   async function buscarHistorico() {
+    if (!auth.currentUser) {
+      setHistorico([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -104,18 +114,23 @@ export default function Historico() {
         await getDocs(
           query(
             collection(db, 'pacientes'),
+            where(
+              'usuarioId',
+              '==',
+              auth.currentUser.uid
+            ),
             orderBy('createdAt', 'desc')
           )
         );
 
-      pacientesSnap.forEach((doc) => {
-        const data = doc.data();
+      pacientesSnap.forEach((docItem) => {
+        const data = docItem.data();
 
         const nome =
           data.nomeCompleto ||
           'Paciente';
 
-        nomesPacientes[doc.id] =
+        nomesPacientes[docItem.id] =
           nome;
 
         if (lista.length === 0) {
@@ -123,7 +138,7 @@ export default function Historico() {
         }
 
         lista.push({
-          id: `paciente-${doc.id}`,
+          id: `paciente-${docItem.id}`,
           paciente: nome,
           data:
             formatarDataFirestore(
@@ -141,43 +156,61 @@ export default function Historico() {
 
       const preSnap =
         await getDocs(
-          collection(db, 'preOperatorio')
+          query(
+            collection(db, 'preOperatorio'),
+            where(
+              'usuarioId',
+              '==',
+              auth.currentUser.uid
+            )
+          )
         );
 
-      preSnap.forEach((doc) => {
-        const data = doc.data();
+      preSnap.forEach((docItem) => {
+        const data = docItem.data();
 
         const paciente =
-          nomesPacientes[data.pacienteId] ||
+          nomesPacientes[
+            data.pacienteId
+          ] ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
-          id: `pre-${doc.id}`,
+          id: `pre-${docItem.id}`,
           paciente,
           data: data.data || '',
           titulo: 'Pré-Operatório',
           descricao:
             data.observacoes ||
-            `Avaliação OK, jejum adequado.`,
+            'Avaliação OK, jejum adequado.',
         });
       });
 
       const intraSnap =
         await getDocs(
-          collection(db, 'intraOperatorio')
+          query(
+            collection(db, 'intraOperatorio'),
+            where(
+              'usuarioId',
+              '==',
+              auth.currentUser.uid
+            )
+          )
         );
 
-      intraSnap.forEach((doc) => {
-        const data = doc.data();
+      intraSnap.forEach((docItem) => {
+        const data = docItem.data();
 
         const paciente =
-          nomesPacientes[data.pacienteId] ||
+          nomesPacientes[
+            data.pacienteId
+          ] ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
-          id: `intra-${doc.id}`,
+          id: `intra-${docItem.id}`,
           paciente,
           data: data.data || '',
           titulo: 'Intra-Operatório',
@@ -189,30 +222,38 @@ export default function Historico() {
 
       const posSnap =
         await getDocs(
-          collection(db, 'posOperatorio')
+          query(
+            collection(db, 'posOperatorio'),
+            where(
+              'usuarioId',
+              '==',
+              auth.currentUser.uid
+            )
+          )
         );
 
-      posSnap.forEach((doc) => {
-        const data = doc.data();
+      posSnap.forEach((docItem) => {
+        const data = docItem.data();
 
         const paciente =
-          nomesPacientes[data.pacienteId] ||
+          nomesPacientes[
+            data.pacienteId
+          ] ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
-          id: `pos-${doc.id}`,
+          id: `pos-${docItem.id}`,
           paciente,
           data: data.data || '',
           titulo: 'Pós-Operatório',
           descricao:
             data.observacoes ||
-            `Paciente estável, alta em breve.`,
+            'Paciente estável, alta em breve.',
         });
       });
 
       setHistorico(lista);
-
     } catch (error) {
       console.log(
         'Erro ao buscar histórico:',
@@ -249,7 +290,9 @@ export default function Historico() {
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
+              contentContainerStyle={
+                styles.scrollContent
+              }
             >
               <View style={styles.patientBadge}>
                 <Text style={styles.patientBadgeText}>
@@ -266,13 +309,11 @@ export default function Historico() {
                     style={styles.row}
                   >
                     <View style={styles.leftCol}>
-                      <View style={styles.dot}>
-                        <Image
-                          source={setaBaixo.logo}
-                          style={styles.dotIcon}
-                          resizeMode="contain"
-                        />
-                      </View>
+                      <Image
+                        source={setaBaixo.logo}
+                        style={styles.dotIcon}
+                        resizeMode="contain"
+                      />
                     </View>
 
                     <View style={styles.card}>

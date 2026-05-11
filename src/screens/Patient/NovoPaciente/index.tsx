@@ -30,7 +30,10 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import {
   RootStackParamList,
@@ -51,17 +54,11 @@ export default function NovoPaciente() {
   const navigation =
     useNavigation<NavProps>();
 
-  /* STATES */
+  const [nomeCompleto, setNomeCompleto] =
+    useState('');
 
-  const [
-    nomeCompleto,
-    setNomeCompleto,
-  ] = useState('');
-
-  const [
-    dataNascimento,
-    setDataNascimento,
-  ] = useState('');
+  const [dataNascimento, setDataNascimento] =
+    useState('');
 
   const [idade, setIdade] =
     useState('');
@@ -72,63 +69,52 @@ export default function NovoPaciente() {
   const [peso, setPeso] =
     useState('');
 
-  const [
-    procedimento,
-    setProcedimento,
-  ] = useState('');
+  const [procedimento, setProcedimento] =
+    useState('');
 
-  const [
-    comorbidade,
-    setComorbidade,
-  ] = useState('');
+  const [comorbidade, setComorbidade] =
+    useState('');
 
-  const [
-    observacoes,
-    setObservacoes,
-  ] = useState('');
+  const [observacoes, setObservacoes] =
+    useState('');
 
   const [loading, setLoading] =
     useState(false);
 
-  /* SALVAR PACIENTE */
-
   async function salvarPaciente() {
+    if (!auth.currentUser) {
+      Alert.alert(
+        'Erro',
+        'Usuário não está logado.'
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const docRef =
-        await addDoc(
-          collection(
-            db,
-            'pacientes'
-          ),
-          {
-            nomeCompleto,
+      const docRef = await addDoc(
+        collection(db, 'pacientes'),
+        {
+          usuarioId: auth.currentUser.uid,
 
-            dataNascimento,
+          nomeCompleto,
+          dataNascimento,
+          idade,
+          asa,
+          peso,
+          procedimento,
+          comorbidade,
+          observacoes,
 
-            idade,
-
-            asa,
-
-            peso,
-
-            procedimento,
-
-            comorbidade,
-
-            observacoes,
-
-            createdAt:
-              serverTimestamp(),
-          }
-        );
+          createdAt: serverTimestamp(),
+        }
+      );
 
       navigation.navigate(
         'PreOperatorio',
         {
-          pacienteId:
-            docRef.id,
+          pacienteId: docRef.id,
         }
       );
     } catch (error) {
@@ -145,10 +131,7 @@ export default function NovoPaciente() {
 
   return (
     <LinearGradient
-      colors={[
-        '#214192',
-        '#4293D5',
-      ]}
+      colors={['#214192', '#4293D5']}
       style={{ flex: 1 }}
     >
       <StatusBar
@@ -161,222 +144,116 @@ export default function NovoPaciente() {
         style={{ flex: 1 }}
         edges={['top']}
       >
-        {/* HEADER REUTILIZÁVEL */}
-        <Header
-          title="Novo Paciente"
-        />
+        <Header title="Novo Paciente" />
 
-        {/* BODY */}
         <View style={styles.body}>
           <ScrollView
-            showsVerticalScrollIndicator={
-              false
-            }
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom:
-                120,
+              paddingBottom: 120,
             }}
           >
-            <Text
-              style={
-                styles.sectionTitle
-              }
-            >
+            <Text style={styles.sectionTitle}>
               Dados do Paciente
             </Text>
 
-            {/* NOME COMPLETO */}
-            <Text
-              style={styles.label}
-            >
+            <Text style={styles.label}>
               Nome Completo
             </Text>
 
             <TextInput
               placeholder="Digite o nome completo"
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
-              value={
-                nomeCompleto
-              }
-              onChangeText={
-                setNomeCompleto
-              }
+              style={styles.input}
+              value={nomeCompleto}
+              onChangeText={setNomeCompleto}
             />
 
-            {/* DATA + IDADE */}
-            <View
-              style={styles.row}
-            >
-              <View
-                style={
-                  styles.half
-                }
-              >
-                <Text
-                  style={
-                    styles.label
-                  }
-                >
-                  Data de
-                  Nascimento
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Data de Nascimento
                 </Text>
 
                 <TextInput
                   placeholder="dd/mm/aaaa"
                   placeholderTextColor="#999"
-                  style={
-                    styles.input
-                  }
-                  value={
-                    dataNascimento
-                  }
-                  onChangeText={
-                    setDataNascimento
-                  }
+                  style={styles.input}
+                  value={dataNascimento}
+                  onChangeText={setDataNascimento}
                 />
               </View>
 
-              <View
-                style={
-                  styles.half
-                }
-              >
-                <Text
-                  style={
-                    styles.label
-                  }
-                >
+              <View style={styles.half}>
+                <Text style={styles.label}>
                   Idade
                 </Text>
 
                 <TextInput
                   placeholder="anos"
                   placeholderTextColor="#999"
-                  style={
-                    styles.input
-                  }
+                  style={styles.input}
                   value={idade}
-                  onChangeText={
-                    setIdade
-                  }
+                  onChangeText={setIdade}
                   keyboardType="numeric"
                 />
               </View>
             </View>
 
-            {/* ASA + PESO */}
-            <View
-              style={styles.row}
-            >
-              <View
-                style={
-                  styles.half
-                }
-              >
-                <Text
-                  style={
-                    styles.label
-                  }
-                >
-                  Classificação
-                  ASA
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Classificação ASA
                 </Text>
 
-                <TouchableOpacity
-                  style={
-                    styles.select
-                  }
-                >
-                  <Text
-                    style={
-                      styles.selectText
-                    }
-                  >
-                    {asa ||
-                      'Selecione'}
+                <TouchableOpacity style={styles.select}>
+                  <Text style={styles.selectText}>
+                    {asa || 'Selecione'}
                   </Text>
                 </TouchableOpacity>
               </View>
 
-              <View
-                style={
-                  styles.half
-                }
-              >
-                <Text
-                  style={
-                    styles.label
-                  }
-                >
+              <View style={styles.half}>
+                <Text style={styles.label}>
                   Peso (kg)
                 </Text>
 
                 <TextInput
                   placeholder="Ex: 20 kg"
                   placeholderTextColor="#999"
-                  style={
-                    styles.input
-                  }
+                  style={styles.input}
                   value={peso}
-                  onChangeText={
-                    setPeso
-                  }
+                  onChangeText={setPeso}
                   keyboardType="numeric"
                 />
               </View>
             </View>
 
-            {/* PROCEDIMENTO */}
-            <Text
-              style={styles.label}
-            >
-              Procedimento
-              Cirúrgico
+            <Text style={styles.label}>
+              Procedimento Cirúrgico
             </Text>
 
             <TextInput
               placeholder="Ex: Adenoidectomia"
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
-              value={
-                procedimento
-              }
-              onChangeText={
-                setProcedimento
-              }
+              style={styles.input}
+              value={procedimento}
+              onChangeText={setProcedimento}
             />
 
-            {/* COMORBIDADE */}
-            <Text
-              style={styles.label}
-            >
-              Comorbidade
-              Respiratória
+            <Text style={styles.label}>
+              Comorbidade Respiratória
             </Text>
 
             <TextInput
               placeholder="Ex: Asma, cardiopatia..."
               placeholderTextColor="#999"
-              style={
-                styles.input
-              }
-              value={
-                comorbidade
-              }
-              onChangeText={
-                setComorbidade
-              }
+              style={styles.input}
+              value={comorbidade}
+              onChangeText={setComorbidade}
             />
 
-            {/* OBSERVAÇÕES */}
-            <Text
-              style={styles.label}
-            >
+            <Text style={styles.label}>
               Observações
             </Text>
 
@@ -388,53 +265,28 @@ export default function NovoPaciente() {
                 styles.textArea,
               ]}
               multiline
-              value={
-                observacoes
-              }
-              onChangeText={
-                setObservacoes
-              }
+              value={observacoes}
+              onChangeText={setObservacoes}
             />
 
-            {/* BOTÕES */}
-            <View
-              style={
-                styles.buttonRow
-              }
-            >
+            <View style={styles.buttonRow}>
               <TouchableOpacity
-                style={
-                  styles.cancelButton
-                }
+                style={styles.cancelButton}
                 onPress={() =>
                   navigation.goBack()
                 }
               >
-                <Text
-                  style={
-                    styles.cancelText
-                  }
-                >
+                <Text style={styles.cancelText}>
                   Cancelar
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={
-                  styles.saveButton
-                }
-                onPress={
-                  salvarPaciente
-                }
-                disabled={
-                  loading
-                }
+                style={styles.saveButton}
+                onPress={salvarPaciente}
+                disabled={loading}
               >
-                <Text
-                  style={
-                    styles.saveText
-                  }
-                >
+                <Text style={styles.saveText}>
                   {loading
                     ? 'Salvando...'
                     : 'Próximo'}
@@ -444,7 +296,6 @@ export default function NovoPaciente() {
           </ScrollView>
         </View>
 
-        {/* FOOTER */}
         <AppFooter />
       </SafeAreaView>
     </LinearGradient>

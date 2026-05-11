@@ -29,7 +29,10 @@ import {
   setDoc,
 } from 'firebase/firestore';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import { RootStackParamList } from '../../../routes/types';
 
@@ -77,7 +80,12 @@ export default function PreOperatorio() {
 
   async function carregarDados() {
     try {
-      const ref = doc(db, 'preOperatorio', pacienteId);
+      const ref = doc(
+        db,
+        'preOperatorio',
+        pacienteId
+      );
+
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
@@ -102,12 +110,25 @@ export default function PreOperatorio() {
       return;
     }
 
+    if (!auth.currentUser) {
+      Alert.alert(
+        'Erro',
+        'Usuário não está logado.'
+      );
+      return;
+    }
+
     try {
-      const ref = doc(db, 'preOperatorio', pacienteId);
+      const ref = doc(
+        db,
+        'preOperatorio',
+        pacienteId
+      );
 
       await setDoc(
         ref,
         {
+          usuarioId: auth.currentUser.uid,
           pacienteId,
           data: formatDate(date),
           horario: formatHour(horario),
@@ -122,10 +143,12 @@ export default function PreOperatorio() {
         }
       );
 
-      navigation.navigate('IntraOperatorioG', {
-        pacienteId,
-      });
-
+      navigation.navigate(
+        'IntraOperatorioG',
+        {
+          pacienteId,
+        }
+      );
     } catch (error) {
       console.log(error);
 

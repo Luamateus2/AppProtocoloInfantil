@@ -17,7 +17,7 @@ import EditarPaciente from "../screens/Patient/EditarPaciente";
 import EditarPreOperatorio from "../screens/Surgery/EditarPreOperatorio";
 import EditarPosOperatorio from "../screens/Surgery/EditarPosOperatorio";
 import EditarIntraOperatorio from "../screens/Surgery/EditarIntraOperatorio";
-import Settings from "../../Settings";
+import Settings from "../screens/Settings";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Routes() {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 import {
@@ -31,7 +32,10 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import { RootStackParamList } from '../../../routes/types';
 
@@ -96,10 +100,19 @@ export default function PosOperatorio() {
       return;
     }
 
+    if (!auth.currentUser) {
+      Alert.alert(
+        'Erro',
+        'Usuário não está logado.'
+      );
+      return;
+    }
+
     try {
       await setDoc(
         doc(db, 'posOperatorio', pacienteId),
         {
+          usuarioId: auth.currentUser.uid,
           pacienteId,
           data: formatDate(date),
           horarioTermino: formatHour(horarioTermino),
@@ -147,7 +160,11 @@ export default function PosOperatorio() {
         </Text>
 
         <Ionicons
-          name={opened ? 'chevron-up' : 'chevron-down'}
+          name={
+            opened
+              ? 'chevron-up'
+              : 'chevron-down'
+          }
           size={18}
           color="#214192"
         />
@@ -275,7 +292,9 @@ export default function PosOperatorio() {
                 >
                   <SelectBox
                     value={recuperacao}
-                    opened={openSelect === 'recuperacao'}
+                    opened={
+                      openSelect === 'recuperacao'
+                    }
                   />
                 </TouchableOpacity>
 
@@ -311,7 +330,9 @@ export default function PosOperatorio() {
                 >
                   <SelectBox
                     value={sinaisVitais}
-                    opened={openSelect === 'sinais'}
+                    opened={
+                      openSelect === 'sinais'
+                    }
                   />
                 </TouchableOpacity>
 
@@ -339,13 +360,17 @@ export default function PosOperatorio() {
                   activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
-                      openSelect === 'dor' ? '' : 'dor'
+                      openSelect === 'dor'
+                        ? ''
+                        : 'dor'
                     )
                   }
                 >
                   <SelectBox
                     value={dor}
-                    opened={openSelect === 'dor'}
+                    opened={
+                      openSelect === 'dor'
+                    }
                   />
                 </TouchableOpacity>
 

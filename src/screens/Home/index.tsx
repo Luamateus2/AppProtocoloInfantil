@@ -37,15 +37,22 @@ import {
   limit,
   orderBy,
   query,
+  doc,
+  getDoc,
 } from 'firebase/firestore';
 
 import {
+  auth,
   db,
 } from '../../services/firebaseConfig';
 
 import {
   RootStackParamList,
 } from '../../routes/types';
+
+import {
+  LogoPrincipal,
+} from '../../constants/images';
 
 import AppFooter from '../../components/Footer/Footer';
 
@@ -66,6 +73,7 @@ interface Registro {
 }
 
 export default function Home() {
+
   const navigation =
     useNavigation<NavigationProps>();
 
@@ -75,22 +83,84 @@ export default function Home() {
   const [loading, setLoading] =
     useState(true);
 
+  const [fotoPerfil, setFotoPerfil] =
+    useState<string | null>(null);
+
+  const user = auth.currentUser;
+
   useEffect(() => {
+
     buscarHistorico();
+    carregarFotoPerfil();
+
   }, []);
 
-  function gerarIniciais(nome: string) {
+  async function carregarFotoPerfil() {
+
+    try {
+
+      if (!user) return;
+
+      const userRef =
+        doc(
+          db,
+          'usuarios',
+          user.uid
+        );
+
+      const userSnap =
+        await getDoc(userRef);
+
+      if (userSnap.exists()) {
+
+        const data =
+          userSnap.data();
+
+        if (data.fotoPerfil) {
+
+          setFotoPerfil(
+            data.fotoPerfil
+          );
+
+          return;
+        }
+      }
+
+      if (user.photoURL) {
+
+        setFotoPerfil(
+          user.photoURL
+        );
+      }
+
+    } catch (error) {
+
+      console.log(
+        'Erro ao carregar foto:',
+        error
+      );
+    }
+  }
+
+  function gerarIniciais(
+    nome: string
+  ) {
+
     return nome
       .split(' ')
       .filter(Boolean)
-      .map((n: string) => n[0])
+      .map(
+        (n: string) => n[0]
+      )
       .slice(0, 2)
       .join('')
       .toUpperCase();
   }
 
   async function buscarHistorico() {
+
     try {
+
       setLoading(true);
 
       const lista: Registro[] = [];
@@ -98,113 +168,165 @@ export default function Home() {
       const pacientesSnap =
         await getDocs(
           query(
-            collection(db, 'pacientes'),
-            orderBy('createdAt', 'desc'),
+            collection(
+              db,
+              'pacientes'
+            ),
+            orderBy(
+              'createdAt',
+              'desc'
+            ),
             limit(4)
           )
         );
 
-      pacientesSnap.forEach((doc) => {
-        const data = doc.data();
+      pacientesSnap.forEach(
+        (docItem) => {
 
-        const nome =
-          data.nomeCompleto ||
-          'Paciente';
+          const data =
+            docItem.data();
 
-        lista.push({
-          id: `paciente-${doc.id}`,
-          nome,
-          tipo: 'Cadastro do Paciente',
-          data:
-            data.dataNascimento ||
-            '',
-          iniciais:
-            gerarIniciais(nome),
-        });
-      });
+          const nome =
+            data.nomeCompleto ||
+            'Paciente';
+
+          lista.push({
+            id: `paciente-${docItem.id}`,
+            nome,
+            tipo:
+              'Cadastro do Paciente',
+            data:
+              data.dataNascimento ||
+              '',
+            iniciais:
+              gerarIniciais(
+                nome
+              ),
+          });
+        }
+      );
 
       const preSnap =
         await getDocs(
           query(
-            collection(db, 'preOperatorio'),
+            collection(
+              db,
+              'preOperatorio'
+            ),
+            orderBy(
+              'createdAt',
+              'desc'
+            ),
             limit(4)
           )
         );
 
-      preSnap.forEach((doc) => {
-        const data = doc.data();
+      preSnap.forEach(
+        (docItem) => {
 
-        lista.push({
-          id: `pre-${doc.id}`,
-          nome:
-            data.pacienteId ||
-            'Paciente',
-          tipo: 'Pré-Operatório',
-          data:
-            data.data ||
-            '',
-          iniciais: 'PR',
-        });
-      });
+          const data =
+            docItem.data();
+
+          lista.push({
+            id: `pre-${docItem.id}`,
+            nome:
+              data.pacienteId ||
+              'Paciente',
+            tipo:
+              'Pré-Operatório',
+            data:
+              data.data ||
+              '',
+            iniciais: 'PR',
+          });
+        }
+      );
 
       const intraSnap =
         await getDocs(
           query(
-            collection(db, 'intraOperatorio'),
+            collection(
+              db,
+              'intraOperatorio'
+            ),
+            orderBy(
+              'createdAt',
+              'desc'
+            ),
             limit(4)
           )
         );
 
-      intraSnap.forEach((doc) => {
-        const data = doc.data();
+      intraSnap.forEach(
+        (docItem) => {
 
-        lista.push({
-          id: `intra-${doc.id}`,
-          nome:
-            data.pacienteId ||
-            'Paciente',
-          tipo: 'Intra-Operatório',
-          data:
-            data.data ||
-            '',
-          iniciais: 'IN',
-        });
-      });
+          const data =
+            docItem.data();
+
+          lista.push({
+            id: `intra-${docItem.id}`,
+            nome:
+              data.pacienteId ||
+              'Paciente',
+            tipo:
+              'Intra-Operatório',
+            data:
+              data.data ||
+              '',
+            iniciais: 'IN',
+          });
+        }
+      );
 
       const posSnap =
         await getDocs(
           query(
-            collection(db, 'posOperatorio'),
+            collection(
+              db,
+              'posOperatorio'
+            ),
+            orderBy(
+              'createdAt',
+              'desc'
+            ),
             limit(4)
           )
         );
 
-      posSnap.forEach((doc) => {
-        const data = doc.data();
+      posSnap.forEach(
+        (docItem) => {
 
-        lista.push({
-          id: `pos-${doc.id}`,
-          nome:
-            data.pacienteId ||
-            'Paciente',
-          tipo: 'Pós-Operatório',
-          data:
-            data.data ||
-            '',
-          iniciais: 'PO',
-        });
-      });
+          const data =
+            docItem.data();
+
+          lista.push({
+            id: `pos-${docItem.id}`,
+            nome:
+              data.pacienteId ||
+              'Paciente',
+            tipo:
+              'Pós-Operatório',
+            data:
+              data.data ||
+              '',
+            iniciais: 'PO',
+          });
+        }
+      );
 
       setRegistros(
         lista.slice(0, 4)
       );
 
     } catch (error) {
+
       console.log(
         'Erro ao buscar histórico:',
         error
       );
+
     } finally {
+
       setLoading(false);
     }
   }
@@ -213,23 +335,29 @@ export default function Home() {
     {
       icon: 'people-outline',
       label: 'Pacientes',
+      route: 'Pacientes',
     },
     {
       icon: 'add-outline',
       label: 'Novo\nCadastro',
+      route: 'NovoPaciente',
     },
     {
       icon: 'clipboard-outline',
       label: 'Protocolos',
+      route: 'Protocolos',
     },
     {
       icon: 'time-outline',
       label: 'Histórico',
+      route: 'Historico',
     },
   ];
 
   return (
+
     <View style={styles.container}>
+
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -245,102 +373,133 @@ export default function Home() {
           styles.headerGradient
         }
       >
-        <SafeAreaView edges={['top']}>
-          <View style={styles.header}>
-            <View style={styles.logoBox}>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() =>
-                  navigation.navigate(
-                    'Settings'
-                  )
-                }
-              >
-                <Image
-                  source={{
-                    uri: 'https://i.pravatar.cc/150?img=12',
-                  }}
-                  style={styles.avatar}
-                />
-              </TouchableOpacity>
-            </View>
 
-            <Text style={styles.headerText}>
+        <SafeAreaView
+          edges={['top']}
+        >
+
+          <View style={styles.header}>
+
+            <Image
+              source={
+                LogoPrincipal.logo
+              }
+              style={styles.logo}
+              resizeMode="contain"
+            />
+
+            <Text
+              style={
+                styles.headerText
+              }
+            >
               Seja Bem-Vindo
             </Text>
 
-            <Image
-              source={{
-                uri: 'https://i.pravatar.cc/150?img=12',
-              }}
-              style={styles.avatar}
-            />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                navigation.navigate(
+                  'Settings'
+                )
+              }
+              style={
+                styles.headerAvatar
+              }
+            >
+
+              {fotoPerfil ? (
+
+                <Image
+                  source={{
+                    uri: fotoPerfil,
+                  }}
+                  style={
+                    styles.avatar
+                  }
+                />
+
+              ) : (
+
+                <Ionicons
+                  name="person-outline"
+                  size={24}
+                  color="#214192"
+                />
+              )}
+
+            </TouchableOpacity>
+
           </View>
+
         </SafeAreaView>
+
       </LinearGradient>
 
       <View style={styles.body}>
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 140,
           }}
         >
-          <View style={styles.menuContainer}>
-            {menu.map((item, index) => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                key={index}
-                style={styles.menuCard}
-                onPress={() => {
-                  if (
-                    item.label.includes(
-                      'Novo'
-                    )
-                  ) {
-                    navigation.navigate(
-                      'NovoPaciente'
-                    );
-                  }
 
-                  if (
-                    item.label.includes(
-                      'Pacientes'
-                    )
-                  ) {
-                    navigation.navigate(
-                      'Pacientes'
-                    );
-                  }
+          <View
+            style={
+              styles.menuContainer
+            }
+          >
 
-                  if (
-                    item.label.includes(
-                      'Histórico'
-                    )
-                  ) {
-                    navigation.navigate(
-                      'Historico'
-                    );
-                  }
-                }}
-              >
-                <Ionicons
-                  name={
-                    item.icon as any
-                  }
-                  size={28}
-                  color="#FFFFFF"
-                />
+            {menu.map(
+              (item, index) => (
 
-                <Text style={styles.menuText}>
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  key={index}
+                  style={
+                    styles.menuCard
+                  }
+                  onPress={() =>
+                    navigation.navigate(
+                      item.route as any
+                    )
+                  }
+                >
+
+                  <Ionicons
+                    name={
+                      item.icon as any
+                    }
+                    size={28}
+                    color="#FFFFFF"
+                  />
+
+                  <Text
+                    style={
+                      styles.menuText
+                    }
+                  >
+                    {item.label}
+                  </Text>
+
+                </TouchableOpacity>
+              )
+            )}
+
           </View>
 
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>
+          <View
+            style={
+              styles.sectionHeader
+            }
+          >
+
+            <Text
+              style={
+                styles.sectionTitle
+              }
+            >
               Últimos Registros
             </Text>
 
@@ -351,77 +510,113 @@ export default function Home() {
                 )
               }
             >
-              <Text style={styles.seeAll}>
+
+              <Text
+                style={
+                  styles.seeAll
+                }
+              >
                 Ver Todos &gt;
               </Text>
+
             </TouchableOpacity>
+
           </View>
 
           <View style={styles.list}>
+
             {loading ? (
+
               <ActivityIndicator
                 size="large"
                 color="#214192"
               />
+
             ) : registros.length === 0 ? (
+
               <Text
                 style={{
-                  textAlign: 'center',
+                  textAlign:
+                    'center',
                   marginTop: 20,
                   color: '#777',
                 }}
               >
                 Nenhum registro encontrado
               </Text>
+
             ) : (
-              registros.map((item) => (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  key={item.id}
-                  style={styles.card}
-                >
-                  <View
+
+              registros.map(
+                (item) => (
+
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    key={item.id}
                     style={
-                      styles.initialCircle
+                      styles.card
                     }
                   >
-                    <Text
+
+                    <View
                       style={
-                        styles.initialText
+                        styles.initialCircle
                       }
                     >
-                      {item.iniciais}
-                    </Text>
-                  </View>
 
-                  <View
-                    style={
-                      styles.infoContainer
-                    }
-                  >
-                    <Text style={styles.name}>
-                      {item.nome}
-                    </Text>
+                      <Text
+                        style={
+                          styles.initialText
+                        }
+                      >
+                        {
+                          item.iniciais
+                        }
+                      </Text>
 
-                    <Text
+                    </View>
+
+                    <View
                       style={
-                        styles.subtitle
+                        styles.infoContainer
                       }
                     >
-                      {item.tipo}
-                      {item.data
-                        ? ` • ${item.data}`
-                        : ''}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))
+
+                      <Text
+                        style={
+                          styles.name
+                        }
+                      >
+                        {item.nome}
+                      </Text>
+
+                      <Text
+                        style={
+                          styles.subtitle
+                        }
+                      >
+                        {item.tipo}
+
+                        {item.data
+                          ? ` • ${item.data}`
+                          : ''}
+                      </Text>
+
+                    </View>
+
+                  </TouchableOpacity>
+                )
+              )
             )}
+
           </View>
+
         </ScrollView>
+
       </View>
 
       <AppFooter />
+
     </View>
   );
 }

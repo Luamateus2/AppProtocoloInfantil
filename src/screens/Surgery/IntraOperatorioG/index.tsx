@@ -27,7 +27,10 @@ import {
   setDoc,
 } from 'firebase/firestore';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import { RootStackParamList } from '../../../routes/types';
 
@@ -100,12 +103,25 @@ export default function IntraOperatorioG() {
       return;
     }
 
+    if (!auth.currentUser) {
+      Alert.alert(
+        'Erro',
+        'Usuário não está logado.'
+      );
+      return;
+    }
+
     try {
-      const ref = doc(db, 'intraOperatorio', pacienteId);
+      const ref = doc(
+        db,
+        'intraOperatorio',
+        pacienteId
+      );
 
       await setDoc(
         ref,
         {
+          usuarioId: auth.currentUser.uid,
           pacienteId,
           data: '12/03/2026',
           horarioInicio,
@@ -119,9 +135,12 @@ export default function IntraOperatorioG() {
         }
       );
 
-      navigation.navigate('PosOperatorio', {
-        pacienteId,
-      });
+      navigation.navigate(
+        'PosOperatorio',
+        {
+          pacienteId,
+        }
+      );
     } catch (error) {
       console.log(error);
 
@@ -146,7 +165,9 @@ export default function IntraOperatorioG() {
           activeOpacity={0.8}
           style={styles.input}
           onPress={() =>
-            setDropdownAberto(aberto ? null : tipo)
+            setDropdownAberto(
+              aberto ? null : tipo
+            )
           }
         >
           <Text
@@ -157,7 +178,11 @@ export default function IntraOperatorioG() {
           </Text>
 
           <Ionicons
-            name={aberto ? 'chevron-up' : 'chevron-down'}
+            name={
+              aberto
+                ? 'chevron-up'
+                : 'chevron-down'
+            }
             size={18}
             color="#214192"
           />
@@ -204,7 +229,9 @@ export default function IntraOperatorioG() {
         <View style={styles.body}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={
+              styles.scrollContent
+            }
           >
             <View style={styles.date}>
               <Text style={styles.dateText}>
@@ -221,7 +248,9 @@ export default function IntraOperatorioG() {
                 <View style={styles.input}>
                   <TextInput
                     value={horarioInicio}
-                    onChangeText={setHorarioInicio}
+                    onChangeText={
+                      setHorarioInicio
+                    }
                     style={styles.timeInput}
                     placeholder="00:00"
                     placeholderTextColor="#214192"

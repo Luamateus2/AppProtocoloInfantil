@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   View,
@@ -26,9 +29,13 @@ import {
   query,
   deleteDoc,
   doc,
+  where,
 } from 'firebase/firestore';
 
-import { db } from '../../../services/firebaseConfig';
+import {
+  db,
+  auth,
+} from '../../../services/firebaseConfig';
 
 import styles from './styles';
 
@@ -65,33 +72,57 @@ type PacienteType = {
 };
 
 export default function Pacientes() {
-  const navigation = useNavigation<NavProps>();
+  const navigation =
+    useNavigation<NavProps>();
 
-  const [busca, setBusca] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [pacientes, setPacientes] = useState<PacienteType[]>([]);
+  const [busca, setBusca] =
+    useState('');
 
-  // MODAL
-  const [modalVisible, setModalVisible] = useState(false);
-  const [pacienteSelecionado, setPacienteSelecionado] = useState<string | null>(null);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [pacientes, setPacientes] =
+    useState<PacienteType[]>([]);
+
+  const [
+    modalVisible,
+    setModalVisible,
+  ] = useState(false);
+
+  const [
+    pacienteSelecionado,
+    setPacienteSelecionado,
+  ] = useState<string | null>(null);
 
   async function buscarPacientes() {
+    if (!auth.currentUser) {
+      setPacientes([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
 
       const q = query(
         collection(db, 'pacientes'),
+        where(
+          'usuarioId',
+          '==',
+          auth.currentUser.uid
+        ),
         orderBy('createdAt', 'desc')
       );
 
-      const querySnapshot = await getDocs(q);
+      const querySnapshot =
+        await getDocs(q);
 
       const lista: PacienteType[] = [];
 
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((docItem) => {
         lista.push({
-          id: doc.id,
-          ...doc.data(),
+          id: docItem.id,
+          ...docItem.data(),
         } as PacienteType);
       });
 
@@ -107,53 +138,85 @@ export default function Pacientes() {
     buscarPacientes();
   }, []);
 
-  const pacientesFiltrados = pacientes.filter(paciente => {
-    const nome = paciente.nomeCompleto?.toLowerCase().trim();
-    const textoBusca = busca.toLowerCase().trim();
+  const pacientesFiltrados =
+    pacientes.filter((paciente) => {
+      const nome =
+        paciente.nomeCompleto
+          ?.toLowerCase()
+          .trim() || '';
 
-    return nome.includes(textoBusca);
-  });
+      const textoBusca =
+        busca.toLowerCase().trim();
 
-  // EXCLUIR
+      return nome.includes(textoBusca);
+    });
+
   async function excluirPaciente(id: string) {
     try {
-      await deleteDoc(doc(db, 'pacientes', id));
+      await deleteDoc(
+        doc(db, 'pacientes', id)
+      );
 
-      setPacientes(prev =>
-        prev.filter(item => item.id !== id)
+      await deleteDoc(
+        doc(db, 'preOperatorio', id)
+      );
+
+      await deleteDoc(
+        doc(db, 'intraOperatorio', id)
+      );
+
+      await deleteDoc(
+        doc(db, 'posOperatorio', id)
+      );
+
+      setPacientes((prev) =>
+        prev.filter(
+          (item) => item.id !== id
+        )
       );
 
       setModalVisible(false);
+      setPacienteSelecionado(null);
     } catch (error) {
       console.log(error);
     }
   }
 
-  // EDITAR
   function editarPaciente(id: string) {
     setModalVisible(false);
 
-    navigation.navigate('EditarPaciente', {
-      pacienteId: id,
-    });
+    navigation.navigate(
+      'EditarPaciente',
+      {
+        pacienteId: id,
+      }
+    );
   }
 
   return (
-    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+    <LinearGradient
+      colors={['#214192', '#4293D5']}
+      style={{ flex: 1 }}
+    >
       <StatusBar barStyle="light-content" />
 
-      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+      <SafeAreaView
+        style={{ flex: 1 }}
+        edges={['top']}
+      >
         <Header title="Pacientes" />
 
         <View style={styles.body}>
-
-          {/* BUSCA */}
           <View style={styles.searchContainer}>
             <LinearGradient
               colors={['#4C91E6', '#214192']}
               style={styles.searchBox}
             >
-              <Ionicons name="search" size={20} color="#FFF" />
+              <Ionicons
+                name="search"
+                size={20}
+                color="#FFF"
+              />
 
               <TextInput
                 value={busca}
@@ -164,12 +227,17 @@ export default function Pacientes() {
               />
             </LinearGradient>
 
-            <TouchableOpacity style={styles.filterButton}>
-              <Ionicons name="filter" size={18} color="#fff" />
+            <TouchableOpacity
+              style={styles.filterButton}
+            >
+              <Ionicons
+                name="filter"
+                size={18}
+                color="#fff"
+              />
             </TouchableOpacity>
           </View>
 
-          {/* LOADING */}
           {loading ? (
             <ActivityIndicator
               size="large"
@@ -179,12 +247,22 @@ export default function Pacientes() {
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 120 }}
+              contentContainerStyle={{
+                paddingBottom: 120,
+              }}
             >
-              {/* VAZIO */}
               {pacientesFiltrados.length === 0 && (
-                <View style={{ marginTop: 40, alignItems: 'center' }}>
-                  <Ionicons name="people-outline" size={50} color="#214192" />
+                <View
+                  style={{
+                    marginTop: 40,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Ionicons
+                    name="people-outline"
+                    size={50}
+                    color="#214192"
+                  />
 
                   <Text
                     style={{
@@ -199,48 +277,54 @@ export default function Pacientes() {
                 </View>
               )}
 
-              {/* LISTA */}
-              {pacientesFiltrados.map(paciente => (
-                <View key={paciente.id} style={styles.card}>
-
-                  {/* AVATAR */}
+              {pacientesFiltrados.map((paciente) => (
+                <View
+                  key={paciente.id}
+                  style={styles.card}
+                >
                   <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
+                    <Text
+                      style={styles.avatarText}
+                    >
                       {paciente.nomeCompleto
                         ?.split(' ')
-                        .map(n => n[0])
+                        .map((n) => n[0])
                         .join('')
                         .slice(0, 2)}
                     </Text>
                   </View>
 
-                  {/* INFO */}
                   <View style={styles.cardInfo}>
                     <Text style={styles.name}>
                       {paciente.nomeCompleto}
                     </Text>
 
                     <Text style={styles.details}>
-                      {paciente.idade} anos • {paciente.peso} kg
+                      {paciente.idade} anos •{' '}
+                      {paciente.peso} kg
                     </Text>
 
                     <Text style={styles.details}>
-                      ASA: {paciente.asa} • {paciente.procedimento}
+                      ASA: {paciente.asa} •{' '}
+                      {paciente.procedimento}
                     </Text>
 
                     <Text style={styles.details}>
-                      Comorbidade: {paciente.comorbidade}
+                      Comorbidade:{' '}
+                      {paciente.comorbidade}
                     </Text>
 
                     <Text style={styles.details}>
-                      Nascimento: {paciente.dataNascimento}
+                      Nascimento:{' '}
+                      {paciente.dataNascimento}
                     </Text>
                   </View>
 
-                  {/* SETA */}
                   <TouchableOpacity
                     onPress={() => {
-                      setPacienteSelecionado(paciente.id);
+                      setPacienteSelecionado(
+                        paciente.id
+                      );
                       setModalVisible(true);
                     }}
                   >
@@ -256,17 +340,19 @@ export default function Pacientes() {
           )}
         </View>
 
-        {/* MODAL */}
         <Modal
           visible={modalVisible}
           transparent
           animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={() =>
+            setModalVisible(false)
+          }
         >
           <View
             style={{
               flex: 1,
-              backgroundColor: 'rgba(0,0,0,0.5)',
+              backgroundColor:
+                'rgba(0,0,0,0.5)',
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -291,7 +377,6 @@ export default function Pacientes() {
                 O que deseja fazer?
               </Text>
 
-              {/* EDITAR */}
               <TouchableOpacity
                 style={{
                   padding: 12,
@@ -300,15 +385,22 @@ export default function Pacientes() {
                   marginBottom: 10,
                 }}
                 onPress={() =>
-                  editarPaciente(pacienteSelecionado!)
+                  editarPaciente(
+                    pacienteSelecionado!
+                  )
                 }
               >
-                <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontWeight: '600',
+                  }}
+                >
                   Editar Paciente
                 </Text>
               </TouchableOpacity>
 
-              {/* EXCLUIR */}
               <TouchableOpacity
                 style={{
                   padding: 12,
@@ -317,16 +409,27 @@ export default function Pacientes() {
                   marginBottom: 10,
                 }}
                 onPress={() =>
-                  excluirPaciente(pacienteSelecionado!)
+                  excluirPaciente(
+                    pacienteSelecionado!
+                  )
                 }
               >
-                <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontWeight: '600',
+                  }}
+                >
                   Excluir Paciente
                 </Text>
               </TouchableOpacity>
 
-              {/* CANCELAR */}
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <TouchableOpacity
+                onPress={() =>
+                  setModalVisible(false)
+                }
+              >
                 <Text
                   style={{
                     textAlign: 'center',
