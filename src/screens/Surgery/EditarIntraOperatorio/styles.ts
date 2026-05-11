@@ -44,13 +44,6 @@ export default StyleSheet.create({
     fontWeight: '700',
   },
 
-  section: {
-    color: '#214192',
-    fontWeight: '800',
-    fontSize: 18,
-    marginBottom: 14,
-  },
-
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -95,6 +88,15 @@ export default StyleSheet.create({
     fontWeight: '600',
     flex: 1,
     marginRight: 4,
+  },
+
+  timeInput: {
+    flex: 1,
+    color: '#214192',
+    fontSize: 12,
+    fontWeight: '600',
+    padding: 0,
+    margin: 0,
   },
 
   dropdown: {

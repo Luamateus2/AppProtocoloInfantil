@@ -16,7 +16,8 @@ import PosOperatorio from "../screens/Surgery/PosOperatorio";
 import EditarPaciente from "../screens/Patient/EditarPaciente";
 import EditarPreOperatorio from "../screens/Surgery/EditarPreOperatorio";
 import EditarPosOperatorio from "../screens/Surgery/EditarPosOperatorio";
-import Settings from "../screens/Settings";
+import EditarIntraOperatorio from "../screens/Surgery/EditarIntraOperatorio";
+import Settings from "../../Settings";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Routes() {
@@ -38,6 +39,8 @@ export default function Routes() {
       <Stack.Screen name = "EditarPaciente" component={EditarPaciente}/>
       <Stack.Screen name = "EditarPosOperatorio" component={EditarPosOperatorio}/>
       <Stack.Screen name= "EditarPreOperatorio" component={EditarPreOperatorio}/>
+      <Stack.Screen name= "EditarIntraOperatorio" component={EditarIntraOperatorio}/>
+
       <Stack.Screen name= "Settings" component={Settings}/>
 
     </Stack.Navigator>

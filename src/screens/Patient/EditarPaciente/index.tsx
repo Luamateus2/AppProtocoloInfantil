@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   View,
@@ -12,8 +15,8 @@ import {
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 import {
   useNavigation,
@@ -32,9 +35,7 @@ import {
 
 import { db } from '../../../services/firebaseConfig';
 
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+import { RootStackParamList } from '../../../routes/types';
 
 import AppFooter from '../../../components/Footer/Footer';
 import Header from '../../../components/HeaderSecundario';
@@ -65,7 +66,16 @@ export default function EditarPaciente() {
   const [comorbidade, setComorbidade] = useState('');
   const [observacoes, setObservacoes] = useState('');
 
+  const [openAsa, setOpenAsa] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+
+  const asaOptions = [
+    'ASA I',
+    'ASA II',
+    'ASA III',
+    'ASA IV',
+    'ASA V',
+  ];
 
   async function carregarPaciente() {
     try {
@@ -73,7 +83,10 @@ export default function EditarPaciente() {
       const snap = await getDoc(ref);
 
       if (!snap.exists()) {
-        Alert.alert('Erro', 'Paciente não encontrado');
+        Alert.alert(
+          'Erro',
+          'Paciente não encontrado'
+        );
         navigation.goBack();
         return;
       }
@@ -88,10 +101,13 @@ export default function EditarPaciente() {
       setProcedimento(data.procedimento || '');
       setComorbidade(data.comorbidade || '');
       setObservacoes(data.observacoes || '');
-
     } catch (error) {
       console.log(error);
-      Alert.alert('Erro', 'Falha ao carregar paciente');
+
+      Alert.alert(
+        'Erro',
+        'Falha ao carregar paciente'
+      );
     } finally {
       setLoadingData(false);
     }
@@ -101,7 +117,6 @@ export default function EditarPaciente() {
     carregarPaciente();
   }, []);
 
-  // ✅ AGORA NÃO SALVA, SÓ AVANÇA
   function continuar() {
     navigation.navigate('EditarPreOperatorio', {
       pacienteId,
@@ -120,71 +135,226 @@ export default function EditarPaciente() {
 
   if (loadingData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#214192" />
-      </View>
+      <LinearGradient
+        colors={['#214192', '#4293D5']}
+        style={styles.container}
+      >
+        <SafeAreaView
+          style={styles.safeArea}
+          edges={['top']}
+        >
+          <Header title="Editar Paciente" />
+
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator
+              size="large"
+              color="#214192"
+            />
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
     );
   }
 
   return (
-    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
-      <StatusBar barStyle="light-content" />
+    <LinearGradient
+      colors={['#214192', '#4293D5']}
+      style={styles.container}
+    >
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
 
-      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={['top']}
+      >
         <Header title="Editar Paciente" />
 
         <View style={styles.body}>
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             <Text style={styles.sectionTitle}>
-              Editar Dados do Paciente
+              Dados do Paciente
             </Text>
 
-            <Text style={styles.label}>Nome Completo</Text>
-            <TextInput style={styles.input} value={nomeCompleto} onChangeText={setNomeCompleto} />
+            <Text style={styles.label}>
+              Nome Completo
+            </Text>
 
-            <Text style={styles.label}>Data de Nascimento</Text>
-            <TextInput style={styles.input} value={dataNascimento} onChangeText={setDataNascimento} />
-
-            <Text style={styles.label}>Idade</Text>
-            <TextInput style={styles.input} value={idade} onChangeText={setIdade} />
-
-            <Text style={styles.label}>ASA</Text>
-            <TextInput style={styles.input} value={asa} onChangeText={setAsa} />
-
-            <Text style={styles.label}>Peso</Text>
-            <TextInput style={styles.input} value={peso} onChangeText={setPeso} />
-
-            <Text style={styles.label}>Procedimento</Text>
-            <TextInput style={styles.input} value={procedimento} onChangeText={setProcedimento} />
-
-            <Text style={styles.label}>Comorbidade</Text>
-            <TextInput style={styles.input} value={comorbidade} onChangeText={setComorbidade} />
-
-            <Text style={styles.label}>Observações</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              placeholder="Digite o nome completo"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={nomeCompleto}
+              onChangeText={setNomeCompleto}
+            />
+
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Data de Nascimento
+                </Text>
+
+                <TextInput
+                  placeholder="dd/mm/aaaa"
+                  placeholderTextColor="#999"
+                  style={styles.input}
+                  value={dataNascimento}
+                  onChangeText={setDataNascimento}
+                />
+              </View>
+
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Idade
+                </Text>
+
+                <TextInput
+                  placeholder="anos"
+                  placeholderTextColor="#999"
+                  style={styles.input}
+                  value={idade}
+                  onChangeText={setIdade}
+                  keyboardType="numeric"
+                />
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Classificação ASA
+                </Text>
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  style={styles.select}
+                  onPress={() =>
+                    setOpenAsa(!openAsa)
+                  }
+                >
+                  <Text
+                    style={styles.selectText}
+                    numberOfLines={1}
+                  >
+                    {asa || 'Selecione'}
+                  </Text>
+
+                  <Ionicons
+                    name={
+                      openAsa
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                    }
+                    size={18}
+                    color="#214192"
+                  />
+                </TouchableOpacity>
+
+                {openAsa && (
+                  <View style={styles.dropdown}>
+                    {asaOptions.map(item => (
+                      <TouchableOpacity
+                        key={item}
+                        style={styles.option}
+                        onPress={() => {
+                          setAsa(item);
+                          setOpenAsa(false);
+                        }}
+                      >
+                        <Text style={styles.optionText}>
+                          {item}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.half}>
+                <Text style={styles.label}>
+                  Peso (kg)
+                </Text>
+
+                <TextInput
+                  placeholder="Ex: 20 kg"
+                  placeholderTextColor="#999"
+                  style={styles.input}
+                  value={peso}
+                  onChangeText={setPeso}
+                  keyboardType="numeric"
+                />
+              </View>
+            </View>
+
+            <Text style={styles.label}>
+              Procedimento Cirúrgico
+            </Text>
+
+            <TextInput
+              placeholder="Ex: Adenoidectomia"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={procedimento}
+              onChangeText={setProcedimento}
+            />
+
+            <Text style={styles.label}>
+              Comorbidade Respiratória
+            </Text>
+
+            <TextInput
+              placeholder="Ex: Asma, cardiopatia..."
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={comorbidade}
+              onChangeText={setComorbidade}
+            />
+
+            <Text style={styles.label}>
+              Observações
+            </Text>
+
+            <TextInput
+              placeholder="Informações adicionais..."
+              placeholderTextColor="#999"
+              style={[
+                styles.input,
+                styles.textArea,
+              ]}
               multiline
               value={observacoes}
               onChangeText={setObservacoes}
             />
 
-            {/* BOTÃO AGORA É "CONTINUAR" */}
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={continuar}
-            >
-              <Text style={styles.saveText}>
-                Continuar
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={styles.cancelText}>
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
 
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={continuar}
+              >
+                <Text style={styles.saveText}>
+                  Continuar
+                </Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
 
         <AppFooter />
-
       </SafeAreaView>
     </LinearGradient>
   );

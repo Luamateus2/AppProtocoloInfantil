@@ -6,18 +6,17 @@ import React, {
 import {
   View,
   Text,
-  TouchableOpacity,
   TextInput,
+  TouchableOpacity,
   ScrollView,
-  StatusBar,
-  Platform,
   Alert,
+  StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { Ionicons } from '@expo/vector-icons';
 
 import {
@@ -25,8 +24,6 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {
   NativeStackNavigationProp,
@@ -36,260 +33,205 @@ import {
   doc,
   getDoc,
   updateDoc,
-  serverTimestamp,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
 
 import { RootStackParamList } from '../../../routes/types';
 
+import HeaderSecundario from '../../../components/HeaderSecundario';
 import AppFooter from '../../../components/Footer/Footer';
 
 import styles from './styles';
 
 type NavProps =
-  NativeStackNavigationProp<
+  NativeStackNavigationProp<RootStackParamList>;
+
+type RouteProps =
+  RouteProp<
     RootStackParamList,
     'EditarPosOperatorio'
   >;
 
-type RouteParams = RouteProp<
-  RootStackParamList,
-  'EditarPosOperatorio'
->;
-
 export default function EditarPosOperatorio() {
-
   const navigation =
     useNavigation<NavProps>();
 
   const route =
-    useRoute<RouteParams>();
+    useRoute<RouteProps>();
 
   const { pacienteId } =
     route.params;
 
-  const [eva,
-    setEva] =
-    useState('');
-
-  const [riscoObstrucao,
-    setRiscoObstrucao] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [alimentacaoPrecoce,
-    setAlimentacaoPrecoce] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [criterioAlta,
-    setCriterioAlta] =
-    useState<boolean | null>(
-      null
-    );
-
-  const [tempoAlta,
-    setTempoAlta] =
-    useState(new Date());
-
-  const [showTimePicker,
-    setShowTimePicker] =
-    useState(false);
-
-  const [observacoes,
-    setObservacoes] =
-    useState('');
-
-  const [loading,
-    setLoading] =
-    useState(false);
-
-  const [loadingPaciente,
-    setLoadingPaciente] =
+  const [loading, setLoading] =
     useState(true);
 
-  function formatTime(
-    date: Date
-  ) {
-    return date.toLocaleTimeString(
+  const [date, setDate] =
+    useState(new Date());
+
+  const [showDate, setShowDate] =
+    useState(false);
+
+  const [
+    horarioTermino,
+    setHorarioTermino,
+  ] = useState(new Date());
+
+  const [
+    showHorario,
+    setShowHorario,
+  ] = useState(false);
+
+  const [
+    recuperacao,
+    setRecuperacao,
+  ] = useState('Estável');
+
+  const [
+    sinaisVitais,
+    setSinaisVitais,
+  ] = useState(
+    '98 bpm | SpO2: 99%'
+  );
+
+  const [dor, setDor] =
+    useState('2');
+
+  const [
+    observacoes,
+    setObservacoes,
+  ] = useState(
+    'Paciente acordado, sem queixas,\nmantendo saturação adequada.'
+  );
+
+  const [
+    openSelect,
+    setOpenSelect,
+  ] = useState('');
+
+  const formatDate = (
+    d: Date
+  ) =>
+    d.toLocaleDateString(
+      'pt-BR'
+    );
+
+  const formatHour = (
+    d: Date
+  ) =>
+    d.toLocaleTimeString(
       'pt-BR',
       {
         hour: '2-digit',
         minute: '2-digit',
       }
     );
-  }
 
-  function parseTime(
-    timeString: string
+  function converterHoraParaDate(
+    hora?: string
   ) {
+    if (!hora) return new Date();
 
-    const date =
+    const [h, m] =
+      hora.split(':');
+
+    const novaData =
       new Date();
 
-    if (!timeString)
-      return date;
-
-    const [
-      hours,
-      minutes,
-    ] =
-      timeString.split(':');
-
-    date.setHours(
-      Number(hours)
+    novaData.setHours(
+      Number(h)
     );
 
-    date.setMinutes(
-      Number(minutes)
+    novaData.setMinutes(
+      Number(m)
     );
 
-    return date;
+    novaData.setSeconds(0);
+
+    return novaData;
   }
 
-  const onChangeTime = (
-    _: any,
-    selectedDate?: Date
-  ) => {
-
-    setShowTimePicker(
-      false
-    );
-
-    if (selectedDate) {
-      setTempoAlta(
-        selectedDate
-      );
-    }
-  };
-
-  /* CARREGAR DADOS */
-
   async function carregarDados() {
-
     try {
+      const ref = doc(
+        db,
+        'posOperatorio',
+        pacienteId
+      );
 
-      const pacienteRef =
-        doc(
-          db,
-          'pacientes',
-          pacienteId
+      const snap =
+        await getDoc(ref);
+
+      if (snap.exists()) {
+        const data =
+          snap.data();
+
+        setRecuperacao(
+          data.recuperacao ||
+            'Estável'
         );
 
-      const snapshot =
-        await getDoc(
-          pacienteRef
+        setSinaisVitais(
+          data.sinaisVitais ||
+            '98 bpm | SpO2: 99%'
         );
 
-      if (
-        !snapshot.exists()
-      ) {
-
-        Alert.alert(
-          'Erro',
-          'Paciente não encontrado.'
+        setDor(
+          data.dor || '2'
         );
 
-        navigation.goBack();
+        setObservacoes(
+          data.observacoes ||
+            ''
+        );
 
-        return;
+        if (
+          data.horarioTermino
+        ) {
+          setHorarioTermino(
+            converterHoraParaDate(
+              data.horarioTermino
+            )
+          );
+        }
       }
-
-      const data =
-        snapshot.data();
-
-      const pos =
-        data.posOperatorio;
-
-      if (!pos)
-        return;
-
-      setEva(
-        pos.eva || ''
-      );
-
-      setRiscoObstrucao(
-        pos.riscoObstrucao ??
-          null
-      );
-
-      setAlimentacaoPrecoce(
-        pos.alimentacaoPrecoce ??
-          null
-      );
-
-      setCriterioAlta(
-        pos.criterioAlta ??
-          null
-      );
-
-      setTempoAlta(
-        parseTime(
-          pos.tempoAlta
-        )
-      );
-
-      setObservacoes(
-        pos.observacoes ||
-          ''
-      );
-
     } catch (error) {
-
       console.log(error);
 
       Alert.alert(
         'Erro',
-        'Não foi possível carregar os dados.'
+        'Não foi possível carregar o pós-operatório.'
       );
-
     } finally {
-
-      setLoadingPaciente(
-        false
-      );
+      setLoading(false);
     }
   }
 
-  async function salvarRegistro() {
+  useEffect(() => {
+    carregarDados();
+  }, []);
 
+  async function salvarEdicao() {
     try {
-
-      setLoading(true);
-
-      const pacienteRef =
+      await updateDoc(
         doc(
           db,
-          'pacientes',
+          'posOperatorio',
           pacienteId
-        );
-
-      await updateDoc(
-        pacienteRef,
+        ),
         {
-          posOperatorio: {
+          data:
+            formatDate(date),
 
-            eva,
+          horarioTermino:
+            formatHour(
+              horarioTermino
+            ),
 
-            riscoObstrucao,
-
-            alimentacaoPrecoce,
-
-            criterioAlta,
-
-            tempoAlta:
-              formatTime(
-                tempoAlta
-              ),
-
-            observacoes,
-          },
-
-          updatedAt:
-            serverTimestamp(),
+          recuperacao,
+          sinaisVitais,
+          dor,
+          observacoes,
         }
       );
 
@@ -299,101 +241,127 @@ export default function EditarPosOperatorio() {
       );
 
       navigation.navigate(
-        'Historico'
+        'Home'
       );
-
     } catch (error) {
-
       console.log(error);
 
       Alert.alert(
         'Erro',
-        'Não foi possível salvar.'
+        'Não foi possível atualizar.'
       );
-
-    } finally {
-
-      setLoading(false);
     }
   }
 
-  useEffect(() => {
-
-    carregarDados();
-
-  }, []);
-
-  const BooleanSelector = ({
-    label,
+  function SelectBox({
     value,
-    onChange,
+    opened = false,
   }: {
-    label: string;
-    value:
-      | boolean
-      | null;
-    onChange: (
-      value: boolean
+    value: string;
+    opened?: boolean;
+  }) {
+    return (
+      <View style={styles.input}>
+        <Text
+          style={
+            styles.inputText
+          }
+          numberOfLines={1}
+        >
+          {value}
+        </Text>
+
+        <Ionicons
+          name={
+            opened
+              ? 'chevron-up'
+              : 'chevron-down'
+          }
+          size={18}
+          color="#214192"
+        />
+      </View>
+    );
+  }
+
+  function OptionList({
+    items,
+    onSelect,
+  }: {
+    items: string[];
+    onSelect: (
+      item: string
     ) => void;
-  }) => (
-    <View style={styles.row}>
-
-      <Text style={styles.label}>
-        {label}
-      </Text>
-
+  }) {
+    return (
       <View
         style={
-          styles.booleanContainer
+          styles.dropdown
         }
       >
+        {items.map(item => (
+          <TouchableOpacity
+            key={item}
+            style={
+              styles.option
+            }
+            onPress={() => {
+              onSelect(item);
 
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === true &&
-              styles.booleanButtonActive,
-          ]}
-          onPress={() =>
-            onChange(true)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === true &&
-                styles.booleanTextActive,
-            ]}
+              setOpenSelect(
+                ''
+              );
+            }}
           >
-            Sim
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.booleanButton,
-            value === false &&
-              styles.booleanButtonActiveRed,
-          ]}
-          onPress={() =>
-            onChange(false)
-          }
-        >
-          <Text
-            style={[
-              styles.booleanText,
-              value === false &&
-                styles.booleanTextActive,
-            ]}
-          >
-            Não
-          </Text>
-        </TouchableOpacity>
-
+            <Text
+              style={
+                styles.optionText
+              }
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
+    );
+  }
 
-    </View>
-  );
+  if (loading) {
+    return (
+      <LinearGradient
+        colors={[
+          '#214192',
+          '#4293D5',
+        ]}
+        style={
+          styles.container
+        }
+      >
+        <SafeAreaView
+          style={
+            styles.safeArea
+          }
+          edges={['top']}
+        >
+          <HeaderSecundario
+            title="Editar Pós-Operatório"
+            showBackButton
+          />
+
+          <View
+            style={
+              styles.loadingContainer
+            }
+          >
+            <ActivityIndicator
+              size="large"
+              color="#214192"
+            />
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
@@ -401,48 +369,352 @@ export default function EditarPosOperatorio() {
         '#214192',
         '#4293D5',
       ]}
-      style={{ flex: 1 }}
+      style={styles.container}
     >
-      <StatusBar
-        barStyle="light-content"
-      />
+      <StatusBar barStyle="light-content" />
 
       <SafeAreaView
-        style={{ flex: 1 }}
+        style={styles.safeArea}
         edges={['top']}
       >
+        <HeaderSecundario
+          title="Editar Pós-Operatório"
+          showBackButton
+        />
 
-        <View style={styles.header}>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.goBack()
+        <View style={styles.body}>
+          <ScrollView
+            showsVerticalScrollIndicator={
+              false
+            }
+            contentContainerStyle={
+              styles.scrollContent
             }
           >
-            <Ionicons
-              name="arrow-back"
-              size={22}
-              color="#fff"
+            <TouchableOpacity
+              style={styles.date}
+              onPress={() =>
+                setShowDate(
+                  true
+                )
+              }
+            >
+              <Text
+                style={
+                  styles.dateText
+                }
+              >
+                {formatDate(
+                  date
+                )}
+              </Text>
+            </TouchableOpacity>
+
+            {showDate && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                onChange={(
+                  event,
+                  selectedDate
+                ) => {
+                  setShowDate(
+                    false
+                  );
+
+                  if (
+                    selectedDate
+                  ) {
+                    setDate(
+                      selectedDate
+                    );
+                  }
+                }}
+              />
+            )}
+
+            <View style={styles.row}>
+              <Text
+                style={
+                  styles.label
+                }
+              >
+                Horário de
+                Término
+              </Text>
+
+              <TouchableOpacity
+                style={
+                  styles.dropdownWrapper
+                }
+                activeOpacity={
+                  0.85
+                }
+                onPress={() =>
+                  setShowHorario(
+                    true
+                  )
+                }
+              >
+                <SelectBox
+                  value={formatHour(
+                    horarioTermino
+                  )}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {showHorario && (
+              <DateTimePicker
+                value={
+                  horarioTermino
+                }
+                mode="time"
+                is24Hour
+                onChange={(
+                  event,
+                  selectedTime
+                ) => {
+                  setShowHorario(
+                    false
+                  );
+
+                  if (
+                    selectedTime
+                  ) {
+                    setHorarioTermino(
+                      selectedTime
+                    );
+                  }
+                }}
+              />
+            )}
+
+            <View style={styles.row}>
+              <Text
+                style={
+                  styles.label
+                }
+              >
+                Recuperação
+              </Text>
+
+              <View
+                style={
+                  styles.dropdownWrapper
+                }
+              >
+                <TouchableOpacity
+                  activeOpacity={
+                    0.85
+                  }
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect ===
+                        'recuperacao'
+                        ? ''
+                        : 'recuperacao'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={
+                      recuperacao
+                    }
+                    opened={
+                      openSelect ===
+                      'recuperacao'
+                    }
+                  />
+                </TouchableOpacity>
+
+                {openSelect ===
+                  'recuperacao' && (
+                  <OptionList
+                    items={[
+                      'Estável',
+                      'Sonolento',
+                      'Agitado',
+                      'Instável',
+                    ]}
+                    onSelect={
+                      setRecuperacao
+                    }
+                  />
+                )}
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <Text
+                style={
+                  styles.label
+                }
+              >
+                Sinais
+                Vitais
+              </Text>
+
+              <View
+                style={
+                  styles.dropdownWrapper
+                }
+              >
+                <TouchableOpacity
+                  activeOpacity={
+                    0.85
+                  }
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect ===
+                        'sinais'
+                        ? ''
+                        : 'sinais'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={
+                      sinaisVitais
+                    }
+                    opened={
+                      openSelect ===
+                      'sinais'
+                    }
+                  />
+                </TouchableOpacity>
+
+                {openSelect ===
+                  'sinais' && (
+                  <OptionList
+                    items={[
+                      '98 bpm | SpO2: 99%',
+                      '90 bpm | SpO2: 98%',
+                      '86 bpm | SpO2: 97%',
+                      '100 bpm | SpO2: 96%',
+                    ]}
+                    onSelect={
+                      setSinaisVitais
+                    }
+                  />
+                )}
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <Text
+                style={
+                  styles.label
+                }
+              >
+                Dor
+                (Escala)
+              </Text>
+
+              <View
+                style={
+                  styles.dropdownWrapper
+                }
+              >
+                <TouchableOpacity
+                  activeOpacity={
+                    0.85
+                  }
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect ===
+                        'dor'
+                        ? ''
+                        : 'dor'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={dor}
+                    opened={
+                      openSelect ===
+                      'dor'
+                    }
+                  />
+                </TouchableOpacity>
+
+                {openSelect ===
+                  'dor' && (
+                  <OptionList
+                    items={[
+                      '0',
+                      '1',
+                      '2',
+                      '3',
+                      '4',
+                      '5',
+                      '6',
+                      '7',
+                      '8',
+                      '9',
+                      '10',
+                    ]}
+                    onSelect={
+                      setDor
+                    }
+                  />
+                )}
+              </View>
+            </View>
+
+            <Text
+              style={
+                styles.observacoesLabel
+              }
+            >
+              Observações
+            </Text>
+
+            <TextInput
+              style={
+                styles.textArea
+              }
+              multiline
+              value={
+                observacoes
+              }
+              onChangeText={
+                setObservacoes
+              }
+              placeholder="Paciente acordado, sem queixas, mantendo saturação adequada."
+              placeholderTextColor="#5E6D95"
             />
-          </TouchableOpacity>
 
-          <Text
-            style={styles.headerTitle}
-          >
-            Editar
-            Pós-Operatório
-          </Text>
-
-          <View
-            style={{ width: 22 }}
-          />
-
+            <TouchableOpacity
+              activeOpacity={
+                0.85
+              }
+              onPress={
+                salvarEdicao
+              }
+            >
+              <LinearGradient
+                colors={[
+                  '#3A7BD5',
+                  '#2A5298',
+                ]}
+                style={
+                  styles.button
+                }
+              >
+                <Text
+                  style={
+                    styles.buttonText
+                  }
+                >
+                  Salvar Alterações
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
 
-        {/* restante da UI permanece igual à sua tela atual */}
-
         <AppFooter />
-
       </SafeAreaView>
     </LinearGradient>
   );

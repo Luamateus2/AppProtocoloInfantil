@@ -46,11 +46,11 @@ import {
   auth,
   db,
   storage,
-} from '../../services/firebaseConfig';
+} from '../src/services/firebaseConfig';
 
-import { RootStackParamList } from '../../routes/types';
+import { RootStackParamList } from '../src/routes/types';
 
-import AppFooter from '../../components/Footer/Footer';
+import AppFooter from '../src/components/Footer/Footer';
 
 import styles from './styles';
 
