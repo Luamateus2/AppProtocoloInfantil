@@ -1,87 +1,118 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  top: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 40,
-    marginBottom: 30,
-  },
-
-  logo: {
-    width: 180,
-    height: 180,
-    resizeMode: 'contain',
-  },
-
-  content: {
+  container: {
     flex: 1,
-    backgroundColor: '#FFF',
-    marginHorizontal: 20,
-    borderRadius: 28,
-    paddingHorizontal: 25,
-    paddingVertical: 30,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    marginBottom: 30,
+    backgroundColor: '#fff',
+  },
+
+  header: {
+    height: 140,
+  },
+
+  body: {
+    flex: 1,
+    padding: 20,
+    marginTop: -40,
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#214192',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-
-  description: {
-    fontSize: 15,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 28,
-  },
-
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#214192',
+    color: '#1E1E1E',
     marginBottom: 10,
   },
 
+  subtitle: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 20,
+    lineHeight: 18,
+  },
+
   input: {
-    height: 58,
-    backgroundColor: '#F8FAFC',
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    borderWidth: 1.5,
-    borderColor: '#D9E2F2',
-    fontSize: 15,
-    color: '#1F2937',
-    marginBottom: 25,
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#1E4FA1',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
 
-  buttonWrapper: {
-    borderRadius: 18,
-    overflow: 'hidden',
+  checklist: {
+    marginTop: 10,
+    marginBottom: 20,
   },
 
-  button: {
-    height: 58,
-    justifyContent: 'center',
+  checkItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 18,
+    marginBottom: 6,
   },
 
-  buttonText: {
-    color: '#FFF',
-    fontSize: 17,
+  checkText: {
+    fontSize: 12,
+    marginLeft: 6,
+  },
+
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+
+  cancelButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#1E4FA1',
+    borderRadius: 20,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+
+  cancelText: {
+    color: '#1E4FA1',
+    fontWeight: '600',
+  },
+
+  saveButton: {
+    flex: 1,
+    backgroundColor: '#1E4FA1',
+    borderRadius: 20,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  saveText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+
+  successCard: {
+    position: 'absolute',
+    top: '40%',
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    padding: 25,
+    borderRadius: 15,
+    alignItems: 'center',
+    elevation: 5,
+  },
+
+  successTitle: {
+    fontSize: 16,
     fontWeight: '700',
+    marginTop: 10,
+    color: '#1E4FA1',
+  },
+
+  successText: {
+    fontSize: 13,
+    marginTop: 5,
+    color: '#6B7280',
+    textAlign: 'center',
   },
 });

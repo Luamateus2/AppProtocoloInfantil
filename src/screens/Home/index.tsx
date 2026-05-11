@@ -174,11 +174,17 @@ export default function Home() {
           <View style={styles.header}>
 
            <View style={styles.logoBox}>
-              <Image
-                source={LogoPrincipal.logo}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Settings')}
+              >
+                <Image
+                  source={{
+                    uri: 'https://i.pravatar.cc/150?img=12',
+                  }}
+                  style={styles.avatar}
+                />
+</TouchableOpacity>
             </View>
             <Text style={styles.headerText}>
               Seja Bem-Vindo

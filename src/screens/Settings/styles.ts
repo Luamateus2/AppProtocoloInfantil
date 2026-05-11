@@ -117,4 +117,19 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  avatarImage: {
+  width: '100%',
+  height: '100%',
+  borderRadius: 50,
+},
+
+loadingAvatar: {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  borderRadius: 50,
+  backgroundColor: 'rgba(0,0,0,0.35)',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
 });

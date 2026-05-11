@@ -1,22 +1,18 @@
-// Historico.tsx
-
 import React, { useEffect, useState } from 'react';
-
 import {
   View,
   Text,
   ScrollView,
   ActivityIndicator,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
   useNavigation,
 } from '@react-navigation/native';
 
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
   NativeStackNavigationProp,
@@ -38,37 +34,21 @@ import Header from '../../../components/HeaderSecundario';
 
 import styles from './styles';
 
-import {
-  RootStackParamList,
-} from '../../../routes/types';
+import { RootStackParamList } from '../../../routes/types';
 
 type NavProps = NativeStackNavigationProp<
   RootStackParamList,
   'Historico'
 >;
 
-type HistoricoItem = {
-  id: string;
-  paciente: string;
-  data: string;
-  titulo: string;
-  descricao: string;
-};
-
 export default function Historico() {
-
   const navigation = useNavigation<NavProps>();
 
   const [loading, setLoading] = useState(true);
-
-  const [historico,
-    setHistorico] =
-    useState<HistoricoItem[]>([]);
+  const [historico, setHistorico] = useState<any[]>([]);
 
   async function buscarHistorico() {
-
     try {
-
       setLoading(true);
 
       const q = query(
@@ -76,214 +56,107 @@ export default function Historico() {
         orderBy('createdAt', 'desc')
       );
 
-      const querySnapshot =
-        await getDocs(q);
+      const snap = await getDocs(q);
 
-      const lista: HistoricoItem[] = [];
+      const lista: any[] = [];
 
-      querySnapshot.forEach((doc) => {
-
+      snap.forEach((doc) => {
         const data = doc.data();
 
-        /* PRÉ */
-
         if (data.preOperatorio) {
-
           lista.push({
             id: `${doc.id}-pre`,
-
-            paciente:
-              data.nomeCompleto || 'Paciente',
-
-            data:
-              data.createdAt
-                ?.toDate?.()
-                ?.toLocaleString('pt-BR') ||
-              'Sem data',
-
+            paciente: data.nomeCompleto,
+            data: data.createdAt?.toDate?.().toLocaleString('pt-BR'),
             titulo: 'Pré-Operatório',
-
-            descricao:
-              data.preOperatorio
-                ?.observacoes ||
-              'Registro pré-operatório realizado.',
+            descricao: data.preOperatorio.observacoes,
           });
         }
-
-        /* INTRA */
 
         if (data.intraOperatorio) {
-
           lista.push({
             id: `${doc.id}-intra`,
-
-            paciente:
-              data.nomeCompleto || 'Paciente',
-
-            data:
-              data.createdAt
-                ?.toDate?.()
-                ?.toLocaleString('pt-BR') ||
-              'Sem data',
-
+            paciente: data.nomeCompleto,
+            data: data.createdAt?.toDate?.().toLocaleString('pt-BR'),
             titulo: 'Intra-Operatório',
-
-            descricao:
-              data.intraOperatorio
-                ?.observacoes ||
-              'Registro intra-operatório realizado.',
+            descricao: data.intraOperatorio.observacoes,
           });
         }
-
-        /* PÓS */
 
         if (data.posOperatorio) {
-
           lista.push({
             id: `${doc.id}-pos`,
-
-            paciente:
-              data.nomeCompleto || 'Paciente',
-
-            data:
-              data.createdAt
-                ?.toDate?.()
-                ?.toLocaleString('pt-BR') ||
-              'Sem data',
-
+            paciente: data.nomeCompleto,
+            data: data.createdAt?.toDate?.().toLocaleString('pt-BR'),
             titulo: 'Pós-Operatório',
-
-            descricao:
-              data.posOperatorio
-                ?.observacoes ||
-              'Registro pós-operatório realizado.',
+            descricao: data.posOperatorio.observacoes,
           });
         }
-
       });
 
       setHistorico(lista);
-
-    } catch (error) {
-
-      console.log(error);
-
     } finally {
-
       setLoading(false);
-
     }
   }
 
   useEffect(() => {
-
     buscarHistorico();
-
   }, []);
 
   return (
-
-    <LinearGradient
-      colors={['#214192', '#4293D5']}
-      style={{ flex: 1 }}
-    >
-
+    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
 
-      <SafeAreaView
-        style={{ flex: 1 }}
-        edges={['top']}
-      >
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
 
-         {/* HEADER REUTILIZÁVEL */}
-                <Header
-                  title="Histórico"
-                />
-        
-
-        {/* CONTEÚDO */}
+        <Header title="Histórico" />
 
         <View style={styles.content}>
 
           {loading ? (
-
-            <ActivityIndicator
-              size="large"
-              color="#214192"
-              style={{ marginTop: 40 }}
-            />
-
+            <ActivityIndicator size="large" color="#214192" />
           ) : (
+            <ScrollView showsVerticalScrollIndicator={false}>
 
-            <ScrollView
-              contentContainerStyle={styles.list}
-              showsVerticalScrollIndicator={false}
-            >
-
-              {/* LINHA DA TIMELINE */}
-
-              <View style={styles.absoluteLine} />
+              {/* LINHA CENTRAL FIXA */}
+              <View style={styles.timelineLine} />
 
               {historico.map((item) => (
+                <View key={item.id} style={styles.row}>
 
-                <View
-                  key={item.id}
-                  style={styles.itemRow}
-                >
-
-                  {/* BOLINHA */}
-
-                  <View style={styles.circleContainer}>
-
-                    <View style={styles.circle} />
-
+                  {/* COLUNA ESQUERDA (BOLINHA) */}
+                  <View style={styles.leftCol}>
+                    <View style={styles.dot} />
                   </View>
 
                   {/* CARD */}
-
                   <View style={styles.card}>
 
-                    <Text style={styles.date}>
-                      {item.data}
-                    </Text>
+                    <Text style={styles.date}>{item.data}</Text>
 
-                    <Text style={styles.title}>
-                      {item.titulo}
-                    </Text>
+                    <Text style={styles.title}>{item.titulo}</Text>
 
-                    <Text style={styles.patient}>
-                      {item.paciente}
-                    </Text>
+                    <Text style={styles.patient}>{item.paciente}</Text>
 
                     <Text style={styles.description}>
                       {item.descricao}
                     </Text>
 
-                    <Text style={styles.arrow}>
-                      →
-                    </Text>
+                    <Text style={styles.arrow}>›</Text>
 
                   </View>
 
                 </View>
-
               ))}
 
-              {!loading &&
-                historico.length === 0 && (
-
-                <View style={styles.emptyContainer}>
-
-                  <Text style={styles.emptyText}>
-                    Nenhum histórico encontrado
-                  </Text>
-
+              {historico.length === 0 && (
+                <View style={{ marginTop: 40, alignItems: 'center' }}>
+                  <Text>Nenhum histórico encontrado</Text>
                 </View>
-
               )}
 
             </ScrollView>
-
           )}
 
         </View>
@@ -291,7 +164,6 @@ export default function Historico() {
         <AppFooter />
 
       </SafeAreaView>
-
     </LinearGradient>
   );
 }

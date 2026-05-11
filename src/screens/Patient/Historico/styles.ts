@@ -1,52 +1,48 @@
-// styles.ts
-
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
 
- 
-
   content: {
     flex: 1,
     backgroundColor: '#FFF',
-    paddingTop: 20,
     paddingHorizontal: 20,
+    paddingTop: 20,
   },
 
-  list: {
-    paddingBottom: 120,
-  },
-
-  absoluteLine: {
+  /* LINHA CENTRAL REAL (igual imagem) */
+  timelineLine: {
     position: 'absolute',
-    left: 26,
+    left: 18,
     top: 0,
     bottom: 0,
     width: 2,
     backgroundColor: '#2F5DA8',
   },
 
-  itemRow: {
+  /* LINHA DO ITEM */
+  row: {
     flexDirection: 'row',
-    marginBottom: 18,
+    alignItems: 'flex-start',
+    marginBottom: 22,
   },
 
-  circleContainer: {
-    width: 30,
+  /* COLUNA DA BOLINHA */
+  leftCol: {
+    width: 36,
     alignItems: 'center',
-    zIndex: 10,
+    paddingTop: 18,
   },
 
-  circle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: '#2F5DA8',
-    marginTop: 18,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: '#FFF',
   },
 
+  /* CARD */
   card: {
     flex: 1,
     backgroundColor: '#FFF',
@@ -54,17 +50,11 @@ export default StyleSheet.create({
     borderColor: '#2F5DA8',
     borderRadius: 14,
     padding: 12,
-    marginLeft: 10,
-    minHeight: 90,
+    position: 'relative',
 
     shadowColor: '#000',
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.08,
     shadowRadius: 6,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-
     elevation: 3,
   },
 
@@ -78,41 +68,28 @@ export default StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#2F5DA8',
-    marginBottom: 2,
   },
 
   patient: {
     fontSize: 13,
     fontWeight: '600',
     color: '#214192',
-    marginBottom: 4,
+    marginTop: 2,
   },
 
   description: {
     fontSize: 12,
     color: '#666',
-    paddingRight: 20,
+    marginTop: 6,
     lineHeight: 18,
   },
 
   arrow: {
     position: 'absolute',
-    right: 12,
-    top: 12,
-    fontSize: 16,
+    right: 10,
+    top: 10,
+    fontSize: 18,
     color: '#2F5DA8',
-    fontWeight: '700',
-  },
-
-  emptyContainer: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-
-  emptyText: {
-    fontSize: 16,
-    color: '#214192',
-    fontWeight: '600',
   },
 
 });

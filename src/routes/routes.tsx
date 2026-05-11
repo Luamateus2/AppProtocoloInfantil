@@ -10,12 +10,11 @@ import NovoPaciente from "../screens/Patient/NovoPaciente";
 import NovaSenha from "../screens/Auth/NovaSenha";
 import Historico from "../screens/Patient/Historico";
 import Pacientes from "../screens/Patient/Paciente";
+import IntraOperatorioG from "../screens/Surgery/IntraOperatorioG";
 import PreOperatorio from "../screens/Surgery/PreOperatorio";
-import IntraOperatorio from "../screens/Surgery/IntraOperatorio";
 import PosOperatorio from "../screens/Surgery/PosOperatorio";
 import EditarPaciente from "../screens/Patient/EditarPaciente";
 import EditarPreOperatorio from "../screens/Surgery/EditarPreOperatorio";
-import EditarIntraOperatorio from "../screens/Surgery/EditarIntraOperatorio";
 import EditarPosOperatorio from "../screens/Surgery/EditarPosOperatorio";
 import Settings from "../screens/Settings";
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,10 +33,9 @@ export default function Routes() {
       <Stack.Screen name = "Historico" component={Historico} />
       <Stack.Screen name = "Pacientes" component={Pacientes} />
       <Stack.Screen name= "PreOperatorio" component={PreOperatorio}/>
-      <Stack.Screen name = "IntraOperatorio" component={IntraOperatorio}/>
       <Stack.Screen name = "PosOperatorio" component={PosOperatorio}/>
+      <Stack.Screen name = "IntraOperatorioG" component={IntraOperatorioG}/>
       <Stack.Screen name = "EditarPaciente" component={EditarPaciente}/>
-      <Stack.Screen name = "EditarIntraOperatorio" component={EditarIntraOperatorio}/>
       <Stack.Screen name = "EditarPosOperatorio" component={EditarPosOperatorio}/>
       <Stack.Screen name= "EditarPreOperatorio" component={EditarPreOperatorio}/>
       <Stack.Screen name= "Settings" component={Settings}/>

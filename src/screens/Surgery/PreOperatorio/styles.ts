@@ -1,11 +1,23 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  safeArea: {
+    flex: 1,
+  },
+
   body: {
     flex: 1,
     backgroundColor: '#ECECEC',
     paddingHorizontal: 22,
     paddingTop: 18,
+  },
+
+  scrollContent: {
+    paddingBottom: 120,
   },
 
   date: {
@@ -71,13 +83,29 @@ export default StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     marginTop: 6,
+    marginBottom: 8,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#214192',
   },
 
   option: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+
+  optionText: {
+    color: '#214192',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+
+  observacoesLabel: {
+    color: '#214192',
+    fontSize: 16,
+    fontWeight: '700',
+    marginTop: 18,
+    marginBottom: 8,
   },
 
   textArea: {
@@ -89,6 +117,9 @@ export default StyleSheet.create({
     padding: 14,
     textAlignVertical: 'top',
     marginTop: 8,
+    color: '#214192',
+    fontSize: 13,
+    fontWeight: '600',
   },
 
   button: {
@@ -96,6 +127,7 @@ export default StyleSheet.create({
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
   buttonText: {

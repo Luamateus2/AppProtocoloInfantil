@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   View,
@@ -26,7 +26,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   doc,
   getDoc,
-  updateDoc,
+  setDoc,
 } from 'firebase/firestore';
 
 import { db } from '../../../services/firebaseConfig';
@@ -44,13 +44,12 @@ type NavProps =
 type RouteProps =
   RouteProp<RootStackParamList, 'PreOperatorio'>;
 
-export default function EditarPreOperatorio() {
+export default function PreOperatorio() {
   const navigation = useNavigation<NavProps>();
   const route = useRoute<RouteProps>();
 
   const { pacienteId } = route.params;
 
-  /* STATES */
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
 
@@ -60,9 +59,9 @@ export default function EditarPreOperatorio() {
   const [jejum, setJejum] = useState(new Date());
   const [showJejum, setShowJejum] = useState(false);
 
-  const [estadoGeral, setEstadoGeral] = useState('');
-  const [viaAerea, setViaAerea] = useState('');
-  const [medicacao, setMedicacao] = useState('');
+  const [estadoGeral, setEstadoGeral] = useState('Estável');
+  const [viaAerea, setViaAerea] = useState('Mallampati I');
+  const [medicacao, setMedicacao] = useState('Nenhuma');
   const [observacoes, setObservacoes] = useState('');
 
   const [openSelect, setOpenSelect] = useState('');
@@ -76,7 +75,6 @@ export default function EditarPreOperatorio() {
       minute: '2-digit',
     });
 
-  /* CARREGAR DADOS */
   async function carregarDados() {
     try {
       const ref = doc(db, 'preOperatorio', pacienteId);
@@ -95,28 +93,46 @@ export default function EditarPreOperatorio() {
     }
   }
 
-  /* SALVAR E ATUALIZAR */
   async function salvar() {
+    if (!pacienteId) {
+      Alert.alert(
+        'Erro',
+        'ID do paciente não encontrado.'
+      );
+      return;
+    }
+
     try {
       const ref = doc(db, 'preOperatorio', pacienteId);
 
-      await updateDoc(ref, {
-        data: formatDate(date),
-        horario: formatHour(horario),
-        jejum: formatHour(jejum),
-        estadoGeral,
-        viaAerea,
-        medicacao,
-        observacoes,
-      });
+      await setDoc(
+        ref,
+        {
+          pacienteId,
+          data: formatDate(date),
+          horario: formatHour(horario),
+          jejum: formatHour(jejum),
+          estadoGeral,
+          viaAerea,
+          medicacao,
+          observacoes,
+        },
+        {
+          merge: true,
+        }
+      );
 
-      navigation.navigate('IntraOperatorio', {
+      navigation.navigate('IntraOperatorioG', {
         pacienteId,
       });
 
     } catch (error) {
       console.log(error);
-      Alert.alert('Erro', 'Não foi possível salvar');
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível salvar'
+      );
     }
   }
 
@@ -124,47 +140,78 @@ export default function EditarPreOperatorio() {
     carregarDados();
   }, []);
 
-  const SelectBox = ({ value }: any) => (
-    <View style={styles.input}>
-      <Text style={styles.inputText}>{value}</Text>
-      <Ionicons name="chevron-down" size={18} color="#214192" />
-    </View>
-  );
+  function SelectBox({ value }: { value: string }) {
+    return (
+      <View style={styles.input}>
+        <Text style={styles.inputText}>
+          {value}
+        </Text>
+
+        <Ionicons
+          name="chevron-down"
+          size={18}
+          color="#214192"
+        />
+      </View>
+    );
+  }
 
   return (
-    <LinearGradient colors={['#214192', '#4293D5']} style={{ flex: 1 }}>
+    <LinearGradient
+      colors={['#214192', '#4293D5']}
+      style={styles.container}
+    >
       <StatusBar barStyle="light-content" />
 
-      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
-
-        <HeaderSecundario title="Pré-Operatório" />
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={['top']}
+      >
+        <HeaderSecundario
+          title="Pré-Operatório"
+          showBackButton
+        />
 
         <View style={styles.body}>
-          <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-
-            {/* DATA */}
-            <TouchableOpacity style={styles.date} onPress={() => setShowDate(true)}>
-              <Text style={styles.dateText}>{formatDate(date)}</Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <TouchableOpacity
+              style={styles.date}
+              onPress={() => setShowDate(true)}
+            >
+              <Text style={styles.dateText}>
+                {formatDate(date)}
+              </Text>
             </TouchableOpacity>
 
             {showDate && (
               <DateTimePicker
                 value={date}
                 mode="date"
-                onChange={(e, d) => {
+                onChange={(event, selectedDate) => {
                   setShowDate(false);
-                  if (d) setDate(d);
+
+                  if (selectedDate) {
+                    setDate(selectedDate);
+                  }
                 }}
               />
             )}
 
-            <Text style={styles.section}>Avaliação Pré-Anestésica</Text>
+            <Text style={styles.section}>
+              Avaliação Pré-Anestésica
+            </Text>
 
-            {/* HORÁRIO */}
             <View style={styles.row}>
-              <Text style={styles.label}>Horário</Text>
+              <Text style={styles.label}>
+                Horário
+              </Text>
 
-              <TouchableOpacity onPress={() => setShowHorario(true)}>
+              <TouchableOpacity
+                onPress={() => setShowHorario(true)}
+              >
                 <SelectBox value={formatHour(horario)} />
               </TouchableOpacity>
             </View>
@@ -174,18 +221,24 @@ export default function EditarPreOperatorio() {
                 value={horario}
                 mode="time"
                 is24Hour
-                onChange={(e, d) => {
+                onChange={(event, selectedTime) => {
                   setShowHorario(false);
-                  if (d) setHorario(d);
+
+                  if (selectedTime) {
+                    setHorario(selectedTime);
+                  }
                 }}
               />
             )}
 
-            {/* JEJUM */}
             <View style={styles.row}>
-              <Text style={styles.label}>Jejum</Text>
+              <Text style={styles.label}>
+                Jejum
+              </Text>
 
-              <TouchableOpacity onPress={() => setShowJejum(true)}>
+              <TouchableOpacity
+                onPress={() => setShowJejum(true)}
+              >
                 <SelectBox value={formatHour(jejum)} />
               </TouchableOpacity>
             </View>
@@ -195,55 +248,76 @@ export default function EditarPreOperatorio() {
                 value={jejum}
                 mode="time"
                 is24Hour
-                onChange={(e, d) => {
+                onChange={(event, selectedTime) => {
                   setShowJejum(false);
-                  if (d) setJejum(d);
+
+                  if (selectedTime) {
+                    setJejum(selectedTime);
+                  }
                 }}
               />
             )}
 
-            {/* ESTADO GERAL */}
             <View style={styles.row}>
-              <Text style={styles.label}>Estado Geral</Text>
+              <Text style={styles.label}>
+                Estado Geral
+              </Text>
 
-              <TouchableOpacity onPress={() =>
-                setOpenSelect(openSelect === 'estado' ? '' : 'estado')
-              }>
+              <TouchableOpacity
+                onPress={() =>
+                  setOpenSelect(
+                    openSelect === 'estado' ? '' : 'estado'
+                  )
+                }
+              >
                 <SelectBox value={estadoGeral} />
               </TouchableOpacity>
             </View>
 
             {openSelect === 'estado' && (
               <View style={styles.dropdown}>
-                {['Estável', 'Regular', 'Crítico'].map(item => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.option}
-                    onPress={() => {
-                      setEstadoGeral(item);
-                      setOpenSelect('');
-                    }}
-                  >
-                    <Text>{item}</Text>
-                  </TouchableOpacity>
-                ))}
+                {['Estável', 'Regular', 'Crítico'].map(
+                  item => (
+                    <TouchableOpacity
+                      key={item}
+                      style={styles.option}
+                      onPress={() => {
+                        setEstadoGeral(item);
+                        setOpenSelect('');
+                      }}
+                    >
+                      <Text style={styles.optionText}>
+                        {item}
+                      </Text>
+                    </TouchableOpacity>
+                  )
+                )}
               </View>
             )}
 
-            {/* VIA AÉREA */}
             <View style={styles.row}>
-              <Text style={styles.label}>Via Aérea</Text>
+              <Text style={styles.label}>
+                Via Aérea
+              </Text>
 
-              <TouchableOpacity onPress={() =>
-                setOpenSelect(openSelect === 'via' ? '' : 'via')
-              }>
+              <TouchableOpacity
+                onPress={() =>
+                  setOpenSelect(
+                    openSelect === 'via' ? '' : 'via'
+                  )
+                }
+              >
                 <SelectBox value={viaAerea} />
               </TouchableOpacity>
             </View>
 
             {openSelect === 'via' && (
               <View style={styles.dropdown}>
-                {['Mallampati I', 'Mallampati II', 'Mallampati III'].map(item => (
+                {[
+                  'Mallampati I',
+                  'Mallampati II',
+                  'Mallampati III',
+                ].map(item => (
                   <TouchableOpacity
                     key={item}
                     style={styles.option}
@@ -252,26 +326,37 @@ export default function EditarPreOperatorio() {
                       setOpenSelect('');
                     }}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.optionText}>
+                      {item}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
 
-            {/* MEDICAÇÃO */}
             <View style={styles.row}>
-              <Text style={styles.label}>Medicação</Text>
+              <Text style={styles.label}>
+                Medicação
+              </Text>
 
-              <TouchableOpacity onPress={() =>
-                setOpenSelect(openSelect === 'med' ? '' : 'med')
-              }>
+              <TouchableOpacity
+                onPress={() =>
+                  setOpenSelect(
+                    openSelect === 'med' ? '' : 'med'
+                  )
+                }
+              >
                 <SelectBox value={medicacao} />
               </TouchableOpacity>
             </View>
 
             {openSelect === 'med' && (
               <View style={styles.dropdown}>
-                {['Nenhuma', 'Anti-hipertensivo', 'Anticoagulante'].map(item => (
+                {[
+                  'Nenhuma',
+                  'Anti-hipertensivo',
+                  'Anticoagulante',
+                ].map(item => (
                   <TouchableOpacity
                     key={item}
                     style={styles.option}
@@ -280,34 +365,44 @@ export default function EditarPreOperatorio() {
                       setOpenSelect('');
                     }}
                   >
-                    <Text>{item}</Text>
+                    <Text style={styles.optionText}>
+                      {item}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
 
-            {/* OBS */}
-            <Text style={styles.label}>Observações</Text>
+            <Text style={styles.observacoesLabel}>
+              Observações
+            </Text>
 
             <TextInput
               style={styles.textArea}
               multiline
               value={observacoes}
               onChangeText={setObservacoes}
+              placeholder="Paciente em boas condições para procedimento."
+              placeholderTextColor="#5E6D95"
             />
 
-            {/* BOTÃO */}
-            <LinearGradient colors={['#3A7BD5', '#2A5298']} style={styles.button}>
-              <TouchableOpacity onPress={salvar}>
-                <Text style={styles.buttonText}>Salvar e Continuar</Text>
-              </TouchableOpacity>
-            </LinearGradient>
-
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={salvar}
+            >
+              <LinearGradient
+                colors={['#3A7BD5', '#2A5298']}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>
+                  Salvar e Continuar
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </ScrollView>
         </View>
 
         <AppFooter />
-
       </SafeAreaView>
     </LinearGradient>
   );

@@ -1,33 +1,54 @@
-import React from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   View,
   Text,
   TouchableOpacity,
   StatusBar,
-  Image,
   Alert,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons } from '@expo/vector-icons';
 
-import {
-  useNavigation,
-} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import {
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
+  signOut,
+  updateProfile,
+} from 'firebase/auth';
 
 import {
-  RootStackParamList,
-} from '../../routes/types';
+  doc,
+  getDoc,
+  setDoc,
+} from 'firebase/firestore';
+
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+
+import * as ImagePicker from 'expo-image-picker';
+
+import {
+  auth,
+  db,
+  storage,
+} from '../../services/firebaseConfig';
+
+import { RootStackParamList } from '../../routes/types';
 
 import AppFooter from '../../components/Footer/Footer';
 
@@ -39,175 +60,240 @@ type NavProps = NativeStackNavigationProp<
 >;
 
 export default function Settings() {
+  const navigation = useNavigation<NavProps>();
 
-  const navigation =
-    useNavigation<NavProps>();
+  const [fotoPerfil, setFotoPerfil] = useState<string | null>(null);
+  const [loadingFoto, setLoadingFoto] = useState(false);
 
-  function alterarFoto() {
+  const user = auth.currentUser;
 
-    Alert.alert(
-      'Foto de Perfil',
-      'Abrir galeria para selecionar foto.'
-    );
+  useEffect(() => {
+    carregarFoto();
+  }, []);
+
+  async function carregarFoto() {
+    try {
+      if (!user) return;
+
+      const userRef = doc(db, 'usuarios', user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+
+        if (data.fotoPerfil) {
+          setFotoPerfil(data.fotoPerfil);
+          return;
+        }
+      }
+
+      if (user.photoURL) {
+        setFotoPerfil(user.photoURL);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  function alterarSenha() {
+  async function alterarFoto() {
+    try {
+      if (!user) {
+        Alert.alert(
+          'Erro',
+          'Usuário não encontrado.'
+        );
+        return;
+      }
 
-    navigation.navigate(
-      'NovaSenha'
-    );
-  }
+      const permissao =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  function sair() {
+      if (!permissao.granted) {
+        Alert.alert(
+          'Permissão necessária',
+          'Permita o acesso à galeria para escolher uma foto.'
+        );
+        return;
+      }
 
-    Alert.alert(
-      'Sair',
-      'Deseja realmente sair?',
-      [
+      const resultado =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 0.8,
+        });
+
+      if (resultado.canceled) return;
+
+      setLoadingFoto(true);
+
+      const uri = resultado.assets[0].uri;
+
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      const storageRef = ref(
+        storage,
+        `usuarios/${user.uid}/fotoPerfil.jpg`
+      );
+
+      await uploadBytes(storageRef, blob);
+
+      const downloadURL =
+        await getDownloadURL(storageRef);
+
+      await updateProfile(user, {
+        photoURL: downloadURL,
+      });
+
+      await setDoc(
+        doc(db, 'usuarios', user.uid),
         {
-          text: 'Cancelar',
-          style: 'cancel',
+          fotoPerfil: downloadURL,
+          email: user.email,
+          atualizadoEm: new Date(),
         },
-        {
-          text: 'Sair',
-          style: 'destructive',
-          onPress: () => {
+        { merge: true }
+      );
+
+      setFotoPerfil(downloadURL);
+
+      Alert.alert(
+        'Sucesso',
+        'Foto de perfil atualizada!'
+      );
+
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível atualizar a foto.'
+      );
+    } finally {
+      setLoadingFoto(false);
+    }
+  }
+
+  async function sair() {
+    Alert.alert('Sair', 'Deseja realmente sair?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await signOut(auth);
 
             navigation.reset({
               index: 0,
-              routes: [
-                {
-                  name: 'Login',
-                },
-              ],
+              routes: [{ name: 'Login' }],
             });
-          },
+
+          } catch (error) {
+            console.log(error);
+
+            Alert.alert(
+              'Erro',
+              'Não foi possível sair da conta'
+            );
+          }
         },
-      ]
-    );
+      },
+    ]);
   }
 
   return (
     <LinearGradient
-      colors={[
-        '#214192',
-        '#4293D5',
-      ]}
+      colors={['#214192', '#4293D5']}
       style={{ flex: 1 }}
     >
+      <StatusBar barStyle="light-content" />
 
-      <StatusBar
-        barStyle="light-content"
-      />
-
-      <SafeAreaView
-        style={{ flex: 1 }}
-        edges={['top']}
-      >
-
-        {/* HEADER */}
-
+      <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <View style={styles.header}>
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.goBack()
-            }
-          >
-
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons
               name="arrow-back"
               size={24}
               color="#fff"
             />
-
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>
             Configurações
           </Text>
 
-          <View
-            style={{ width: 24 }}
-          />
-
+          <View style={{ width: 24 }} />
         </View>
 
-        {/* BODY */}
-
         <View style={styles.body}>
+          <View style={styles.profileContainer}>
+            <View style={styles.avatar}>
+              {fotoPerfil ? (
+                <Image
+                  source={{ uri: fotoPerfil }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Ionicons
+                  name="person"
+                  size={45}
+                  color="#214192"
+                />
+              )}
 
-          {/* PERFIL */}
-
-          <View
-            style={styles.profileContainer}
-          >
-
-            <View
-              style={styles.avatar}
-            >
-
-              <Ionicons
-                name="person"
-                size={45}
-                color="#214192"
-              />
-
+              {loadingFoto && (
+                <View style={styles.loadingAvatar}>
+                  <ActivityIndicator
+                    size="small"
+                    color="#fff"
+                  />
+                </View>
+              )}
             </View>
 
-            <Text style={styles.name}>
-              Meu Perfil
-            </Text>
+            <Text style={styles.name}>Meu Perfil</Text>
 
             <TouchableOpacity
               style={styles.photoButton}
               onPress={alterarFoto}
+              disabled={loadingFoto}
             >
-
               <Ionicons
                 name="camera-outline"
                 size={18}
                 color="#fff"
               />
 
-              <Text
-                style={styles.photoButtonText}
-              >
-                Adicionar foto
+              <Text style={styles.photoButtonText}>
+                {fotoPerfil ? 'Alterar foto' : 'Adicionar foto'}
               </Text>
-
             </TouchableOpacity>
-
           </View>
-
-          {/* OPÇÕES */}
 
           <TouchableOpacity
             style={styles.card}
             activeOpacity={0.8}
-            onPress={alterarSenha}
+            onPress={() => navigation.navigate('NovaSenha')}
           >
-
-            <View
-              style={styles.leftContent}
-            >
-
-              <View
-                style={styles.iconContainer}
-              >
-
+            <View style={styles.leftContent}>
+              <View style={styles.iconContainer}>
                 <Ionicons
                   name="lock-closed-outline"
                   size={22}
                   color="#214192"
                 />
-
               </View>
 
               <Text style={styles.cardText}>
                 Alterar senha
               </Text>
-
             </View>
 
             <Ionicons
@@ -215,53 +301,36 @@ export default function Settings() {
               size={20}
               color="#214192"
             />
-
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.card,
-              styles.logoutCard,
-            ]}
+            style={[styles.card, styles.logoutCard]}
             activeOpacity={0.8}
             onPress={sair}
           >
-
-            <View
-              style={styles.leftContent}
-            >
-
+            <View style={styles.leftContent}>
               <View
                 style={[
                   styles.iconContainer,
                   styles.logoutIcon,
                 ]}
               >
-
                 <Ionicons
                   name="log-out-outline"
                   size={22}
                   color="#D9534F"
                 />
-
               </View>
 
-              <Text
-                style={styles.logoutText}
-              >
+              <Text style={styles.logoutText}>
                 Sair
               </Text>
-
             </View>
-
           </TouchableOpacity>
-
         </View>
 
         <AppFooter />
-
       </SafeAreaView>
-
     </LinearGradient>
   );
 }

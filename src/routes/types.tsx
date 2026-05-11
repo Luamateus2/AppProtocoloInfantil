@@ -13,10 +13,21 @@ export type RootStackParamList = {
   Pacientes:undefined;
   Settings:undefined;
 
+
+PreOperatorio: {
+    pacienteId: string;
+  };
+
+IntraOperatorioG: {
+    pacienteId: string;
+  };
+
+PosOperatorio: {
+    pacienteId: string;
+  };
 EditarPaciente: {
   pacienteId: string;
 };
-
 EditarPreOperatorio: {
   pacienteId: string;
   pacienteEditado?: {
@@ -29,24 +40,9 @@ EditarPreOperatorio: {
     comorbidade: string;
     observacoes: string;
   };
-};
- EditarIntraOperatorio: {
-  pacienteId: string;
-};
+
 EditarPosOperatorio: {
   pacienteId: string;
+};  
 };
-  PreOperatorio: {
-    pacienteId: string;
-  };
-
-  IntraOperatorio: {
-    pacienteId: string;
-  };
-
-  PosOperatorio: {
-    pacienteId: string;
-  };
-
-  
 };
