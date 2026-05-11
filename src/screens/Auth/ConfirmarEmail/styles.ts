@@ -10,16 +10,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 
-  header: {
-    height: 120,
+  blueHeader: {
+    height: 110,
     backgroundColor: '#2F63B5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  logo: {
-    width: 220,
-    height: 70,
   },
 
   content: {
@@ -27,79 +20,91 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F6',
     alignItems: 'center',
     paddingHorizontal: 30,
-    paddingTop: 35,
+    paddingTop: 28,
   },
 
   topRow: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 38,
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
-    color: '#2C4FA3',
-    marginLeft: 12,
+    color: '#214192',
+    marginLeft: 14,
   },
 
   iconContainer: {
-    marginBottom: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 24,
   },
 
   confirmarImage: {
-    width: 180,
-    height: 180,
+    width: 210,
+    height: 210,
   },
 
   text: {
     fontSize: 18,
-    color: '#333',
+    color: '#2D2D2D',
     textAlign: 'center',
     fontWeight: '600',
-    marginBottom: 16,
+    lineHeight: 26,
+    marginBottom: 14,
   },
 
   email: {
-    fontSize: 22,
+    fontSize: 23,
     fontWeight: '700',
     color: '#4A90E2',
-    marginBottom: 22,
     textAlign: 'center',
+    marginBottom: 22,
   },
 
   description: {
     fontSize: 16,
-    color: '#444',
+    color: '#000000',
     textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 40,
-    paddingHorizontal: 10,
+    lineHeight: 26,
+    marginBottom: 42,
+    paddingHorizontal: 8,
   },
 
   buttonWrapper: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 5,
   },
 
   button: {
-    height: 58,
+    height: 60,
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
+
+    shadowColor: '#214192',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+
+    elevation: 6,
   },
 
   buttonText: {
     color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.4,
   },
 
   footer: {
-    height: 18,
+    height: 16,
     backgroundColor: '#2F63B5',
   },
 });

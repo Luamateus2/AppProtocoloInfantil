@@ -48,7 +48,6 @@ import {
 } from '../../routes/types';
 
 import AppFooter from '../../components/Footer/Footer';
-import {LogoPrincipal } from '../../constants/images';
 
 import styles from './styles';
 
@@ -67,7 +66,6 @@ interface Registro {
 }
 
 export default function Home() {
-
   const navigation =
     useNavigation<NavigationProps>();
 
@@ -78,58 +76,135 @@ export default function Home() {
     useState(true);
 
   useEffect(() => {
-
     buscarHistorico();
-
   }, []);
 
+  function gerarIniciais(nome: string) {
+    return nome
+      .split(' ')
+      .filter(Boolean)
+      .map((n: string) => n[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
+  }
+
   async function buscarHistorico() {
-
     try {
-
-      const q = query(
-        collection(db, 'historico'),
-        orderBy('createdAt', 'desc'),
-        limit(4),
-      );
-
-      const querySnapshot =
-        await getDocs(q);
+      setLoading(true);
 
       const lista: Registro[] = [];
 
-      querySnapshot.forEach((doc) => {
+      const pacientesSnap =
+        await getDocs(
+          query(
+            collection(db, 'pacientes'),
+            orderBy('createdAt', 'desc'),
+            limit(4)
+          )
+        );
 
+      pacientesSnap.forEach((doc) => {
         const data = doc.data();
 
-        const iniciais =
-          data.nome
-            ?.split(' ')
-            ?.map((n: string) => n[0])
-            ?.slice(0, 2)
-            ?.join('')
-            ?.toUpperCase();
+        const nome =
+          data.nomeCompleto ||
+          'Paciente';
 
         lista.push({
-          id: doc.id,
-          nome: data.nome,
-          tipo: data.tipo,
-          data: data.data,
-          iniciais,
+          id: `paciente-${doc.id}`,
+          nome,
+          tipo: 'Cadastro do Paciente',
+          data:
+            data.dataNascimento ||
+            '',
+          iniciais:
+            gerarIniciais(nome),
         });
       });
 
-      setRegistros(lista);
+      const preSnap =
+        await getDocs(
+          query(
+            collection(db, 'preOperatorio'),
+            limit(4)
+          )
+        );
 
-    } catch (error) {
+      preSnap.forEach((doc) => {
+        const data = doc.data();
 
-      console.log(
-        'Erro ao buscar histórico:',
-        error,
+        lista.push({
+          id: `pre-${doc.id}`,
+          nome:
+            data.pacienteId ||
+            'Paciente',
+          tipo: 'Pré-Operatório',
+          data:
+            data.data ||
+            '',
+          iniciais: 'PR',
+        });
+      });
+
+      const intraSnap =
+        await getDocs(
+          query(
+            collection(db, 'intraOperatorio'),
+            limit(4)
+          )
+        );
+
+      intraSnap.forEach((doc) => {
+        const data = doc.data();
+
+        lista.push({
+          id: `intra-${doc.id}`,
+          nome:
+            data.pacienteId ||
+            'Paciente',
+          tipo: 'Intra-Operatório',
+          data:
+            data.data ||
+            '',
+          iniciais: 'IN',
+        });
+      });
+
+      const posSnap =
+        await getDocs(
+          query(
+            collection(db, 'posOperatorio'),
+            limit(4)
+          )
+        );
+
+      posSnap.forEach((doc) => {
+        const data = doc.data();
+
+        lista.push({
+          id: `pos-${doc.id}`,
+          nome:
+            data.pacienteId ||
+            'Paciente',
+          tipo: 'Pós-Operatório',
+          data:
+            data.data ||
+            '',
+          iniciais: 'PO',
+        });
+      });
+
+      setRegistros(
+        lista.slice(0, 4)
       );
 
+    } catch (error) {
+      console.log(
+        'Erro ao buscar histórico:',
+        error
+      );
     } finally {
-
       setLoading(false);
     }
   }
@@ -154,29 +229,32 @@ export default function Home() {
   ];
 
   return (
-
     <View style={styles.container}>
-
       <StatusBar
         translucent
         backgroundColor="transparent"
         barStyle="light-content"
       />
 
-      {/* HEADER */}
       <LinearGradient
-        colors={['#214192', '#4293D5']}
-        style={styles.headerGradient}
+        colors={[
+          '#214192',
+          '#4293D5',
+        ]}
+        style={
+          styles.headerGradient
+        }
       >
-
         <SafeAreaView edges={['top']}>
-
           <View style={styles.header}>
-
-           <View style={styles.logoBox}>
+            <View style={styles.logoBox}>
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => navigation.navigate('Settings')}
+                onPress={() =>
+                  navigation.navigate(
+                    'Settings'
+                  )
+                }
               >
                 <Image
                   source={{
@@ -184,8 +262,9 @@ export default function Home() {
                   }}
                   style={styles.avatar}
                 />
-</TouchableOpacity>
+              </TouchableOpacity>
             </View>
+
             <Text style={styles.headerText}>
               Seja Bem-Vindo
             </Text>
@@ -196,36 +275,28 @@ export default function Home() {
               }}
               style={styles.avatar}
             />
-
           </View>
-
         </SafeAreaView>
-
       </LinearGradient>
 
-      {/* BODY */}
       <View style={styles.body}>
-
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 140,
           }}
         >
-
-          {/* MENU */}
           <View style={styles.menuContainer}>
-
             {menu.map((item, index) => (
-
               <TouchableOpacity
                 activeOpacity={0.8}
                 key={index}
                 style={styles.menuCard}
                 onPress={() => {
-
                   if (
-                    item.label.includes('Novo')
+                    item.label.includes(
+                      'Novo'
+                    )
                   ) {
                     navigation.navigate(
                       'NovoPaciente'
@@ -253,9 +324,10 @@ export default function Home() {
                   }
                 }}
               >
-
                 <Ionicons
-                  name={item.icon as any}
+                  name={
+                    item.icon as any
+                  }
                   size={28}
                   color="#FFFFFF"
                 />
@@ -263,16 +335,11 @@ export default function Home() {
                 <Text style={styles.menuText}>
                   {item.label}
                 </Text>
-
               </TouchableOpacity>
-
             ))}
-
           </View>
 
-          {/* TITULO */}
           <View style={styles.sectionHeader}>
-
             <Text style={styles.sectionTitle}>
               Últimos Registros
             </Text>
@@ -284,27 +351,19 @@ export default function Home() {
                 )
               }
             >
-
               <Text style={styles.seeAll}>
                 Ver Todos &gt;
               </Text>
-
             </TouchableOpacity>
-
           </View>
 
-          {/* LISTA */}
           <View style={styles.list}>
-
             {loading ? (
-
               <ActivityIndicator
                 size="large"
                 color="#214192"
               />
-
             ) : registros.length === 0 ? (
-
               <Text
                 style={{
                   textAlign: 'center',
@@ -314,60 +373,55 @@ export default function Home() {
               >
                 Nenhum registro encontrado
               </Text>
-
             ) : (
-
               registros.map((item) => (
-
                 <TouchableOpacity
                   activeOpacity={0.8}
                   key={item.id}
                   style={styles.card}
                 >
-
                   <View
-                    style={styles.initialCircle}
+                    style={
+                      styles.initialCircle
+                    }
                   >
-
                     <Text
-                      style={styles.initialText}
+                      style={
+                        styles.initialText
+                      }
                     >
                       {item.iniciais}
                     </Text>
-
                   </View>
 
                   <View
-                    style={styles.infoContainer}
+                    style={
+                      styles.infoContainer
+                    }
                   >
-
                     <Text style={styles.name}>
                       {item.nome}
                     </Text>
 
                     <Text
-                      style={styles.subtitle}
+                      style={
+                        styles.subtitle
+                      }
                     >
-                      {item.tipo} • {item.data}
+                      {item.tipo}
+                      {item.data
+                        ? ` • ${item.data}`
+                        : ''}
                     </Text>
-
                   </View>
-
                 </TouchableOpacity>
-
               ))
-
             )}
-
           </View>
-
         </ScrollView>
-
       </View>
 
-      {/* FOOTER */}
       <AppFooter />
-
     </View>
   );
 }

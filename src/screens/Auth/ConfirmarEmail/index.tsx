@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   View,
   Text,
@@ -11,23 +12,28 @@ import {
   useRoute,
 } from '@react-navigation/native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+} from 'react-native-safe-area-context';
+
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 
 import styles from './styles';
 
 import {
-  LogoSecundaria,
   ConfirmarEmail as ConfirmarEmailImage,
+  voltarIconAzul,
 } from '../../../constants/images';
 
 export default function ConfirmarEmail() {
+
   const navigation = useNavigation<any>();
+
   const route = useRoute<any>();
 
   const email =
-    route.params?.email || 'exemplo@email.com';
+    route.params?.email ||
+    'exemplo@email.com';
 
   return (
     <LinearGradient
@@ -38,40 +44,49 @@ export default function ConfirmarEmail() {
         style={styles.safeArea}
         edges={['top']}
       >
-        {/* HEADER */}
-        <View style={styles.header}>
-          <Image
-            source={LogoSecundaria.logo}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
+
+        {/* HEADER AZUL */}
+        <View style={styles.blueHeader} />
 
         {/* CONTEÚDO */}
         <View style={styles.content}>
+
           {/* TOPO */}
           <View style={styles.topRow}>
+
             <TouchableOpacity
-              onPress={() => navigation.goBack()}
+              onPress={() =>
+                navigation.goBack()
+              }
               activeOpacity={0.7}
             >
-              <Ionicons
-                name="arrow-back"
-                size={24}
-                color="#2C4FA3"
+              <Image
+                source={
+                  voltarIconAzul.logo
+                }
+                style={{
+                  width: 24,
+                  height: 24,
+                }}
+                resizeMode="contain"
               />
             </TouchableOpacity>
 
             <Text style={styles.title}>
               Confirmar e-mail
             </Text>
+
           </View>
 
           {/* IMAGEM */}
           <View style={styles.iconContainer}>
             <Image
-              source={ConfirmarEmailImage.logo}
-              style={styles.confirmarImage}
+              source={
+                ConfirmarEmailImage.logo
+              }
+              style={
+                styles.confirmarImage
+              }
               resizeMode="contain"
             />
           </View>
@@ -87,9 +102,9 @@ export default function ConfirmarEmail() {
           </Text>
 
           <Text style={styles.description}>
-            Por favor, verifique sua caixa de
-            entrada e clique no link para
-            redefinir sua senha.
+            Por favor, verifique sua caixa
+            de entrada e clique no link
+            para redefinir sua senha.
           </Text>
 
           {/* BOTÃO */}
@@ -98,20 +113,35 @@ export default function ConfirmarEmail() {
             style={styles.buttonWrapper}
           >
             <LinearGradient
-              colors={['#4A90E2', '#214192']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              colors={[
+                '#4A90E2',
+                '#214192',
+              ]}
+              start={{
+                x: 0,
+                y: 0,
+              }}
+              end={{
+                x: 1,
+                y: 0,
+              }}
               style={styles.button}
             >
-              <Text style={styles.buttonText}>
+              <Text
+                style={
+                  styles.buttonText
+                }
+              >
                 Reenviar E-mail
               </Text>
             </LinearGradient>
           </TouchableOpacity>
+
         </View>
 
         {/* FOOTER */}
         <View style={styles.footer} />
+
       </SafeAreaView>
     </LinearGradient>
   );

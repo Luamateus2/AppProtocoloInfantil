@@ -1,95 +1,149 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  safeArea: {
+    flex: 1,
+  },
 
   content: {
     flex: 1,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    backgroundColor: '#F7F7F7',
+    paddingHorizontal: 24,
+    paddingTop: 16,
   },
 
-  /* LINHA CENTRAL REAL (igual imagem) */
+  scrollContent: {
+    paddingBottom: 120,
+  },
+
+  patientBadge: {
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#214192',
+    borderRadius: 30,
+    paddingVertical: 6,
+    paddingHorizontal: 34,
+    marginBottom: 26,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    elevation: 4,
+  },
+
+  patientBadgeText: {
+    color: '#214192',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+
+  timelineWrapper: {
+    position: 'relative',
+    paddingBottom: 30,
+  },
+
   timelineLine: {
     position: 'absolute',
-    left: 18,
+    left: 35,
     top: 0,
     bottom: 0,
-    width: 2,
-    backgroundColor: '#2F5DA8',
+    width: 3,
+    backgroundColor: '#4E73B8',
+    borderRadius: 10,
   },
 
-  /* LINHA DO ITEM */
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 22,
   },
 
-  /* COLUNA DA BOLINHA */
   leftCol: {
-    width: 36,
+    width: 70,
     alignItems: 'center',
-    paddingTop: 18,
+    paddingTop: 31,
+    zIndex: 2,
   },
 
   dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#2F5DA8',
-    borderWidth: 2,
-    borderColor: '#FFF',
+    
+    elevation: 4,
   },
 
-  /* CARD */
+  dotIcon: {
+    width: 24,
+    height: 24,
+  },
+
   card: {
     flex: 1,
-    backgroundColor: '#FFF',
-    borderWidth: 1.5,
-    borderColor: '#2F5DA8',
+    minHeight: 78,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#214192',
     borderRadius: 14,
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    justifyContent: 'center',
     position: 'relative',
 
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    elevation: 4,
   },
 
   date: {
-    fontSize: 11,
-    color: '#777',
-    marginBottom: 4,
+    fontSize: 15,
+    color: '#4E73B8',
+    fontWeight: '600',
+    marginBottom: 2,
   },
 
   title: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#2F5DA8',
-  },
-
-  patient: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 16,
     color: '#214192',
-    marginTop: 2,
+    fontWeight: '800',
+    marginBottom: 2,
   },
 
   description: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 6,
-    lineHeight: 18,
-  },
-
-  arrow: {
-    position: 'absolute',
-    right: 10,
-    top: 10,
-    fontSize: 18,
+    fontSize: 15,
     color: '#2F5DA8',
+    fontWeight: '500',
+    paddingRight: 30,
   },
 
+  arrowImage: {
+    position: 'absolute',
+    right: 13,
+    top: 27,
+    width: 22,
+    height: 22,
+    tintColor: '#214192',
+  },
+
+  emptyBox: {
+    marginTop: 40,
+    alignItems: 'center',
+  },
+
+  emptyText: {
+    color: '#777',
+    fontSize: 15,
+    fontWeight: '500',
+  },
 });

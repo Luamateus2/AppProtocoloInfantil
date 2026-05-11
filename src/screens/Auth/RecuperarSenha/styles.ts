@@ -2,76 +2,85 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   top: {
-    height: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  logo: {
-    width: 200,
-    height: 200,
+    height: 120,
+    backgroundColor: '#2F63B5',
   },
 
   content: {
     flex: 1,
-    padding: 24,
-    marginTop: 10,
-    backgroundColor: '#F4F4F4', 
+    paddingHorizontal: 28,
+    paddingTop: 42,
+    backgroundColor: '#F4F4F4',
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
     color: '#214192',
-    marginBottom: 10,
+    marginBottom: 12,
     letterSpacing: 0.3,
   },
 
   description: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 25,
-    lineHeight: 20,
+    fontSize: 16,
+    color: '#1F1F1F',
+    marginBottom: 30,
+    lineHeight: 24,
   },
 
   label: {
-    fontSize: 14,
-    marginBottom: 6,
+    fontSize: 15,
+    marginBottom: 8,
     color: '#333',
+    fontWeight: '600',
   },
 
   input: {
-    borderWidth: 1.5,
-    borderColor: '#1E3C72',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 25,
-    backgroundColor: '#fff',
+    height: 58,
+    borderWidth: 1.8,
+    borderColor: '#214192',
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    marginBottom: 35,
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    color: '#222',
   },
 
   buttonWrapper: {
     alignSelf: 'center',
-    borderRadius: 25,
+    borderRadius: 35,
     overflow: 'hidden',
 
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 5,
+    shadowColor: '#214192',
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+
+    elevation: 6,
   },
 
   button: {
-    width: 235,
-    paddingVertical: 12,
+    width: 250,
+    height: 58,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25,
+    borderRadius: 35,
   },
 
   buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 18,
+    letterSpacing: 0.3,
+  },
+
+  footer: {
+    height: 16,
+    backgroundColor: '#214192',
   },
 });
 
