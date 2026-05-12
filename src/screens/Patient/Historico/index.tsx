@@ -27,7 +27,6 @@ import {
 import {
   collection,
   getDocs,
-  orderBy,
   query,
   where,
 } from 'firebase/firestore';
@@ -65,6 +64,7 @@ type HistoricoItem = {
   data: string;
   titulo: string;
   descricao: string;
+  timestamp: number;
 };
 
 export default function Historico() {
@@ -94,8 +94,27 @@ export default function Historico() {
     return String(valor);
   }
 
+  function pegarTimestamp(valor: any) {
+    if (!valor) {
+      return 0;
+    }
+
+    if (valor?.toDate) {
+      return valor.toDate().getTime();
+    }
+
+    const dataConvertida =
+      new Date(valor).getTime();
+
+    return isNaN(dataConvertida)
+      ? 0
+      : dataConvertida;
+  }
+
   async function buscarHistorico() {
-    if (!auth.currentUser) {
+    const user = auth.currentUser;
+
+    if (!user) {
       setHistorico([]);
       setLoading(false);
       return;
@@ -117,9 +136,8 @@ export default function Historico() {
             where(
               'usuarioId',
               '==',
-              auth.currentUser.uid
-            ),
-            orderBy('createdAt', 'desc')
+              user.uid
+            )
           )
         );
 
@@ -128,6 +146,7 @@ export default function Historico() {
 
         const nome =
           data.nomeCompleto ||
+          data.nome ||
           'Paciente';
 
         nomesPacientes[docItem.id] =
@@ -146,6 +165,9 @@ export default function Historico() {
             ) ||
             data.dataNascimento ||
             '',
+          timestamp:
+            pegarTimestamp(data.createdAt) ||
+            pegarTimestamp(data.dataNascimento),
           titulo: 'Cadastro',
           descricao:
             data.procedimento ||
@@ -161,7 +183,7 @@ export default function Historico() {
             where(
               'usuarioId',
               '==',
-              auth.currentUser.uid
+              user.uid
             )
           )
         );
@@ -170,16 +192,23 @@ export default function Historico() {
         const data = docItem.data();
 
         const paciente =
-          nomesPacientes[
-            data.pacienteId
-          ] ||
+          nomesPacientes[data.pacienteId] ||
+          data.nomePaciente ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
           id: `pre-${docItem.id}`,
           paciente,
-          data: data.data || '',
+          data:
+            formatarDataFirestore(
+              data.createdAt
+            ) ||
+            data.data ||
+            '',
+          timestamp:
+            pegarTimestamp(data.createdAt) ||
+            pegarTimestamp(data.data),
           titulo: 'Pré-Operatório',
           descricao:
             data.observacoes ||
@@ -194,7 +223,7 @@ export default function Historico() {
             where(
               'usuarioId',
               '==',
-              auth.currentUser.uid
+              user.uid
             )
           )
         );
@@ -203,20 +232,29 @@ export default function Historico() {
         const data = docItem.data();
 
         const paciente =
-          nomesPacientes[
-            data.pacienteId
-          ] ||
+          nomesPacientes[data.pacienteId] ||
+          data.nomePaciente ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
           id: `intra-${docItem.id}`,
           paciente,
-          data: data.data || '',
+          data:
+            formatarDataFirestore(
+              data.createdAt
+            ) ||
+            data.data ||
+            '',
+          timestamp:
+            pegarTimestamp(data.createdAt) ||
+            pegarTimestamp(data.data),
           titulo: 'Intra-Operatório',
           descricao:
             data.observacoes ||
-            `Anestesia ${data.anestesia || 'Geral'}, sem intercorrências.`,
+            `Anestesia ${
+              data.anestesia || 'Geral'
+            }, sem intercorrências.`,
         });
       });
 
@@ -227,7 +265,7 @@ export default function Historico() {
             where(
               'usuarioId',
               '==',
-              auth.currentUser.uid
+              user.uid
             )
           )
         );
@@ -236,16 +274,23 @@ export default function Historico() {
         const data = docItem.data();
 
         const paciente =
-          nomesPacientes[
-            data.pacienteId
-          ] ||
+          nomesPacientes[data.pacienteId] ||
+          data.nomePaciente ||
           data.pacienteId ||
           'Paciente';
 
         lista.push({
           id: `pos-${docItem.id}`,
           paciente,
-          data: data.data || '',
+          data:
+            formatarDataFirestore(
+              data.createdAt
+            ) ||
+            data.data ||
+            '',
+          timestamp:
+            pegarTimestamp(data.createdAt) ||
+            pegarTimestamp(data.data),
           titulo: 'Pós-Operatório',
           descricao:
             data.observacoes ||
@@ -253,12 +298,19 @@ export default function Historico() {
         });
       });
 
+      lista.sort(
+        (a, b) =>
+          b.timestamp - a.timestamp
+      );
+
       setHistorico(lista);
     } catch (error) {
       console.log(
         'Erro ao buscar histórico:',
         error
       );
+
+      setHistorico([]);
     } finally {
       setLoading(false);
     }
@@ -283,10 +335,12 @@ export default function Historico() {
 
         <View style={styles.content}>
           {loading ? (
-            <ActivityIndicator
-              size="large"
-              color="#214192"
-            />
+            <View style={styles.loadingBox}>
+              <ActivityIndicator
+                size="large"
+                color="#214192"
+              />
+            </View>
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}

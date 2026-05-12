@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+} from 'react';
 
 import {
   View,
@@ -8,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,10 +23,17 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 
+import {
+  sendPasswordResetEmail,
+} from 'firebase/auth';
+
+import {
+  auth,
+} from '../../../services/firebaseConfig';
+
 import styles from './styles';
 
 export default function RecuperarSenha() {
-
   const [email, setEmail] =
     useState('');
 
@@ -33,25 +43,74 @@ export default function RecuperarSenha() {
   const navigation =
     useNavigation<any>();
 
-  function handleContinuar() {
+  async function handleContinuar() {
+    const emailFormatado =
+      email.trim().toLowerCase();
 
-    if (!email.trim()) {
-
-      alert('Digite seu email');
+    if (!emailFormatado) {
+      Alert.alert(
+        'Atenção',
+        'Digite seu email.'
+      );
 
       return;
     }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    navigation.navigate(
-      'ConfirmarEmail',
-      {
-        email: email.trim(),
+      await sendPasswordResetEmail(
+        auth,
+        emailFormatado
+      );
+
+      navigation.navigate(
+        'ConfirmarEmail',
+        {
+          email: emailFormatado,
+        }
+      );
+
+    } catch (error: any) {
+      console.log(
+        'Erro ao enviar redefinição:',
+        error
+      );
+
+      let mensagem =
+        'Não foi possível enviar o email de redefinição.';
+
+      if (
+        error.code ===
+        'auth/invalid-email'
+      ) {
+        mensagem =
+          'Digite um email válido.';
       }
-    );
 
-    setLoading(false);
+      if (
+        error.code ===
+        'auth/user-not-found'
+      ) {
+        mensagem =
+          'Nenhuma conta encontrada com este email.';
+      }
+
+      if (
+        error.code ===
+        'auth/too-many-requests'
+      ) {
+        mensagem =
+          'Muitas tentativas. Tente novamente mais tarde.';
+      }
+
+      Alert.alert(
+        'Erro',
+        mensagem
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -66,7 +125,6 @@ export default function RecuperarSenha() {
         style={{ flex: 1 }}
         edges={['top']}
       >
-
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={
@@ -75,7 +133,6 @@ export default function RecuperarSenha() {
               : undefined
           }
         >
-
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -84,13 +141,9 @@ export default function RecuperarSenha() {
               false
             }
           >
-
-            {/* HEADER AZUL */}
             <View style={styles.top} />
 
-            {/* CONTEÚDO */}
             <View style={styles.content}>
-
               <Text style={styles.title}>
                 Esqueceu a senha?
               </Text>
@@ -100,9 +153,9 @@ export default function RecuperarSenha() {
                   styles.description
                 }
               >
-                Digite o e-mail
-                cadastrado e enviaremos o link para
-                você criar uma nova senha.
+                Digite o e-mail cadastrado
+                e enviaremos o link para você
+                criar uma nova senha.
               </Text>
 
               <Text style={styles.label}>
@@ -118,6 +171,7 @@ export default function RecuperarSenha() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                editable={!loading}
               />
 
               <TouchableOpacity
@@ -135,7 +189,12 @@ export default function RecuperarSenha() {
                     '#4293D5',
                     '#214192',
                   ]}
-                  style={styles.button}
+                  style={[
+                    styles.button,
+                    loading && {
+                      opacity: 0.7,
+                    },
+                  ]}
                 >
                   <Text
                     style={
@@ -143,18 +202,14 @@ export default function RecuperarSenha() {
                     }
                   >
                     {loading
-                      ? 'Carregando...'
+                      ? 'Enviando...'
                       : 'Enviar'}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
-
             </View>
-
           </ScrollView>
-
         </KeyboardAvoidingView>
-
       </SafeAreaView>
     </LinearGradient>
   );

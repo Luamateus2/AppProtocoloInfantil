@@ -1,6 +1,10 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 
-const { width } = Dimensions.get('window');
+const { width } =
+  Dimensions.get('window');
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -10,14 +14,16 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    backgroundColor: '#FFFFFF',
   },
 
   logoContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    justifyContent: 'center',
+    marginBottom: 40,
   },
 
   logoImage: {
@@ -27,7 +33,7 @@ const styles = StyleSheet.create({
 
   footer: {
     width: '100%',
-    paddingHorizontal: 24,
+    alignItems: 'center',
   },
 
   button: {
@@ -40,6 +46,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.08,
     shadowRadius: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+
     elevation: 4,
   },
 

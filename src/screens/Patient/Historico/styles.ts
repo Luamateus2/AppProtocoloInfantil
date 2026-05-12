@@ -37,6 +37,7 @@ export default StyleSheet.create({
       width: 0,
       height: 2,
     },
+
     elevation: 4,
   },
 
@@ -75,7 +76,6 @@ export default StyleSheet.create({
   },
 
   dot: {
-    
     elevation: 4,
   },
 
@@ -103,6 +103,7 @@ export default StyleSheet.create({
       width: 0,
       height: 3,
     },
+
     elevation: 4,
   },
 
@@ -134,6 +135,13 @@ export default StyleSheet.create({
     width: 22,
     height: 22,
     tintColor: '#214192',
+  },
+
+  loadingBox: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
   },
 
   emptyBox: {

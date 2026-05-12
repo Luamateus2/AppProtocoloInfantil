@@ -36,7 +36,7 @@ export default function Inicio() {
           />
         </View>
 
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom + 6 }]}>
            <TouchableOpacity activeOpacity={0.85} style={styles.button} onPress={() => navigation.navigate('Login')}>
             <Text style={styles.buttonText}>Entrar</Text>
           </TouchableOpacity>

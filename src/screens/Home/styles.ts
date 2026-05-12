@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
   },
-
   logo: {
-    width: 52,
-    height: 52,
-  },
-
+  width: 52,
+  height: 52,
+  backgroundColor: '#FFFFFF',
+  borderRadius: 12,
+},
   headerText: {
     flex: 1,
 
@@ -75,9 +75,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4',
 
     marginTop: -20,
-
-    borderTopLeftRadius: 26,
-    borderTopRightRadius: 26,
 
     paddingTop: 24,
   },

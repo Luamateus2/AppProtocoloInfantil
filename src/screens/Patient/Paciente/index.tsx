@@ -25,7 +25,6 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   collection,
   getDocs,
-  orderBy,
   query,
   deleteDoc,
   doc,
@@ -95,7 +94,9 @@ export default function Pacientes() {
   ] = useState<string | null>(null);
 
   async function buscarPacientes() {
-    if (!auth.currentUser) {
+    const user = auth.currentUser;
+
+    if (!user) {
       setPacientes([]);
       setLoading(false);
       return;
@@ -109,9 +110,8 @@ export default function Pacientes() {
         where(
           'usuarioId',
           '==',
-          auth.currentUser.uid
-        ),
-        orderBy('createdAt', 'desc')
+          user.uid
+        )
       );
 
       const querySnapshot =
@@ -120,15 +120,50 @@ export default function Pacientes() {
       const lista: PacienteType[] = [];
 
       querySnapshot.forEach((docItem) => {
+        const data = docItem.data();
+
         lista.push({
           id: docItem.id,
-          ...docItem.data(),
-        } as PacienteType);
+          nomeCompleto:
+            data.nomeCompleto ||
+            data.nome ||
+            '',
+          idade:
+            String(data.idade || ''),
+          peso:
+            String(data.peso || ''),
+          asa:
+            data.asa ||
+            data.classificacaoAsa ||
+            data.classficacaoAsa ||
+            '',
+          procedimento:
+            data.procedimento ||
+            data.tipoCirurgia ||
+            '',
+          comorbidade:
+            data.comorbidade ||
+            data.comorbidadeResp ||
+            '',
+          dataNascimento:
+            data.dataNascimento || '',
+        });
       });
+
+      lista.sort((a, b) =>
+        a.nomeCompleto.localeCompare(
+          b.nomeCompleto
+        )
+      );
 
       setPacientes(lista);
     } catch (error) {
-      console.log(error);
+      console.log(
+        'Erro ao buscar pacientes:',
+        error
+      );
+
+      setPacientes([]);
     } finally {
       setLoading(false);
     }
@@ -159,15 +194,15 @@ export default function Pacientes() {
 
       await deleteDoc(
         doc(db, 'preOperatorio', id)
-      );
+      ).catch(() => {});
 
       await deleteDoc(
         doc(db, 'intraOperatorio', id)
-      );
+      ).catch(() => {});
 
       await deleteDoc(
         doc(db, 'posOperatorio', id)
-      );
+      ).catch(() => {});
 
       setPacientes((prev) =>
         prev.filter(
@@ -178,7 +213,10 @@ export default function Pacientes() {
       setModalVisible(false);
       setPacienteSelecionado(null);
     } catch (error) {
-      console.log(error);
+      console.log(
+        'Erro ao excluir paciente:',
+        error
+      );
     }
   }
 
@@ -191,6 +229,20 @@ export default function Pacientes() {
         pacienteId: id,
       }
     );
+  }
+
+  function pegarIniciais(nome: string) {
+    if (!nome) {
+      return 'P';
+    }
+
+    return nome
+      .split(' ')
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase();
   }
 
   return (
@@ -283,40 +335,39 @@ export default function Pacientes() {
                   style={styles.card}
                 >
                   <View style={styles.avatar}>
-                    <Text
-                      style={styles.avatarText}
-                    >
-                      {paciente.nomeCompleto
-                        ?.split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .slice(0, 2)}
+                    <Text style={styles.avatarText}>
+                      {pegarIniciais(
+                        paciente.nomeCompleto
+                      )}
                     </Text>
                   </View>
 
                   <View style={styles.cardInfo}>
                     <Text style={styles.name}>
-                      {paciente.nomeCompleto}
+                      {paciente.nomeCompleto ||
+                        'Paciente sem nome'}
                     </Text>
 
                     <Text style={styles.details}>
-                      {paciente.idade} anos •{' '}
-                      {paciente.peso} kg
+                      {paciente.idade || '-'} anos •{' '}
+                      {paciente.peso || '-'} kg
                     </Text>
 
                     <Text style={styles.details}>
-                      ASA: {paciente.asa} •{' '}
-                      {paciente.procedimento}
+                      ASA: {paciente.asa || '-'} •{' '}
+                      {paciente.procedimento ||
+                        '-'}
                     </Text>
 
                     <Text style={styles.details}>
                       Comorbidade:{' '}
-                      {paciente.comorbidade}
+                      {paciente.comorbidade || '-'}
                     </Text>
 
                     <Text style={styles.details}>
                       Nascimento:{' '}
-                      {paciente.dataNascimento}
+                      {paciente.dataNascimento ||
+                        '-'}
                     </Text>
                   </View>
 
@@ -384,11 +435,13 @@ export default function Pacientes() {
                   borderRadius: 8,
                   marginBottom: 10,
                 }}
-                onPress={() =>
-                  editarPaciente(
-                    pacienteSelecionado!
-                  )
-                }
+                onPress={() => {
+                  if (pacienteSelecionado) {
+                    editarPaciente(
+                      pacienteSelecionado
+                    );
+                  }
+                }}
               >
                 <Text
                   style={{
@@ -408,11 +461,13 @@ export default function Pacientes() {
                   borderRadius: 8,
                   marginBottom: 10,
                 }}
-                onPress={() =>
-                  excluirPaciente(
-                    pacienteSelecionado!
-                  )
-                }
+                onPress={() => {
+                  if (pacienteSelecionado) {
+                    excluirPaciente(
+                      pacienteSelecionado
+                    );
+                  }
+                }}
               >
                 <Text
                   style={{

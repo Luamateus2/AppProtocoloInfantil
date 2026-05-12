@@ -51,6 +51,7 @@ type NavProps =
   >;
 
 export default function NovoPaciente() {
+
   const navigation =
     useNavigation<NavProps>();
 
@@ -82,51 +83,124 @@ export default function NovoPaciente() {
     useState(false);
 
   async function salvarPaciente() {
+
     if (!auth.currentUser) {
+
       Alert.alert(
         'Erro',
         'Usuário não está logado.'
       );
+
+      return;
+    }
+
+    if (
+      !nomeCompleto ||
+      !idade ||
+      !asa
+    ) {
+
+      Alert.alert(
+        'Atenção',
+        'Preencha os campos obrigatórios.'
+      );
+
       return;
     }
 
     try {
+
       setLoading(true);
 
-      const docRef = await addDoc(
-        collection(db, 'pacientes'),
-        {
-          usuarioId: auth.currentUser.uid,
+      const docRef =
+        await addDoc(
+          collection(
+            db,
+            'pacientes'
+          ),
+          {
+            usuarioId:
+              auth.currentUser.uid,
 
-          nomeCompleto,
-          dataNascimento,
-          idade,
-          asa,
-          peso,
-          procedimento,
-          comorbidade,
-          observacoes,
+            nomeCompleto,
+            dataNascimento,
+            idade,
+            asa,
+            peso,
+            procedimento,
+            comorbidade,
+            observacoes,
 
-          createdAt: serverTimestamp(),
-        }
-      );
+            createdAt:
+              serverTimestamp(),
+          }
+        );
 
       navigation.navigate(
         'PreOperatorio',
         {
-          pacienteId: docRef.id,
+          pacienteId:
+            docRef.id,
         }
       );
+
     } catch (error) {
+
       console.log(error);
 
       Alert.alert(
         'Erro',
         'Não foi possível salvar o paciente.'
       );
+
     } finally {
+
       setLoading(false);
     }
+  }
+
+  function selecionarASA() {
+
+    Alert.alert(
+      'Classificação ASA',
+      'Selecione uma opção',
+      [
+        {
+          text: 'ASA I',
+          onPress: () =>
+            setAsa('ASA I'),
+        },
+
+        {
+          text: 'ASA II',
+          onPress: () =>
+            setAsa('ASA II'),
+        },
+
+        {
+          text: 'ASA III',
+          onPress: () =>
+            setAsa('ASA III'),
+        },
+
+        {
+          text: 'ASA IV',
+          onPress: () =>
+            setAsa('ASA IV'),
+        },
+
+        {
+          text: 'ASA V',
+          onPress: () =>
+            setAsa('ASA V'),
+        },
+
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+      ]
+    );
   }
 
   return (
@@ -147,12 +221,14 @@ export default function NovoPaciente() {
         <Header title="Novo Paciente" />
 
         <View style={styles.body}>
+
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: 120,
             }}
           >
+
             <Text style={styles.sectionTitle}>
               Dados do Paciente
             </Text>
@@ -166,11 +242,15 @@ export default function NovoPaciente() {
               placeholderTextColor="#999"
               style={styles.input}
               value={nomeCompleto}
-              onChangeText={setNomeCompleto}
+              onChangeText={
+                setNomeCompleto
+              }
             />
 
             <View style={styles.row}>
+
               <View style={styles.half}>
+
                 <Text style={styles.label}>
                   Data de Nascimento
                 </Text>
@@ -180,11 +260,15 @@ export default function NovoPaciente() {
                   placeholderTextColor="#999"
                   style={styles.input}
                   value={dataNascimento}
-                  onChangeText={setDataNascimento}
+                  onChangeText={
+                    setDataNascimento
+                  }
                 />
+
               </View>
 
               <View style={styles.half}>
+
                 <Text style={styles.label}>
                   Idade
                 </Text>
@@ -194,39 +278,62 @@ export default function NovoPaciente() {
                   placeholderTextColor="#999"
                   style={styles.input}
                   value={idade}
-                  onChangeText={setIdade}
+                  onChangeText={
+                    setIdade
+                  }
                   keyboardType="numeric"
                 />
+
               </View>
+
             </View>
 
             <View style={styles.row}>
+
               <View style={styles.half}>
+
                 <Text style={styles.label}>
                   Classificação ASA
                 </Text>
 
-                <TouchableOpacity style={styles.select}>
-                  <Text style={styles.selectText}>
+                <TouchableOpacity
+                  style={styles.select}
+                  onPress={
+                    selecionarASA
+                  }
+                >
+
+                  <Text
+                    style={
+                      styles.selectText
+                    }
+                  >
                     {asa || 'Selecione'}
                   </Text>
+
                 </TouchableOpacity>
+
               </View>
 
               <View style={styles.half}>
+
                 <Text style={styles.label}>
                   Peso (kg)
                 </Text>
 
                 <TextInput
-                  placeholder="Ex: 20 kg"
+                  placeholder="Ex: 20"
                   placeholderTextColor="#999"
                   style={styles.input}
                   value={peso}
-                  onChangeText={setPeso}
+                  onChangeText={
+                    setPeso
+                  }
                   keyboardType="numeric"
                 />
+
               </View>
+
             </View>
 
             <Text style={styles.label}>
@@ -238,7 +345,9 @@ export default function NovoPaciente() {
               placeholderTextColor="#999"
               style={styles.input}
               value={procedimento}
-              onChangeText={setProcedimento}
+              onChangeText={
+                setProcedimento
+              }
             />
 
             <Text style={styles.label}>
@@ -250,7 +359,9 @@ export default function NovoPaciente() {
               placeholderTextColor="#999"
               style={styles.input}
               value={comorbidade}
-              onChangeText={setComorbidade}
+              onChangeText={
+                setComorbidade
+              }
             />
 
             <Text style={styles.label}>
@@ -266,38 +377,64 @@ export default function NovoPaciente() {
               ]}
               multiline
               value={observacoes}
-              onChangeText={setObservacoes}
+              onChangeText={
+                setObservacoes
+              }
             />
 
             <View style={styles.buttonRow}>
+
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={
+                  styles.cancelButton
+                }
                 onPress={() =>
                   navigation.goBack()
                 }
               >
-                <Text style={styles.cancelText}>
+
+                <Text
+                  style={
+                    styles.cancelText
+                  }
+                >
                   Cancelar
                 </Text>
+
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.saveButton}
-                onPress={salvarPaciente}
+                style={
+                  styles.saveButton
+                }
+                onPress={
+                  salvarPaciente
+                }
                 disabled={loading}
               >
-                <Text style={styles.saveText}>
+
+                <Text
+                  style={
+                    styles.saveText
+                  }
+                >
                   {loading
                     ? 'Salvando...'
                     : 'Próximo'}
                 </Text>
+
               </TouchableOpacity>
+
             </View>
+
           </ScrollView>
+
         </View>
 
         <AppFooter />
+
       </SafeAreaView>
+
     </LinearGradient>
   );
 }
