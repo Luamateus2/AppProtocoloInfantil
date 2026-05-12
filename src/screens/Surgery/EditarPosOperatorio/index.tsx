@@ -9,7 +9,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Alert,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
@@ -41,6 +40,7 @@ import { RootStackParamList } from '../../../routes/types';
 
 import HeaderSecundario from '../../../components/HeaderSecundario';
 import AppFooter from '../../../components/Footer/Footer';
+import CardModal from '../../../components/Card';
 
 import styles from './styles';
 
@@ -54,6 +54,7 @@ type RouteProps =
   >;
 
 export default function EditarPosOperatorio() {
+
   const navigation =
     useNavigation<NavProps>();
 
@@ -65,6 +66,9 @@ export default function EditarPosOperatorio() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
 
   const [date, setDate] =
     useState(new Date());
@@ -100,14 +104,53 @@ export default function EditarPosOperatorio() {
   const [
     observacoes,
     setObservacoes,
-  ] = useState(
-    'Paciente acordado, sem queixas,\nmantendo saturação adequada.'
-  );
+  ] = useState('');
 
   const [
     openSelect,
     setOpenSelect,
   ] = useState('');
+
+  const [
+    modalVisible,
+    setModalVisible,
+  ] = useState(false);
+
+  const [message, setMessage] =
+    useState('');
+
+  const [type, setType] =
+    useState<'error' | 'success'>(
+      'error'
+    );
+
+  function showError(msg: string) {
+
+    setMessage(msg);
+
+    setType('error');
+
+    setModalVisible(true);
+  }
+
+  function showSuccess(msg: string) {
+
+    setMessage(msg);
+
+    setType('success');
+
+    setModalVisible(true);
+  }
+
+  function fecharModal() {
+
+    setModalVisible(false);
+
+    if (type === 'success') {
+
+      navigation.navigate('Home');
+    }
+  }
 
   const formatDate = (
     d: Date
@@ -130,6 +173,7 @@ export default function EditarPosOperatorio() {
   function converterHoraParaDate(
     hora?: string
   ) {
+
     if (!hora) return new Date();
 
     const [h, m] =
@@ -138,13 +182,9 @@ export default function EditarPosOperatorio() {
     const novaData =
       new Date();
 
-    novaData.setHours(
-      Number(h)
-    );
+    novaData.setHours(Number(h));
 
-    novaData.setMinutes(
-      Number(m)
-    );
+    novaData.setMinutes(Number(m));
 
     novaData.setSeconds(0);
 
@@ -152,7 +192,9 @@ export default function EditarPosOperatorio() {
   }
 
   async function carregarDados() {
+
     try {
+
       const ref = doc(
         db,
         'posOperatorio',
@@ -163,6 +205,7 @@ export default function EditarPosOperatorio() {
         await getDoc(ref);
 
       if (snap.exists()) {
+
         const data =
           snap.data();
 
@@ -181,13 +224,13 @@ export default function EditarPosOperatorio() {
         );
 
         setObservacoes(
-          data.observacoes ||
-            ''
+          data.observacoes || ''
         );
 
         if (
           data.horarioTermino
         ) {
+
           setHorarioTermino(
             converterHoraParaDate(
               data.horarioTermino
@@ -195,24 +238,33 @@ export default function EditarPosOperatorio() {
           );
         }
       }
+
     } catch (error) {
+
       console.log(error);
 
-      Alert.alert(
-        'Erro',
+      showError(
         'Não foi possível carregar o pós-operatório.'
       );
+
     } finally {
+
       setLoading(false);
     }
   }
 
   useEffect(() => {
+
     carregarDados();
+
   }, []);
 
   async function salvarEdicao() {
+
     try {
+
+      setSaving(true);
+
       await updateDoc(
         doc(
           db,
@@ -235,21 +287,21 @@ export default function EditarPosOperatorio() {
         }
       );
 
-      Alert.alert(
-        'Sucesso',
+      showSuccess(
         'Registro atualizado com sucesso.'
       );
 
-      navigation.navigate(
-        'Home'
-      );
     } catch (error) {
+
       console.log(error);
 
-      Alert.alert(
-        'Erro',
+      showError(
         'Não foi possível atualizar.'
       );
+
+    } finally {
+
+      setSaving(false);
     }
   }
 
@@ -260,12 +312,12 @@ export default function EditarPosOperatorio() {
     value: string;
     opened?: boolean;
   }) {
+
     return (
       <View style={styles.input}>
+
         <Text
-          style={
-            styles.inputText
-          }
+          style={styles.inputText}
           numberOfLines={1}
         >
           {value}
@@ -280,6 +332,7 @@ export default function EditarPosOperatorio() {
           size={18}
           color="#214192"
         />
+
       </View>
     );
   }
@@ -293,54 +346,48 @@ export default function EditarPosOperatorio() {
       item: string
     ) => void;
   }) {
+
     return (
-      <View
-        style={
-          styles.dropdown
-        }
-      >
+      <View style={styles.dropdown}>
+
         {items.map(item => (
+
           <TouchableOpacity
             key={item}
-            style={
-              styles.option
-            }
+            style={styles.option}
             onPress={() => {
+
               onSelect(item);
 
-              setOpenSelect(
-                ''
-              );
+              setOpenSelect('');
             }}
           >
+
             <Text
-              style={
-                styles.optionText
-              }
+              style={styles.optionText}
             >
               {item}
             </Text>
+
           </TouchableOpacity>
         ))}
+
       </View>
     );
   }
 
   if (loading) {
+
     return (
       <LinearGradient
         colors={[
           '#214192',
           '#4293D5',
         ]}
-        style={
-          styles.container
-        }
+        style={styles.container}
       >
         <SafeAreaView
-          style={
-            styles.safeArea
-          }
+          style={styles.safeArea}
           edges={['top']}
         >
           <HeaderSecundario
@@ -349,9 +396,7 @@ export default function EditarPosOperatorio() {
           />
 
           <View
-            style={
-              styles.loadingContainer
-            }
+            style={styles.loadingContainer}
           >
             <ActivityIndicator
               size="large"
@@ -371,7 +416,9 @@ export default function EditarPosOperatorio() {
       ]}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" />
+      <StatusBar
+        barStyle="light-content"
+      />
 
       <SafeAreaView
         style={styles.safeArea}
@@ -383,6 +430,7 @@ export default function EditarPosOperatorio() {
         />
 
         <View style={styles.body}>
+
           <ScrollView
             showsVerticalScrollIndicator={
               false
@@ -391,22 +439,17 @@ export default function EditarPosOperatorio() {
               styles.scrollContent
             }
           >
+
             <TouchableOpacity
               style={styles.date}
               onPress={() =>
-                setShowDate(
-                  true
-                )
+                setShowDate(true)
               }
             >
               <Text
-                style={
-                  styles.dateText
-                }
+                style={styles.dateText}
               >
-                {formatDate(
-                  date
-                )}
+                {formatDate(date)}
               </Text>
             </TouchableOpacity>
 
@@ -418,13 +461,13 @@ export default function EditarPosOperatorio() {
                   event,
                   selectedDate
                 ) => {
-                  setShowDate(
-                    false
-                  );
+
+                  setShowDate(false);
 
                   if (
                     selectedDate
                   ) {
+
                     setDate(
                       selectedDate
                     );
@@ -434,26 +477,15 @@ export default function EditarPosOperatorio() {
             )}
 
             <View style={styles.row}>
-              <Text
-                style={
-                  styles.label
-                }
-              >
-                Horário de
-                Término
+              <Text style={styles.label}>
+                Horário de Término
               </Text>
 
               <TouchableOpacity
-                style={
-                  styles.dropdownWrapper
-                }
-                activeOpacity={
-                  0.85
-                }
+                style={styles.dropdownWrapper}
+                activeOpacity={0.85}
                 onPress={() =>
-                  setShowHorario(
-                    true
-                  )
+                  setShowHorario(true)
                 }
               >
                 <SelectBox
@@ -466,22 +498,20 @@ export default function EditarPosOperatorio() {
 
             {showHorario && (
               <DateTimePicker
-                value={
-                  horarioTermino
-                }
+                value={horarioTermino}
                 mode="time"
                 is24Hour
                 onChange={(
                   event,
                   selectedTime
                 ) => {
-                  setShowHorario(
-                    false
-                  );
+
+                  setShowHorario(false);
 
                   if (
                     selectedTime
                   ) {
+
                     setHorarioTermino(
                       selectedTime
                     );
@@ -490,12 +520,13 @@ export default function EditarPosOperatorio() {
               />
             )}
 
-            <View style={styles.row}>
-              <Text
-                style={
-                  styles.label
-                }
-              >
+            <View
+              style={[
+                styles.row,
+                { zIndex: 999 },
+              ]}
+            >
+              <Text style={styles.label}>
                 Recuperação
               </Text>
 
@@ -505,9 +536,7 @@ export default function EditarPosOperatorio() {
                 }
               >
                 <TouchableOpacity
-                  activeOpacity={
-                    0.85
-                  }
+                  activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
                       openSelect ===
@@ -518,9 +547,7 @@ export default function EditarPosOperatorio() {
                   }
                 >
                   <SelectBox
-                    value={
-                      recuperacao
-                    }
+                    value={recuperacao}
                     opened={
                       openSelect ===
                       'recuperacao'
@@ -545,14 +572,14 @@ export default function EditarPosOperatorio() {
               </View>
             </View>
 
-            <View style={styles.row}>
-              <Text
-                style={
-                  styles.label
-                }
-              >
-                Sinais
-                Vitais
+            <View
+              style={[
+                styles.row,
+                { zIndex: 998 },
+              ]}
+            >
+              <Text style={styles.label}>
+                Sinais Vitais
               </Text>
 
               <View
@@ -561,9 +588,7 @@ export default function EditarPosOperatorio() {
                 }
               >
                 <TouchableOpacity
-                  activeOpacity={
-                    0.85
-                  }
+                  activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
                       openSelect ===
@@ -574,9 +599,7 @@ export default function EditarPosOperatorio() {
                   }
                 >
                   <SelectBox
-                    value={
-                      sinaisVitais
-                    }
+                    value={sinaisVitais}
                     opened={
                       openSelect ===
                       'sinais'
@@ -601,14 +624,14 @@ export default function EditarPosOperatorio() {
               </View>
             </View>
 
-            <View style={styles.row}>
-              <Text
-                style={
-                  styles.label
-                }
-              >
-                Dor
-                (Escala)
+            <View
+              style={[
+                styles.row,
+                { zIndex: 997 },
+              ]}
+            >
+              <Text style={styles.label}>
+                Dor (Escala)
               </Text>
 
               <View
@@ -617,9 +640,7 @@ export default function EditarPosOperatorio() {
                 }
               >
                 <TouchableOpacity
-                  activeOpacity={
-                    0.85
-                  }
+                  activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
                       openSelect ===
@@ -654,9 +675,7 @@ export default function EditarPosOperatorio() {
                       '9',
                       '10',
                     ]}
-                    onSelect={
-                      setDor
-                    }
+                    onSelect={setDor}
                   />
                 )}
               </View>
@@ -671,13 +690,9 @@ export default function EditarPosOperatorio() {
             </Text>
 
             <TextInput
-              style={
-                styles.textArea
-              }
+              style={styles.textArea}
               multiline
-              value={
-                observacoes
-              }
+              value={observacoes}
               onChangeText={
                 setObservacoes
               }
@@ -686,35 +701,84 @@ export default function EditarPosOperatorio() {
             />
 
             <TouchableOpacity
-              activeOpacity={
-                0.85
-              }
-              onPress={
-                salvarEdicao
-              }
+              activeOpacity={0.85}
+              onPress={salvarEdicao}
+              disabled={saving}
             >
               <LinearGradient
                 colors={[
                   '#3A7BD5',
                   '#2A5298',
                 ]}
-                style={
-                  styles.button
-                }
+                style={styles.button}
               >
                 <Text
                   style={
                     styles.buttonText
                   }
                 >
-                  Salvar Alterações
+                  {saving
+                    ? 'Salvando...'
+                    : 'Salvar Alterações'}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
+
           </ScrollView>
+
         </View>
 
         <AppFooter />
+
+        <CardModal
+          visible={modalVisible}
+          onClose={fecharModal}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                textAlign: 'center',
+                marginBottom: 15,
+                fontWeight: '600',
+                color:
+                  type === 'success'
+                    ? '#214192'
+                    : '#C62828',
+              }}
+            >
+              {message}
+            </Text>
+
+            <TouchableOpacity
+              onPress={fecharModal}
+              style={{
+                backgroundColor:
+                  type === 'success'
+                    ? '#4A90E2'
+                    : '#C62828',
+                padding: 12,
+                borderRadius: 10,
+                width: '100%',
+                alignItems: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: '#fff',
+                  fontWeight: '600',
+                }}
+              >
+                OK
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </CardModal>
+
       </SafeAreaView>
     </LinearGradient>
   );

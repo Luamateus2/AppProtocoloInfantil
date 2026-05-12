@@ -107,6 +107,7 @@ export default function EditarPreOperatorio() {
     const [h, m] = hora.split(':');
 
     const novaData = new Date();
+
     novaData.setHours(Number(h));
     novaData.setMinutes(Number(m));
     novaData.setSeconds(0);
@@ -116,23 +117,35 @@ export default function EditarPreOperatorio() {
 
   async function carregarDados() {
     try {
-      const ref = doc(db, 'preOperatorio', pacienteId);
+      const ref = doc(
+        db,
+        'preOperatorio',
+        pacienteId
+      );
+
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
         const data = snap.data();
 
         setEstadoGeral(data.estadoGeral || 'Estável');
+
         setViaAerea(data.viaAerea || 'Mallampati I');
+
         setMedicacao(data.medicacao || 'Nenhuma');
+
         setObservacoes(data.observacoes || '');
 
         if (data.horario) {
-          setHorario(converterHoraParaDate(data.horario));
+          setHorario(
+            converterHoraParaDate(data.horario)
+          );
         }
 
         if (data.jejum) {
-          setJejum(converterHoraParaDate(data.jejum));
+          setJejum(
+            converterHoraParaDate(data.jejum)
+          );
         }
       }
     } catch (error) {
@@ -154,14 +167,22 @@ export default function EditarPreOperatorio() {
   function continuar() {
     navigation.navigate('EditarIntraOperatorio', {
       pacienteId,
+
       pacienteEditado,
+
       preOperatorioEditado: {
         data: formatDate(date),
+
         horario: formatHour(horario),
+
         jejum: formatHour(jejum),
+
         estadoGeral,
+
         viaAerea,
+
         medicacao,
+
         observacoes,
       },
     });
@@ -184,7 +205,11 @@ export default function EditarPreOperatorio() {
         </Text>
 
         <Ionicons
-          name={opened ? 'chevron-up' : 'chevron-down'}
+          name={
+            opened
+              ? 'chevron-up'
+              : 'chevron-down'
+          }
           size={18}
           color="#214192"
         />
@@ -205,8 +230,10 @@ export default function EditarPreOperatorio() {
           <TouchableOpacity
             key={item}
             style={styles.option}
+            activeOpacity={0.85}
             onPress={() => {
               onSelect(item);
+
               setOpenSelect('');
             }}
           >
@@ -303,7 +330,9 @@ export default function EditarPreOperatorio() {
                 activeOpacity={0.85}
                 onPress={() => setShowHorario(true)}
               >
-                <SelectBox value={formatHour(horario)} />
+                <SelectBox
+                  value={formatHour(horario)}
+                />
               </TouchableOpacity>
             </View>
 
@@ -332,7 +361,9 @@ export default function EditarPreOperatorio() {
                 activeOpacity={0.85}
                 onPress={() => setShowJejum(true)}
               >
-                <SelectBox value={formatHour(jejum)} />
+                <SelectBox
+                  value={formatHour(jejum)}
+                />
               </TouchableOpacity>
             </View>
 
@@ -351,7 +382,7 @@ export default function EditarPreOperatorio() {
               />
             )}
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 999 }]}>
               <Text style={styles.label}>
                 Estado Geral
               </Text>
@@ -361,13 +392,17 @@ export default function EditarPreOperatorio() {
                   activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
-                      openSelect === 'estado' ? '' : 'estado'
+                      openSelect === 'estado'
+                        ? ''
+                        : 'estado'
                     )
                   }
                 >
                   <SelectBox
                     value={estadoGeral}
-                    opened={openSelect === 'estado'}
+                    opened={
+                      openSelect === 'estado'
+                    }
                   />
                 </TouchableOpacity>
 
@@ -384,7 +419,7 @@ export default function EditarPreOperatorio() {
               </View>
             </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 998 }]}>
               <Text style={styles.label}>
                 Via Aérea
               </Text>
@@ -394,13 +429,17 @@ export default function EditarPreOperatorio() {
                   activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
-                      openSelect === 'via' ? '' : 'via'
+                      openSelect === 'via'
+                        ? ''
+                        : 'via'
                     )
                   }
                 >
                   <SelectBox
                     value={viaAerea}
-                    opened={openSelect === 'via'}
+                    opened={
+                      openSelect === 'via'
+                    }
                   />
                 </TouchableOpacity>
 
@@ -417,7 +456,7 @@ export default function EditarPreOperatorio() {
               </View>
             </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 997 }]}>
               <Text style={styles.label}>
                 Medicação
               </Text>
@@ -427,13 +466,17 @@ export default function EditarPreOperatorio() {
                   activeOpacity={0.85}
                   onPress={() =>
                     setOpenSelect(
-                      openSelect === 'med' ? '' : 'med'
+                      openSelect === 'med'
+                        ? ''
+                        : 'med'
                     )
                   }
                 >
                   <SelectBox
                     value={medicacao}
-                    opened={openSelect === 'med'}
+                    opened={
+                      openSelect === 'med'
+                    }
                   />
                 </TouchableOpacity>
 

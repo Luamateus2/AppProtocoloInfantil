@@ -8,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
-  Alert,
   Image,
   ActivityIndicator,
 } from 'react-native';
@@ -71,6 +70,9 @@ type NavProps =
     'Settings'
   >;
 
+type MessageType =
+  'success' | 'error' | 'info';
+
 export default function Settings() {
 
   const navigation =
@@ -82,11 +84,33 @@ export default function Settings() {
   const [loadingFoto, setLoadingFoto] =
     useState(false);
 
+  const [messageCard, setMessageCard] =
+    useState<{
+      type: MessageType;
+      title: string;
+      text: string;
+    } | null>(null);
+
+  const [showLogoutCard, setShowLogoutCard] =
+    useState(false);
+
   const user = auth.currentUser;
 
   useEffect(() => {
     carregarFoto();
   }, []);
+
+  function mostrarMensagem(
+    type: MessageType,
+    title: string,
+    text: string
+  ) {
+    setMessageCard({
+      type,
+      title,
+      text,
+    });
+  }
 
   async function carregarFoto() {
 
@@ -138,9 +162,12 @@ export default function Settings() {
 
     try {
 
+      setMessageCard(null);
+
       if (!user) {
 
-        Alert.alert(
+        mostrarMensagem(
+          'error',
           'Erro',
           'Usuário não encontrado.'
         );
@@ -153,9 +180,10 @@ export default function Settings() {
 
       if (!permissao.granted) {
 
-        Alert.alert(
+        mostrarMensagem(
+          'info',
           'Permissão necessária',
-          'Permita o acesso à galeria.'
+          'Permita o acesso à galeria para alterar sua foto.'
         );
 
         return;
@@ -163,7 +191,8 @@ export default function Settings() {
 
       const resultado =
         await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
+          mediaTypes:
+            ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [1, 1],
           quality: 0.8,
@@ -225,9 +254,10 @@ export default function Settings() {
         downloadURL
       );
 
-      Alert.alert(
+      mostrarMensagem(
+        'success',
         'Sucesso',
-        'Foto atualizada!'
+        'Foto atualizada com sucesso!'
       );
 
     } catch (error: any) {
@@ -239,7 +269,8 @@ export default function Settings() {
         error.serverResponse
       );
 
-      Alert.alert(
+      mostrarMensagem(
+        'error',
         'Erro',
         'Não foi possível atualizar a foto.'
       );
@@ -250,48 +281,33 @@ export default function Settings() {
     }
   }
 
-  async function sair() {
+  async function confirmarSair() {
 
-    Alert.alert(
-      'Sair',
-      'Deseja realmente sair?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'Sair',
-          style: 'destructive',
+    try {
 
-          onPress: async () => {
+      await signOut(auth);
 
-            try {
-
-              await signOut(auth);
-
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'Login',
-                  },
-                ],
-              });
-
-            } catch (error) {
-
-              console.log(error);
-
-              Alert.alert(
-                'Erro',
-                'Não foi possível sair da conta'
-              );
-            }
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'Login',
           },
-        },
-      ]
-    );
+        ],
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      setShowLogoutCard(false);
+
+      mostrarMensagem(
+        'error',
+        'Erro',
+        'Não foi possível sair da conta.'
+      );
+    }
   }
 
   return (
@@ -329,35 +345,133 @@ export default function Settings() {
 
           </TouchableOpacity>
 
-          <Text
-            style={
-              styles.headerTitle
-            }
-          >
+          <Text style={styles.headerTitle}>
             Configurações
           </Text>
 
-          <View
-            style={{
-              width: 24,
-            }}
-          />
+          <View style={{ width: 24 }} />
 
         </View>
 
         <View style={styles.body}>
 
-          <View
-            style={
-              styles.profileContainer
-            }
-          >
+          {messageCard && (
 
             <View
-              style={
-                styles.avatar
-              }
+              style={[
+                styles.messageCard,
+                messageCard.type === 'success' &&
+                  styles.messageSuccess,
+                messageCard.type === 'error' &&
+                  styles.messageError,
+                messageCard.type === 'info' &&
+                  styles.messageInfo,
+              ]}
             >
+
+              <View style={styles.messageLeft}>
+
+                <Ionicons
+                  name={
+                    messageCard.type === 'success'
+                      ? 'checkmark-circle'
+                      : messageCard.type === 'error'
+                      ? 'close-circle'
+                      : 'information-circle'
+                  }
+                  size={24}
+                  color={
+                    messageCard.type === 'success'
+                      ? '#2E9E5B'
+                      : messageCard.type === 'error'
+                      ? '#D9534F'
+                      : '#214192'
+                  }
+                />
+
+                <View style={styles.messageTexts}>
+
+                  <Text style={styles.messageTitle}>
+                    {messageCard.title}
+                  </Text>
+
+                  <Text style={styles.messageText}>
+                    {messageCard.text}
+                  </Text>
+
+                </View>
+
+              </View>
+
+              <TouchableOpacity
+                onPress={() =>
+                  setMessageCard(null)
+                }
+              >
+
+                <Ionicons
+                  name="close"
+                  size={20}
+                  color="#555"
+                />
+
+              </TouchableOpacity>
+
+            </View>
+          )}
+
+          {showLogoutCard && (
+
+            <View style={styles.confirmCard}>
+
+              <Ionicons
+                name="log-out-outline"
+                size={34}
+                color="#D9534F"
+              />
+
+              <Text style={styles.confirmTitle}>
+                Deseja realmente sair?
+              </Text>
+
+              <Text style={styles.confirmText}>
+                Você será desconectado da sua conta.
+              </Text>
+
+              <View style={styles.confirmButtons}>
+
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() =>
+                    setShowLogoutCard(false)
+                  }
+                >
+
+                  <Text style={styles.cancelButtonText}>
+                    Cancelar
+                  </Text>
+
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.exitButton}
+                  onPress={confirmarSair}
+                >
+
+                  <Text style={styles.exitButtonText}>
+                    Sair
+                  </Text>
+
+                </TouchableOpacity>
+
+              </View>
+
+            </View>
+          )}
+
+          <View style={styles.profileContainer}>
+
+            <View style={styles.avatar}>
 
               {fotoPerfil ? (
 
@@ -365,9 +479,7 @@ export default function Settings() {
                   source={{
                     uri: fotoPerfil,
                   }}
-                  style={
-                    styles.avatarImage
-                  }
+                  style={styles.avatarImage}
                 />
 
               ) : (
@@ -381,11 +493,7 @@ export default function Settings() {
 
               {loadingFoto && (
 
-                <View
-                  style={
-                    styles.loadingAvatar
-                  }
-                >
+                <View style={styles.loadingAvatar}>
 
                   <ActivityIndicator
                     size="small"
@@ -402,9 +510,7 @@ export default function Settings() {
             </Text>
 
             <TouchableOpacity
-              style={
-                styles.photoButton
-              }
+              style={styles.photoButton}
               onPress={alterarFoto}
               disabled={loadingFoto}
               activeOpacity={0.8}
@@ -416,11 +522,7 @@ export default function Settings() {
                 color="#fff"
               />
 
-              <Text
-                style={
-                  styles.photoButtonText
-                }
-              >
+              <Text style={styles.photoButtonText}>
                 {fotoPerfil
                   ? 'Alterar foto'
                   : 'Adicionar foto'}
@@ -434,23 +536,13 @@ export default function Settings() {
             style={styles.card}
             activeOpacity={0.8}
             onPress={() =>
-              navigation.navigate(
-                'NovaSenha'
-              )
+              navigation.navigate('NovaSenha')
             }
           >
 
-            <View
-              style={
-                styles.leftContent
-              }
-            >
+            <View style={styles.leftContent}>
 
-              <View
-                style={
-                  styles.iconContainer
-                }
-              >
+              <View style={styles.iconContainer}>
 
                 <Ionicons
                   name="lock-closed-outline"
@@ -460,11 +552,7 @@ export default function Settings() {
 
               </View>
 
-              <Text
-                style={
-                  styles.cardText
-                }
-              >
+              <Text style={styles.cardText}>
                 Alterar senha
               </Text>
 
@@ -484,14 +572,12 @@ export default function Settings() {
               styles.logoutCard,
             ]}
             activeOpacity={0.8}
-            onPress={sair}
+            onPress={() =>
+              setShowLogoutCard(true)
+            }
           >
 
-            <View
-              style={
-                styles.leftContent
-              }
-            >
+            <View style={styles.leftContent}>
 
               <View
                 style={[
@@ -508,11 +594,7 @@ export default function Settings() {
 
               </View>
 
-              <Text
-                style={
-                  styles.logoutText
-                }
-              >
+              <Text style={styles.logoutText}>
                 Sair
               </Text>
 

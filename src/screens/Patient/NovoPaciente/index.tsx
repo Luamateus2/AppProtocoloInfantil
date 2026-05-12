@@ -17,6 +17,10 @@ import {
 } from 'react-native-safe-area-context';
 
 import {
+  Ionicons,
+} from '@expo/vector-icons';
+
+import {
   useNavigation,
 } from '@react-navigation/native';
 
@@ -81,6 +85,17 @@ export default function NovoPaciente() {
 
   const [loading, setLoading] =
     useState(false);
+
+  const [openAsa, setOpenAsa] =
+    useState(false);
+
+  const asaOptions = [
+    'ASA I',
+    'ASA II',
+    'ASA III',
+    'ASA IV',
+    'ASA V',
+  ];
 
   async function salvarPaciente() {
 
@@ -157,50 +172,6 @@ export default function NovoPaciente() {
 
       setLoading(false);
     }
-  }
-
-  function selecionarASA() {
-
-    Alert.alert(
-      'Classificação ASA',
-      'Selecione uma opção',
-      [
-        {
-          text: 'ASA I',
-          onPress: () =>
-            setAsa('ASA I'),
-        },
-
-        {
-          text: 'ASA II',
-          onPress: () =>
-            setAsa('ASA II'),
-        },
-
-        {
-          text: 'ASA III',
-          onPress: () =>
-            setAsa('ASA III'),
-        },
-
-        {
-          text: 'ASA IV',
-          onPress: () =>
-            setAsa('ASA IV'),
-        },
-
-        {
-          text: 'ASA V',
-          onPress: () =>
-            setAsa('ASA V'),
-        },
-
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-      ]
-    );
   }
 
   return (
@@ -288,7 +259,14 @@ export default function NovoPaciente() {
 
             </View>
 
-            <View style={styles.row}>
+            <View
+              style={[
+                styles.row,
+                {
+                  zIndex: 999,
+                },
+              ]}
+            >
 
               <View style={styles.half}>
 
@@ -296,22 +274,90 @@ export default function NovoPaciente() {
                   Classificação ASA
                 </Text>
 
-                <TouchableOpacity
-                  style={styles.select}
-                  onPress={
-                    selecionarASA
+                <View
+                  style={
+                    styles.selectWrapper
                   }
                 >
 
-                  <Text
-                    style={
-                      styles.selectText
+                  <TouchableOpacity
+                    style={styles.select}
+                    activeOpacity={0.85}
+                    onPress={() =>
+                      setOpenAsa(
+                        !openAsa
+                      )
                     }
                   >
-                    {asa || 'Selecione'}
-                  </Text>
 
-                </TouchableOpacity>
+                    <Text
+                      style={[
+                        styles.selectText,
+
+                        !asa &&
+                          styles.selectPlaceholder,
+                      ]}
+                    >
+                      {asa || 'Selecione'}
+                    </Text>
+
+                    <Ionicons
+                      name={
+                        openAsa
+                          ? 'chevron-up'
+                          : 'chevron-down'
+                      }
+                      size={18}
+                      color="#214192"
+                    />
+
+                  </TouchableOpacity>
+
+                  {openAsa && (
+
+                    <View
+                      style={
+                        styles.dropdown
+                      }
+                    >
+
+                      {asaOptions.map(
+                        option => (
+
+                          <TouchableOpacity
+                            key={option}
+                            style={
+                              styles.option
+                            }
+                            activeOpacity={0.85}
+                            onPress={() => {
+
+                              setAsa(
+                                option
+                              );
+
+                              setOpenAsa(
+                                false
+                              );
+                            }}
+                          >
+
+                            <Text
+                              style={
+                                styles.optionText
+                              }
+                            >
+                              {option}
+                            </Text>
+
+                          </TouchableOpacity>
+                        )
+                      )}
+
+                    </View>
+                  )}
+
+                </View>
 
               </View>
 

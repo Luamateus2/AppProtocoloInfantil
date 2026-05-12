@@ -162,7 +162,7 @@ export default function IntraOperatorioG() {
     return (
       <View style={styles.dropdownWrapper}>
         <TouchableOpacity
-          activeOpacity={0.8}
+          activeOpacity={0.85}
           style={styles.input}
           onPress={() =>
             setDropdownAberto(
@@ -194,6 +194,7 @@ export default function IntraOperatorioG() {
               <TouchableOpacity
                 key={item}
                 style={styles.option}
+                activeOpacity={0.85}
                 onPress={() => {
                   setValor(item);
                   setDropdownAberto(null);
@@ -257,7 +258,7 @@ export default function IntraOperatorioG() {
                   />
 
                   <Ionicons
-                    name="chevron-down"
+                    name="time-outline"
                     size={18}
                     color="#214192"
                   />
@@ -265,7 +266,7 @@ export default function IntraOperatorioG() {
               </View>
             </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 999 }]}>
               <Text style={styles.label}>
                 Anestesia
               </Text>
@@ -278,7 +279,7 @@ export default function IntraOperatorioG() {
               )}
             </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 998 }]}>
               <Text style={styles.label}>
                 Via Aérea
               </Text>
@@ -291,7 +292,7 @@ export default function IntraOperatorioG() {
               )}
             </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 997 }]}>
               <Text style={styles.label}>
                 Intercorrências
               </Text>

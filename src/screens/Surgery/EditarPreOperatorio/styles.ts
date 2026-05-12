@@ -53,12 +53,12 @@ export default StyleSheet.create({
 
   row: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: 1.2,
     borderBottomColor: '#CFCFCF',
-    gap: 12,
+    zIndex: 20,
   },
 
   label: {
@@ -66,26 +66,28 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     flex: 1,
-    flexShrink: 1,
-    paddingTop: 4,
   },
 
   dropdownWrapper: {
-    width: '42%',
-    minWidth: 135,
-    maxWidth: 165,
+    position: 'relative',
+    zIndex: 999,
   },
 
   input: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+
     borderWidth: 2,
     borderColor: '#214192',
+
     borderRadius: 18,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    width: '100%',
+
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+
+    width: 150,
+
     backgroundColor: '#fff',
   },
 
@@ -93,27 +95,50 @@ export default StyleSheet.create({
     color: '#214192',
     fontSize: 12,
     fontWeight: '600',
+
     flex: 1,
-    marginRight: 4,
+    marginRight: 6,
   },
 
   dropdown: {
-    width: '100%',
+    position: 'absolute',
+
+    top: 46,
+    right: 0,
+
+    width: 150,
+
     backgroundColor: '#fff',
-    borderRadius: 10,
-    marginTop: 6,
-    marginBottom: 8,
-    paddingVertical: 6,
+
+    borderRadius: 14,
+
     borderWidth: 1,
-    borderColor: '#214192',
+    borderColor: '#D9D9D9',
+
     overflow: 'hidden',
+
+    elevation: 10,
+
+    zIndex: 9999,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
   },
 
   option: {
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 12,
+
     borderBottomWidth: 0.5,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: '#E5E5E5',
+
+    backgroundColor: '#fff',
   },
 
   optionText: {

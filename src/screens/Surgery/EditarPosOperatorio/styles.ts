@@ -24,7 +24,7 @@ export default StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
 
   date: {
@@ -50,7 +50,7 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: 1.2,
-    borderBottomColor: '#CFCFCF',
+    borderBottomColor: '#D6D6D6',
     gap: 12,
   },
 
@@ -60,58 +60,85 @@ export default StyleSheet.create({
     fontWeight: '700',
     flex: 1,
     flexShrink: 1,
-    paddingTop: 4,
+    paddingTop: 6,
   },
 
   dropdownWrapper: {
-    width: '42%',
-    minWidth: 135,
-    maxWidth: 165,
+    width: '46%',
+    minWidth: 145,
+    position: 'relative',
   },
 
   input: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderWidth: 2,
+
+    backgroundColor: '#FFFFFF',
+
+    borderWidth: 2.2,
     borderColor: '#214192',
-    borderRadius: 18,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    width: '100%',
-    backgroundColor: '#fff',
+
+    borderRadius: 16,
+
+    paddingVertical: 11,
+    paddingHorizontal: 14,
+
+    minHeight: 48,
   },
 
   inputText: {
-    color: '#214192',
-    fontSize: 12,
-    fontWeight: '600',
     flex: 1,
-    marginRight: 4,
+
+    color: '#214192',
+
+    fontSize: 13,
+    fontWeight: '600',
+
+    marginRight: 6,
   },
 
   dropdown: {
+    position: 'absolute',
+    top: 56,
     width: '100%',
+
     backgroundColor: '#fff',
-    borderRadius: 10,
-    marginTop: 6,
-    marginBottom: 8,
-    paddingVertical: 6,
-    borderWidth: 1,
-    borderColor: '#214192',
+
+    borderRadius: 16,
+
+    borderWidth: 1.2,
+    borderColor: '#D8DDE8',
+
     overflow: 'hidden',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+
+    elevation: 6,
+
+    zIndex: 9999,
   },
 
   option: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#E0E0E0',
+    paddingVertical: 13,
+    paddingHorizontal: 14,
+
+    borderBottomWidth: 0.7,
+    borderBottomColor: '#ECECEC',
+
+    backgroundColor: '#fff',
   },
 
   optionText: {
     color: '#214192',
-    fontSize: 12,
+
+    fontSize: 13,
     fontWeight: '600',
   },
 
@@ -119,34 +146,44 @@ export default StyleSheet.create({
     color: '#214192',
     fontSize: 16,
     fontWeight: '700',
-    marginTop: 18,
-    marginBottom: 8,
+    marginTop: 22,
+    marginBottom: 10,
   },
 
   textArea: {
-    borderWidth: 2,
+    borderWidth: 2.2,
     borderColor: '#214192',
-    borderRadius: 14,
-    height: 110,
+
+    borderRadius: 16,
+
+    height: 120,
+
     backgroundColor: '#fff',
+
     padding: 14,
+
     textAlignVertical: 'top',
-    marginTop: 8,
+
     color: '#214192',
+
     fontSize: 13,
     fontWeight: '600',
   },
 
   button: {
-    marginTop: 30,
+    marginTop: 34,
+
     borderRadius: 30,
-    paddingVertical: 14,
+
+    paddingVertical: 15,
+
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   buttonText: {
     color: '#fff',
+
     fontSize: 15,
     fontWeight: '700',
   },

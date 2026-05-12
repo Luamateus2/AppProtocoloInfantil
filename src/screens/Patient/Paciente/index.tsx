@@ -83,9 +83,12 @@ export default function Pacientes() {
   const [pacientes, setPacientes] =
     useState<PacienteType[]>([]);
 
+  const [modalVisible, setModalVisible] =
+    useState(false);
+
   const [
-    modalVisible,
-    setModalVisible,
+    confirmarExclusao,
+    setConfirmarExclusao,
   ] = useState(false);
 
   const [
@@ -107,11 +110,7 @@ export default function Pacientes() {
 
       const q = query(
         collection(db, 'pacientes'),
-        where(
-          'usuarioId',
-          '==',
-          user.uid
-        )
+        where('usuarioId', '==', user.uid)
       );
 
       const querySnapshot =
@@ -211,6 +210,7 @@ export default function Pacientes() {
       );
 
       setModalVisible(false);
+      setConfirmarExclusao(false);
       setPacienteSelecionado(null);
     } catch (error) {
       console.log(
@@ -222,6 +222,7 @@ export default function Pacientes() {
 
   function editarPaciente(id: string) {
     setModalVisible(false);
+    setConfirmarExclusao(false);
 
     navigation.navigate(
       'EditarPaciente',
@@ -229,6 +230,18 @@ export default function Pacientes() {
         pacienteId: id,
       }
     );
+  }
+
+  function abrirModalPaciente(id: string) {
+    setPacienteSelecionado(id);
+    setConfirmarExclusao(false);
+    setModalVisible(true);
+  }
+
+  function fecharModal() {
+    setModalVisible(false);
+    setConfirmarExclusao(false);
+    setPacienteSelecionado(null);
   }
 
   function pegarIniciais(nome: string) {
@@ -372,12 +385,11 @@ export default function Pacientes() {
                   </View>
 
                   <TouchableOpacity
-                    onPress={() => {
-                      setPacienteSelecionado(
+                    onPress={() =>
+                      abrirModalPaciente(
                         paciente.id
-                      );
-                      setModalVisible(true);
-                    }}
+                      )
+                    }
                   >
                     <Ionicons
                       name="return-up-forward"
@@ -395,9 +407,7 @@ export default function Pacientes() {
           visible={modalVisible}
           transparent
           animationType="fade"
-          onRequestClose={() =>
-            setModalVisible(false)
-          }
+          onRequestClose={fecharModal}
         >
           <View
             style={{
@@ -410,92 +420,174 @@ export default function Pacientes() {
           >
             <View
               style={{
-                width: 260,
+                width: 290,
                 backgroundColor: '#fff',
-                borderRadius: 12,
-                padding: 20,
+                borderRadius: 18,
+                padding: 22,
               }}
             >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '700',
-                  marginBottom: 15,
-                  textAlign: 'center',
-                  color: '#214192',
-                }}
-              >
-                O que deseja fazer?
-              </Text>
+              {!confirmarExclusao ? (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '700',
+                      marginBottom: 8,
+                      textAlign: 'center',
+                      color: '#214192',
+                    }}
+                  >
+                    O que deseja fazer?
+                  </Text>
 
-              <TouchableOpacity
-                style={{
-                  padding: 12,
-                  backgroundColor: '#214192',
-                  borderRadius: 8,
-                  marginBottom: 10,
-                }}
-                onPress={() => {
-                  if (pacienteSelecionado) {
-                    editarPaciente(
-                      pacienteSelecionado
-                    );
-                  }
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#fff',
-                    textAlign: 'center',
-                    fontWeight: '600',
-                  }}
-                >
-                  Editar Paciente
-                </Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      padding: 13,
+                      backgroundColor: '#214192',
+                      borderRadius: 12,
+                      marginTop: 12,
+                    }}
+                    onPress={() => {
+                      if (pacienteSelecionado) {
+                        editarPaciente(
+                          pacienteSelecionado
+                        );
+                      }
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Editar Paciente
+                    </Text>
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                style={{
-                  padding: 12,
-                  backgroundColor: '#D9534F',
-                  borderRadius: 8,
-                  marginBottom: 10,
-                }}
-                onPress={() => {
-                  if (pacienteSelecionado) {
-                    excluirPaciente(
-                      pacienteSelecionado
-                    );
-                  }
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#fff',
-                    textAlign: 'center',
-                    fontWeight: '600',
-                  }}
-                >
-                  Excluir Paciente
-                </Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      padding: 13,
+                      backgroundColor: '#D9534F',
+                      borderRadius: 12,
+                      marginTop: 10,
+                    }}
+                    onPress={() =>
+                      setConfirmarExclusao(true)
+                    }
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Excluir Paciente
+                    </Text>
+                  </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() =>
-                  setModalVisible(false)
-                }
-              >
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    marginTop: 5,
-                    color: '#214192',
-                    fontWeight: '600',
-                  }}
-                >
-                  Cancelar
-                </Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={fecharModal}
+                  >
+                    <Text
+                      style={{
+                        textAlign: 'center',
+                        marginTop: 14,
+                        color: '#214192',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Cancelar
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <Ionicons
+                    name="warning-outline"
+                    size={42}
+                    color="#D9534F"
+                    style={{
+                      alignSelf: 'center',
+                      marginBottom: 8,
+                    }}
+                  />
+
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      color: '#D9534F',
+                    }}
+                  >
+                    Confirmar exclusão
+                  </Text>
+
+                  <Text
+                    style={{
+                      color: '#555',
+                      textAlign: 'center',
+                      fontSize: 14,
+                      marginTop: 8,
+                      marginBottom: 18,
+                    }}
+                  >
+                    Tem certeza que deseja excluir este
+                    paciente? Essa ação não poderá ser
+                    desfeita.
+                  </Text>
+
+                  <TouchableOpacity
+                    style={{
+                      padding: 13,
+                      backgroundColor: '#D9534F',
+                      borderRadius: 12,
+                      marginBottom: 10,
+                    }}
+                    onPress={() => {
+                      if (pacienteSelecionado) {
+                        excluirPaciente(
+                          pacienteSelecionado
+                        );
+                      }
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Sim, excluir
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={{
+                      padding: 12,
+                      backgroundColor: '#E8EEF9',
+                      borderRadius: 12,
+                    }}
+                    onPress={() =>
+                      setConfirmarExclusao(false)
+                    }
+                  >
+                    <Text
+                      style={{
+                        color: '#214192',
+                        textAlign: 'center',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Não excluir
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </View>
         </Modal>

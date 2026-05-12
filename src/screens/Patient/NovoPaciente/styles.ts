@@ -61,10 +61,16 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    zIndex: 20,
   },
 
   half: {
     width: '48%',
+  },
+
+  selectWrapper: {
+    position: 'relative',
+    zIndex: 999,
   },
 
   select: {
@@ -77,39 +83,62 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderWidth: 2.5,
     borderColor: '#2A5298',
+    minHeight: 50,
   },
 
   selectText: {
     fontSize: 13,
+    color: '#214192',
+    fontWeight: '600',
+  },
+
+  selectPlaceholder: {
     color: '#777',
+    fontWeight: '400',
   },
 
   /* DROPDOWN ASA */
+
   dropdown: {
+    position: 'absolute',
+    top: 56,
+    left: 0,
+    right: 0,
+
     backgroundColor: '#fff',
+
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#D9D9D9',
-    marginTop: 6,
+
     overflow: 'hidden',
 
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+
+    elevation: 10,
+
+    zIndex: 9999,
   },
 
   option: {
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 14,
     borderBottomWidth: 0.5,
     borderBottomColor: '#E5E5E5',
+    backgroundColor: '#fff',
   },
 
   optionText: {
     fontSize: 14,
     color: '#214192',
-    fontWeight: '500',
+    fontWeight: '600',
   },
 
   buttonRow: {

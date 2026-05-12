@@ -163,18 +163,59 @@ export default function PreOperatorio() {
     carregarDados();
   }, []);
 
-  function SelectBox({ value }: { value: string }) {
+  function SelectBox({
+    value,
+    opened = false,
+  }: {
+    value: string;
+    opened?: boolean;
+  }) {
     return (
       <View style={styles.input}>
-        <Text style={styles.inputText}>
+        <Text
+          style={styles.inputText}
+          numberOfLines={1}
+        >
           {value}
         </Text>
 
         <Ionicons
-          name="chevron-down"
+          name={
+            opened
+              ? 'chevron-up'
+              : 'chevron-down'
+          }
           size={18}
           color="#214192"
         />
+      </View>
+    );
+  }
+
+  function OptionList({
+    items,
+    onSelect,
+  }: {
+    items: string[];
+    onSelect: (item: string) => void;
+  }) {
+    return (
+      <View style={styles.dropdown}>
+        {items.map(item => (
+          <TouchableOpacity
+            key={item}
+            style={styles.option}
+            activeOpacity={0.85}
+            onPress={() => {
+              onSelect(item);
+              setOpenSelect('');
+            }}
+          >
+            <Text style={styles.optionText}>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     );
   }
@@ -234,6 +275,7 @@ export default function PreOperatorio() {
 
               <TouchableOpacity
                 onPress={() => setShowHorario(true)}
+                activeOpacity={0.85}
               >
                 <SelectBox value={formatHour(horario)} />
               </TouchableOpacity>
@@ -261,6 +303,7 @@ export default function PreOperatorio() {
 
               <TouchableOpacity
                 onPress={() => setShowJejum(true)}
+                activeOpacity={0.85}
               >
                 <SelectBox value={formatHour(jejum)} />
               </TouchableOpacity>
@@ -281,120 +324,110 @@ export default function PreOperatorio() {
               />
             )}
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 999 }]}>
               <Text style={styles.label}>
                 Estado Geral
               </Text>
 
-              <TouchableOpacity
-                onPress={() =>
-                  setOpenSelect(
-                    openSelect === 'estado' ? '' : 'estado'
-                  )
-                }
-              >
-                <SelectBox value={estadoGeral} />
-              </TouchableOpacity>
-            </View>
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect === 'estado'
+                        ? ''
+                        : 'estado'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={estadoGeral}
+                    opened={openSelect === 'estado'}
+                  />
+                </TouchableOpacity>
 
-            {openSelect === 'estado' && (
-              <View style={styles.dropdown}>
-                {['Estável', 'Regular', 'Crítico'].map(
-                  item => (
-                    <TouchableOpacity
-                      key={item}
-                      style={styles.option}
-                      onPress={() => {
-                        setEstadoGeral(item);
-                        setOpenSelect('');
-                      }}
-                    >
-                      <Text style={styles.optionText}>
-                        {item}
-                      </Text>
-                    </TouchableOpacity>
-                  )
+                {openSelect === 'estado' && (
+                  <OptionList
+                    items={[
+                      'Estável',
+                      'Regular',
+                      'Crítico',
+                    ]}
+                    onSelect={setEstadoGeral}
+                  />
                 )}
               </View>
-            )}
+            </View>
 
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 998 }]}>
               <Text style={styles.label}>
                 Via Aérea
               </Text>
 
-              <TouchableOpacity
-                onPress={() =>
-                  setOpenSelect(
-                    openSelect === 'via' ? '' : 'via'
-                  )
-                }
-              >
-                <SelectBox value={viaAerea} />
-              </TouchableOpacity>
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect === 'via'
+                        ? ''
+                        : 'via'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={viaAerea}
+                    opened={openSelect === 'via'}
+                  />
+                </TouchableOpacity>
+
+                {openSelect === 'via' && (
+                  <OptionList
+                    items={[
+                      'Mallampati I',
+                      'Mallampati II',
+                      'Mallampati III',
+                    ]}
+                    onSelect={setViaAerea}
+                  />
+                )}
+              </View>
             </View>
 
-            {openSelect === 'via' && (
-              <View style={styles.dropdown}>
-                {[
-                  'Mallampati I',
-                  'Mallampati II',
-                  'Mallampati III',
-                ].map(item => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.option}
-                    onPress={() => {
-                      setViaAerea(item);
-                      setOpenSelect('');
-                    }}
-                  >
-                    <Text style={styles.optionText}>
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            <View style={styles.row}>
+            <View style={[styles.row, { zIndex: 997 }]}>
               <Text style={styles.label}>
                 Medicação
               </Text>
 
-              <TouchableOpacity
-                onPress={() =>
-                  setOpenSelect(
-                    openSelect === 'med' ? '' : 'med'
-                  )
-                }
-              >
-                <SelectBox value={medicacao} />
-              </TouchableOpacity>
-            </View>
+              <View style={styles.selectWrapper}>
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() =>
+                    setOpenSelect(
+                      openSelect === 'med'
+                        ? ''
+                        : 'med'
+                    )
+                  }
+                >
+                  <SelectBox
+                    value={medicacao}
+                    opened={openSelect === 'med'}
+                  />
+                </TouchableOpacity>
 
-            {openSelect === 'med' && (
-              <View style={styles.dropdown}>
-                {[
-                  'Nenhuma',
-                  'Anti-hipertensivo',
-                  'Anticoagulante',
-                ].map(item => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.option}
-                    onPress={() => {
-                      setMedicacao(item);
-                      setOpenSelect('');
-                    }}
-                  >
-                    <Text style={styles.optionText}>
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {openSelect === 'med' && (
+                  <OptionList
+                    items={[
+                      'Nenhuma',
+                      'Anti-hipertensivo',
+                      'Anticoagulante',
+                    ]}
+                    onSelect={setMedicacao}
+                  />
+                )}
               </View>
-            )}
+            </View>
 
             <Text style={styles.observacoesLabel}>
               Observações
